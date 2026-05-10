@@ -3,9 +3,6 @@ _build/
 .mooncakes/
 .moonagent/
 node_modules/
-js/node_modules/
-js/build/
-native/build/
 build/
 CMakeFiles/
 CMakeCache.txt
