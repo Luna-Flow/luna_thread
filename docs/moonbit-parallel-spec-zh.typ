@@ -774,3 +774,269 @@ JavaScript 实现化路径为:
 11. 每个 witness 义务都映射到一个可审计的 artifact 格式。
 12. 每个非法输入向量都通过显式状态失败，而不是崩溃或触发未定义行为。
 13. 文档中引用的每项保证都已显式陈述。
+
+= 第三部分：实现一致性验证
+
+== 异常控制流与 Fail-Closed 语义
+
+第一部分把 worker 执行建模为成功的局部小步。忠实的物理实现还必须闭合 MoonBit、
+C wrapper 与 native runtime 中可能出现的所有异常控制流路径。
+
+*状态分类。*
+每个实现可见的失败都必须属于一个封闭的状态家族：
+
+#figure(
+  $
+    text("RejectReason") ::= & text("ParseReject") \
+                          |   & text("LayoutReject") \
+                          |   & text("OwnershipReject") \
+                          |   & text("DescriptorReject") \
+                          |   & text("OperatorReject") \
+                          |   & text("KernelLookupReject") \
+                          |   & text("KernelWitnessReject") \
+                          |   & text("KernelLayoutReject") \
+                          |   & text("KernelArityReject") \
+                          |   & text("KernelLawReject") \
+                          |   & text("BorrowLifecycleReject") \
+                          |   & text("TransferLifecycleReject") \
+                          |   & text("JSLifecycleReject") \
+                          |   & text("DeterministicTreeReject") \
+                          |   & text("TargetSupportReject")
+  $,
+  caption: [封闭的拒绝原因家族。],
+)
+
+#figure(
+  $
+    text("Status") ::= & text("Ok") \
+                    |   & text("Reject") "(" text("RejectReason") ")" \
+                    |   & text("Fault") "(" text("RuntimeFault") ")" \
+                    |   & text("Worker") "(" text("WorkerFault") ")"
+  $,
+  caption: [带标签的符合性状态代数。],
+)
+
+*边界结果承载。*
+每个供运行时执行使用的 MoonBit 暴露 native kernel 与 wrapper 入口，都必须返回一个
+ABI-safe 的结果封装：
+
+```c
+typedef struct {
+  Status status;
+  Payload payload;
+} FFIResult_Payload;
+```
+
+或者返回目标特化但在可观察行为上等价的记录。任何栈展开、panic 传播或宿主异常传播都不得
+跨越 FFI 边界。
+
+*阶段映射义务。*
+每个非 `Ok` 状态都必须对应以下符合性阶段之一：
+
+- facade 构造拒绝；
+- wrapper parse 拒绝；
+- descriptor 准入拒绝；
+- 并行域前的 runtime 拒绝；或
+- 并行域内 worker 的 fail-closed 发布。
+
+该阶段映射属于可观察合同的一部分，MoonBit 侧必须能够通过模式匹配，或通过可观察行为等价的
+目标 API 恢复这一信息。
+
+*共享 worker 状态。*
+在 native 并行域内，worker 只能通过一个共享的原子状态字通信失败，该状态字初始为 `Ok`。
+
+```c
+typedef struct {
+  _Atomic uint32_t code;
+} AtomicStatusWord;
+```
+
+*Worker 错误发布规则。*
+若某 worker 检测到错误状态 `e != Ok`，则它必须：
+
+1. 以 release 语义把 `e` 写入 `AtomicStatusWord`，除非先前已经可见某个非 `Ok` 状态；
+2. 除线程本地清理外，不再继续发出新的写入；
+3. 只执行清理或 early-exit 步骤，直到并行域 join。
+
+其余 worker 必须在准入点或循环检查点以 acquire 语义观察共享状态字；一旦观察到非 `Ok`
+值，就必须降级为确定性的 early exit。
+
+*CFG 闭包义务。*
+对于 `#pragma omp parallel` 内每一条可达控制流路径，实现必须通过静态分析、代码审计或等价论证证明：
+它只能以下列方式之一终止：
+
+- 以 `Ok` 正常完成 worker；
+- 显式发布一个非 `Ok` 状态并完成本地清理；
+- 因观察到先前发布的非 `Ok` 状态而 early exit。
+
+不得存在任何通过 `abort()`、未捕获异常逃逸、跨边界栈展开或未定义控制转移终止的路径。
+
+== 布局同构的实现化与安全降级
+
+第一部分把 `LayoutOK` 抽象定义为公理式条件。符合性的实现必须通过字节级静态断言与动态准入检查
+来将它实现化。
+
+*C 边界记录义务。*
+对 `lv_view`，C 侧实现必须通过属性、packing 指令或等价的 ABI 稳定机制，保持第一部分给出的
+规范 size、alignment 与 field offset 方程。
+
+这些检查必须绑定到一个已声明的 `ABIProfile(t)`，而不是绑定到推断出来的宿主字宽。
+
+*编译期布局出清。*
+native wrapper 必须在编译期出清下列条件：
+
+- `sizeof(lv_view)` 与 `alignof(lv_view)`；
+- `addr`、`len`、`kind`、`mode` 与 `stride` 的字段偏移；
+- 活动目标 profile 下 `UIntPtr`、`UInt64` 与 `UInt32` 的宽度检查；
+- 活动目标合同所要求的标量宽度与 endian 假设。
+
+这些检查必须由 `static_assert` 或可观察行为等价的编译期机制表达。
+
+*动态 zero-copy gate。*
+在某个边界 view 以无拷贝方式被准入为 borrow 或 transfer 之前，descriptor 形成必须检查：
+
+- base pointer 对所需元素对齐的模运算结果为零；
+- stride 等于该标量种类声明的连续遍历规则；
+- 总字节跨度有界且不发生算术溢出；
+- 源与目标的 layout witness 在标量解释和宽度上一致。
+
+若任一检查失败，实现不得原地重解释该 view。
+
+*确定性降级规则。*
+对每个目标，实现必须为非同构视图声明下列结果之一：
+
+- `CopyConforming`：复制字节到符合布局的表示后继续；或
+- `RejectNonIsomorphic`：在 runtime 准入前直接拒绝。
+
+该选择必须对给定目标路径稳定成立，不得依赖偶然的宿主 ABI 兼容性。
+
+对于每条被准入的目标路径，实现都必须把 `ABIProfile(t)` 及所选降级规则文档化为一个可审计的
+边界合同。
+
+== 算子纯度与 Plan 准入
+
+数据竞争自由定理依赖于 worker footprint 可以仅由 plan 数据推出。因此 facade 与 lowering
+边界必须拒绝任何把不可验证 effect 偷运过 FFI 边界的可执行内容。
+
+*Kernel registry 表面。*
+version 1 的可执行 Plan 只能携带能在活动目标的静态受审计 `KernelRegistry(t)` 中解析的
+`KernelId` 引用。任意 MoonBit 闭包、任意 JavaScript 宿主函数、未入册的 native 函数指针，
+以及捕获了可变环境的值，都不是可接受的 plan payload。
+
+每个受信任的 `KernelDesc` 都必须携带：
+
+- `KernelId`，即 plan 唯一可见的 kernel 级标识符；
+- 隐藏的 native `FnPtr`，其不得跨越 MoonBit plan 边界；
+- `PurityWitness`；
+- `FootprintWitness`；
+- `LayoutContract`；
+- `ArityMeta`；
+- `LawMeta`；以及
+- `TargetMeta`。
+
+动态的任意 kernel 注册不属于本合同。符合性声明只能依赖静态受审计 registry 中已有的
+descriptor。
+
+对浮点 `reduce` 与 `scan`，额外的准入条件是必须提供 `DeterministicTree` 律 witness，
+使 runtime descriptor 为被接受的执行固定唯一的组合树。
+
+*安全抽象义务。*
+一个符合性的 MoonBit-facing API 必须确保：任何通过类型检查并被准入的执行请求，都会 lowering
+为一个其 worker footprint 仅由以下信息决定的 plan：
+
+- plan 构造子；
+- 显式 buffer view 与 layout witness；
+- 受信任的 `KernelId` 与已解析的 `KernelDesc`；
+- 被 `PlanWF` 允许的 runtime configuration 字段。
+
+任何允许隐藏可写别名、逃逸可变引用，或携带无法依据 `SepChunks`、所有权线性与边界 access mode
+证明其安全性的 effectful 算子体的构造路径，都必须被拒绝。
+
+*Witness 义务。*
+对每个被准入的 descriptor `k = KernelDesc(...)`：
+
+- `PurityWitness(k)` 必须证明执行在声明的输入/输出 view 和 `MetaOf(d)` 之外没有副作用；
+- `FootprintWitness(k)` 必须证明 worker 写入被限制在其分配到的 chunk 内，而任何超出 chunk
+  的读取都仅限于声明的只读输入或 `MetaOf(d)`；
+- `LayoutContract(k)` 必须在 runtime 执行前针对所有承载的边界 view 被出清；
+- `ArityMeta(k)` 必须与 plan 的构造子类别和 access mode 匹配；且
+- `LawMeta(k)` 必须满足 `mu` 所要求的规约律义务，包括浮点归约所需的 deterministic-tree
+  要求。
+
+这些义务若不满足，执行必须通过 `Status` 中专用的拒绝分支被拒绝。
+
+*可审计 witness 格式。*
+每个携带 witness 的 registry 条目都必须暴露一个可独立复审的 artifact bundle。最小可接受 bundle
+包含：
+
+- 稳定的 kernel 标识符，以及与被审计实现绑定的版本号或哈希；
+- 对 purity、footprint、layout、arity 与 law 声明的机器可检查摘要或表格化摘要；
+- 这些声明成立时所依赖的目标或 `ABIProfile(t)` 与浮点 profile 假设；
+- 每项声明所采用的审计方法：证明 artifact、静态分析结果、测试证书，或人工审计记录；以及
+- 以第三方可区分“缺失”“拒绝”“接受”证据的形式记录的审计结论。
+
+语义义务本身具有规范性；artifact 格式则是使符合性声明可复审而非自证的最小可接受证据。
+
+== 基于契约的验证矩阵
+
+符合性声明必须由一组可执行的验证矩阵支撑，该矩阵覆盖接受、拒绝与 fail-closed 执行结果。
+
+*验证维度。*
+
+1. 正向实现化：
+   等价的 `map`、`reduce`、`scan` 与 `map-reduce` Plan 在已准入的 native 与 JavaScript
+   目标上保持相同的 plan 指称与所有权轨迹。
+2. 异常控制流：
+   注入的算子故障、分配失败、畸形 payload 与 runtime 准入失败都以显式状态码出现，而不是
+   以进程终止暴露。
+3. 布局与字节级安全：
+   错误对齐、不一致 stride、非同构 scalar kind 与溢出的字节跨度计算，都会按照目标规则触发
+   `CopyConforming` 或显式拒绝。
+4. 所有权与 chunk 安全：
+   重叠可写 chunk、transfer 后的陈旧 alias、活动 borrow 期间的突变，以及 double-borrow
+   尝试，都必须在不健全执行发生前失败。
+5. 算子准入：
+   携带闭包、宿主函数、未知 `KernelId`，或其他不可验证内容的 Plan，必须在 facade 或
+   wrapper 准入阶段被拒绝。
+6. 浮点确定性规约：
+   对同一个已准入的浮点 reduce 或 scan descriptor，在 worker 调度不同的情况下重复执行，
+   都必须在单一目标 profile 下得到相同的组合树与相同的可观察结果；跨目标相等性只对已声明
+   兼容的受审计浮点 profile 做测试。
+7. 借用生命周期：
+   成功 discharge 会恢复 `Own_M(b)`；而过早 discharge、重复 discharge，或在没有活动借用时
+   尝试 discharge，都必须被拒绝。
+8. Transfer-return 生命周期：
+   成功的 `Return-Step` 加 `Rehydrate-Step` 会恢复 `Own_M(b)`；而在 `Returned_M(b)` 上 reuse、
+   重复 return，或在没有活动 `Own_C(b)` 时 return，都必须通过 `TransferLifecycleReject`
+   被拒绝。
+9. JS 生命周期：
+   copy 出来的 buffer 只有一个 owner 且只有一条释放路径；transfer tombstone 会阻止陈旧宿主复用；
+   finalizer 与 explicit-return 的顺序遵守文档声明的目标规则；缺失 snapshot 义务或违反
+   生命周期时，必须通过 `JSLifecycleReject` 拒绝。
+10. 元数据纪律：
+   worker 在其 chunk footprint 之外只能读取 `MetaOf(d)`；任何可写或畸形的元数据区域都必须
+   在不健全执行发生前被拒绝。
+11. Registry 解析：
+   已知 `KernelId` 会解析为受审计 descriptor；未知 id 必须通过 `KernelLookupReject` 拒绝。
+12. Witness 校验：
+   缺失 purity、footprint、layout、arity、law、profile 或 target-support 证据时，必须通过
+   对应的专用拒绝分支拒绝。
+13. 审计 artifact 完整性：
+   验证矩阵使用到的每个 registry 条目都必须标识其证据 bundle 与审计结论。
+
+*拒绝阶段合同。*
+每个负向验证用例都必须说明：
+
+- 被违反的前置条件；
+- 拒绝或失败发布发生的阶段：
+  facade 构造、wrapper parse、descriptor 准入、并行域前的 runtime 检查，或并行域内
+  worker 的 fail-closed 发布；
+- 预期的带标签 `Status` 分支，以及适用时的拒绝子原因。
+
+其中，borrow discharge 违规映射到 `BorrowLifecycleReject`，transfer-return 违规映射到
+`TransferLifecycleReject`，而 JS snapshot / copy / transfer 生命周期违规映射到
+`JSLifecycleReject`。
+
+*覆盖义务。*
+只有当验证矩阵中的每个非法输入向量都收敛为本规格定义的显式状态，并且没有任何非法向量能够产生
+段错误、静默数据损坏或未定义行为时，实现才可称为一致性完备。
