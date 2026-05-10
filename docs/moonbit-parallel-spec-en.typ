@@ -679,3 +679,142 @@ If `Borrow_C(b)` is active, MoonBit cannot derive a step that frees or mutates `
 `Own_M(b) -> Own_C(b)` has fired, MoonBit cannot derive mutable authority for `b` again
 without an explicit `Return-Step` followed by `Rehydrate-Step`; if `Borrow_MR(b) *
 Borrow_C(b)` is active, `Own_M(b)` is restored only by `Discharge-Step`.
+
+= Part II: Realization and Conformance
+
+== Native Realization
+
+The native realization is:
+
+`MoonBit facade -> MoonBit C FFI -> C wrapper -> runtime descriptor -> C runtime`
+
+A conforming native realization must:
+
+- lower only plan ADT values admitted by Part I;
+- preserve one audited `ABIProfile(t)` for each admitted boundary path, or perform
+  explicit copying when layout is not isomorphic;
+- implement borrow and transfer edges according to the linear state machine;
+- schedule writable chunks only under the separation contract of Part I.
+
+== JavaScript Realization
+
+The JavaScript realization is:
+
+`MoonBit facade -> MoonBit JS FFI -> JS wrapper -> N-API addon -> runtime descriptor -> C runtime`
+
+A conforming JavaScript realization must:
+
+- lower typed-array-compatible views into payload views with explicit element-kind tags;
+- reject host objects that do not satisfy layout and ownership obligations;
+- preserve the same plan denotation and split-combine contract as the native realization,
+  and require stronger cross-target equality only when both sides declare compatible
+  `FPProfile`;
+- realize admitted `SharedArrayBuffer` borrows as logical snapshots for denotation
+  purposes;
+- define owner, tombstone, finalizer, and explicit-return behavior for copy and transfer
+  paths before runtime execution starts;
+- enforce borrow or transfer discipline before runtime execution starts.
+
+== Facade Obligations
+
+A conforming facade must:
+
+- expose only pure plan constructors and explicit execution entry points;
+- refuse to encode arbitrary function-value environments or arbitrary host functions into plans;
+- attach explicit ownership mode and access mode to every exported boundary view;
+- surface capability queries that are extensionally equal to actual target support.
+
+== Runtime Obligations
+
+A conforming runtime must:
+
+- interpret descriptors only through the constructor classes defined in Part I;
+- reject any descriptor whose chunk schedule fails separation or side-condition checks;
+- preserve the ownership mode attached to each carried view;
+- lift failures into explicit status classes rather than partial success;
+- prohibit exception escape, panic propagation, or stack unwinding across the FFI boundary;
+- implement deterministic layout fallback or rejection for non-isomorphic views before worker execution starts.
+
+== Unsupported Surface
+
+The following are outside the version-1 contract:
+
+- arbitrary MoonBit function-value execution on foreign worker threads;
+- arbitrary JavaScript host-function execution inside native worker execution;
+- implicit layout reinterpretation across non-isomorphic ABI records or arrays;
+- implicit ownership transfer without a boundary state transition;
+- chunk schedules that cannot be justified by separation and split-combine laws.
+
+== Conformance
+
+An implementation may claim conformance only if:
+
+- its MoonBit-facing API constructs only the plan ADT admitted by Part I;
+- its boundary payloads preserve explicit layout and ownership witnesses;
+- its wrappers satisfy parsing fidelity and ownership fidelity;
+- its runtime satisfies chunk orthogonality and split-combine soundness;
+- invalid, non-isomorphic, or lifetime-unsafe requests fail closed before execution.
+
+== Conformance Transfer
+
+*Faithful realization.*
+An implementation is faithful only if:
+
+- every accepted payload is the lowering of a well-formed plan;
+- every borrow or transfer edge follows the linear ownership state machine;
+- every writable chunk schedule satisfies `SepChunks`;
+- every reduction or scan combine path is justified by a valid monoid descriptor.
+
+*Conformance rule.*
+If a faithful implementation accepts a plan `p`, then the observable result and ownership
+trace of executing `p` must stay within Part I. If it rejects `p`, that rejection must be a
+spec-valid fail-closed outcome. For floating-point `reduce` and `scan`, "the observable
+result" means stable repeated results under one admitted target profile, and cross-target
+equality only under explicitly compatible audited floating-point profiles.
+
+== Validation Scenarios
+
+1. Submit a plan whose source and destination layouts are not isomorphic.
+   Expected result: explicit copy into a conforming layout, or fail-closed rejection.
+2. Submit a read-only borrow plan and attempt MoonBit-side mutation before borrow
+   discharge.
+   Expected result: mutation is rejected or blocked by the borrow discipline.
+3. Submit a writable chunk schedule with overlapping intervals.
+   Expected result: descriptor formation or runtime admission fails before execution.
+4. Submit a reduce or scan plan with an operator lacking a valid monoid descriptor.
+   Expected result: the plan is rejected before fork-join execution.
+5. Submit a transfer plan and attempt MoonBit-side free through an old alias.
+   Expected result: mutable alias permission is absent; the operation is rejected.
+6. Execute equivalent floating-point reduce plans on native and JavaScript targets with
+   layout-compatible views but incompatible floating-point profiles.
+   Expected result: each target is internally deterministic, but cross-target equality is
+   not claimed.
+7. Execute equivalent floating-point reduce plans on targets that declare compatible
+   floating-point profiles.
+   Expected result: both targets preserve the same declared observable result and ownership
+   discipline.
+8. Submit a transfer-return-reuse plan and attempt reuse before `Rehydrate-Step`.
+   Expected result: reuse is rejected until rehydration succeeds.
+9. Submit a JS copy or transfer plan and trigger explicit return, finalizer cleanup, and
+   fail-closed runtime admission on separate runs.
+   Expected result: the documented lifecycle priority and single-disposal obligations hold.
+
+== Closure Checklist
+
+The specification is not closed unless all of the following hold:
+
+1. Every exported execution request is representable by the plan ADT.
+2. Every boundary view carries explicit layout and ownership witnesses.
+3. Every zero-copy path satisfies layout isomorphism.
+4. Every borrow path freezes MoonBit mutation until discharge.
+5. Every transfer path consumes MoonBit mutable authority and restores it only through
+   explicit return plus rehydration.
+6. Every writable chunk schedule is justified by separation.
+7. Every reduction or scan combine path is justified by a valid monoid law.
+8. No exception, panic, or abort path escapes across the FFI boundary.
+9. Every zero-copy admission path discharges byte-level layout and alignment checks.
+10. Every JS copy and transfer path has one closed cleanup story, including finalizer and
+    fail-closed cases.
+11. Every witness obligation maps to an auditable artifact format.
+12. Every invalid input vector fails by explicit status rather than crash or undefined behavior.
+13. Every referenced guarantee is stated in the document.
