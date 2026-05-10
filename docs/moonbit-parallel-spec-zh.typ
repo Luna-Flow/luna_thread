@@ -1,0 +1,645 @@
+#import "template/jmlr-paper-template.typ": jmlr-paper, diagram-box, diagram-panel, down-arrow, split-arrows
+
+#show: jmlr-paper.with(
+  title: [MoonBit 并行 FFI 库的规范性规格],
+  subtitle: [第一部分定义 Plan、所有权与分离安全调度的工程合同],
+  authors: [朱哲皓],
+  affiliation: [Luna-Flow],
+  email: [GitHub: KCN-judu],
+  abstract: [
+    本文把一个 MoonBit 并行 FFI 库规定为关于 Plan 表示、所有权转移和并发 buffer 安全的合同。
+    语义核心不是重新定义 $upright("map")$ 与 $upright("reduce")$ 的基础函数意义，而是精确回答三个跨边界致命问题：
+    MoonBit 如何构造纯并行 Plan，该 Plan 如何以 ABI 受约束的 payload 形式跨越 FFI，以及共享
+    C runtime 如何在不产生数据竞争和生命周期错误的前提下执行 chunk 化的 fork-join 工作。
+    第一部分定义 Plan ADT、布局同构约束、线性所有权状态机、borrow / transfer 规则，以及
+    chunk 调度的分离检查。第二部分给出 native 与 JavaScript 目标的实现化与符合性义务。
+    第三部分把这些义务细化为实现层面的一致性检查，覆盖异常控制流、字节级布局校验、
+    安全算子准入与 fail-closed 验证场景。英文文本是权威版本，中文文本是严格镜像。
+  ],
+  keywords: [MoonBit, FFI, OpenMP, separation safety, linear ownership, ABI, engineering specification],
+  text-font: "STFangsong",
+  title-font: "Helvetica",
+  code-font: "Menlo",
+  lang: "zh",
+)
+
+= 第一部分：语义核心
+
+== 规范性范围
+
+本规格把一个 MoonBit 并行库的 version-1 合同划分为三层:
+
+- 构造纯并行 Plan 的 MoonBit facade；
+- 将 Plan 下放为 ABI 受约束 payload 的后端特化 FFI 边界；
+- 将 payload 解释为 chunk 化 fork-join 执行的共享 C runtime。
+
+具有规范约束力的内容仅限于:
+
+- MoonBit 侧 Plan 的代数形状；
+- 允许穿越 FFI 的值类别；
+- zero-copy 或借用视图所要求的布局同构条件；
+- MoonBit 堆和 C 可见堆之间的线性所有权状态转移；
+- race-free chunk 调度所要求的分离逻辑义务；
+- native 与 JavaScript 目标的 faithful realization 所必须满足的符合性义务。
+
+调度启发式、OpenMP 调优细节和局部优化策略均不属于规范性内容，除非它们影响外部可观察的所有权、
+布局或竞争安全合同。
+
+== 记号与元层约定
+
+本文使用如下记号:
+
+- `H_M` 表示 MoonBit 堆，`H_C` 表示 C / 宿主可见堆；
+- $Gamma$ 表示跨 FFI 边界携带的所有权资源上下文；
+- $b$ 表示 buffer 身份，`v` 表示 view，$p$ 表示 plan，$d$ 表示 runtime descriptor；
+- `mapsto` 表示元层部分求值；
+- $upright("Own_M")(b)$、$upright("Borrow_C")(b)$、$upright("Own_C")(b)$ 表示所有权状态；
+- $Gamma -> Gamma'$ 表示一步所有权转移；
+- `P * Q` 表示不相交堆片段上的分离合取；
+- `Interval(i, j)` 表示半开区间 `[i, j)`；
+- `Chunks(n, m)` 表示把 `[0, n)` 划分为 `m` 个子区间的分块；
+- $upright("Den")(p)$ 表示 plan 指称；
+- $t tack.l p mapsto q$ 表示在目标 `t` 上将 MoonBit plan $p$ 下放为 payload $q$；
+- $upright("parse")(t, q) mapsto d$ 表示包装层将 payload 解析为 runtime descriptor $d$；
+- $upright("exec")(d) = y$ 表示 runtime descriptor $d$ 执行得到可观察结果 $y$。
+
+== 语义 Plan 演算
+
+facade 是纯 Plan 代数。它的构造子携带足够信息，使下层可以解释并行工作，而无需跨越函数值
+或运行时状态边界。
+
+#figure(
+  $
+    text("ScalarKind") ::= & "Int" \
+                         |   & "UInt" \
+                         |   & "Int64" \
+                         |   & "UInt64" \
+                         |   & "Float" \
+                         |   & "Double"
+  $,
+  caption: [标量家族。],
+)
+
+#figure(
+  $
+    text("Schedule") ::= & "Static" \
+                      |   & "Dynamic" \
+                      |   & "Guided"
+  $,
+  caption: [调度类别。],
+)
+
+#figure(
+  $
+    text("RuntimeConfig") ::= & "{" \
+                              & quad text("threads") ":" text("Nat") "," \
+                              & quad text("chunk") ":" text("Nat") "," \
+                              & quad text("schedule") ":" text("Schedule") \
+                              & "}"
+  $,
+  caption: [运行时配置记录。],
+)
+
+#figure(
+  $
+    text("AccessMode") ::= & "ReadOnly" \
+                        |   & "WriteOnly" \
+                        |   & "ReadWrite"
+  $,
+  caption: [边界访问模式。],
+)
+
+#figure(
+  $
+    text("BufferRef") ::= & "(" text("BufId") "," text("ScalarKind") "," text("Len") "," text("AccessMode") "," text("LayoutWitness") ")"
+  $,
+  caption: [facade 层 buffer 引用。],
+)
+
+#figure(
+  $
+    text("OutRef") ::= & "(" text("BufId") "," text("ScalarKind") "," text("Len") "," text("LayoutWitness") ")"
+  $,
+  caption: [facade 层输出引用。],
+)
+
+#figure(
+  $
+    text("LawClass") ::= & "StrictAssoc" \
+                      |   & "DeterministicTree"
+  $,
+  caption: [规约律类别。],
+)
+
+#figure(
+  $
+    text("MonoidLaw") ::= & "(" text("LawClass") "," text("OpId") "," text("IdentityId") "," "AssocWitness" ")"
+  $,
+  caption: [幺半群描述子。],
+)
+
+#figure(
+  $
+    text("Plan") ::= & text("MapPlan") "(" text("RuntimeConfig") "," text("OpId") "," text("BufferRef") "," text("BufferRef") ")" \
+                   | & text("ReducePlan") "(" text("RuntimeConfig") "," text("MonoidLaw") "," text("BufferRef") "," text("OutRef") ")" \
+                   | & text("ScanPlan") "(" text("RuntimeConfig") "," text("MonoidLaw") "," text("BufferRef") "," text("BufferRef") ")" \
+                   | & text("MapReducePlan") "(" text("RuntimeConfig") "," text("OpId") "," text("MonoidLaw") "," text("BufferRef") "," text("OutRef") ")"
+  $,
+  caption: [并行 Plan ADT。],
+)
+
+version 1 禁止任意 MoonBit 函数值与任意 JavaScript 宿主函数进入 Plan。
+
+*定义（构造子形状义务）.*
+记 $upright("ShapeOK")(p)$ 当且仅当：
+
+- 对 `MapPlan(cfg, op, src, dst)`，`Len(src) = Len(dst)` 且 `dst` 可写；
+- 对 `ReducePlan(cfg, mu, src, out)`，`Len(out) = 1`、`ScalarKind(out) = ScalarKind(src)`，
+  且 `out` 是 reduction 的唯一结果位置；
+- 对 `ScanPlan(cfg, mu, src, dst)`，`Len(src) = Len(dst)`、`ScalarKind(src) =
+  ScalarKind(dst)`，且 `dst` 可写；
+- 对 `MapReducePlan(cfg, op, mu, src, out)`，`Len(out) = 1`、`out` 可写，且 `op`
+  产生的映射元素类型与 `mu` 要求的 reduction 元素类型一致。
+
+*定义（Plan 指称）.*
+记 $upright("Den")(p)$ 为由 plan 构造子唯一决定的可观察结果：
+
+- `Den(MapPlan(cfg, op, src, dst))` 是输出 buffer `dst`，其中索引 `i` 处的元素为
+  `Apply(op, src[i])`；
+- `Den(ReducePlan(cfg, mu, src, out))` 是 `out[0]` 中的标量结果，它由 `mu` 对 `src`
+  进行 fold 得到；
+- `Den(ScanPlan(cfg, mu, src, dst))` 是 inclusive prefix 输出 buffer `dst`，其中索引
+  `i` 处的元素等于在 `mu` 下对 `src[0 .. i]` 的规约结果；
+- `Den(MapReducePlan(cfg, op, mu, src, out))` 定义为
+  `Den(ReducePlan(cfg, mu, upright("MapTmp")(op, src), out))`，其中 `MapTmp(op, src)` 是
+  对 `src` 逐点应用 `op` 得到的逻辑映射序列。
+
+*定义（Plan 良构性）.*
+记 $upright("PlanWF")(p)$ 当且仅当:
+
+- `threads > 0`；
+- 只要请求 chunk 化并行执行，就必须满足 `chunk > 0`；
+- 空输入 `map` 与 `scan` 只有在其 shape 义务仍能唯一确定空结果 buffer 时才可接受；
+- 空输入 `reduce` 只有在 `IdentityId` 能解析到该 `MonoidLaw` 的受审计 identity 元素时才可接受，
+  否则必须在 lowering 前拒绝；
+- 每个 buffer 引用都携带显式 scalar kind、长度、access mode 和 layout witness；
+- 每个 `OutRef` 都携带显式 scalar kind、长度和 layout witness；
+- 每个 operator id 都能解析到一个受信任的已注册 kernel descriptor；
+- 每个 monoid law 描述子都携带显式 law class、operator id、identity id，以及
+  associativity 或 deterministic-tree witness id；
+- `ShapeOK(p)` 成立。
+
+*定义（规约律可接受性）.*
+记 $upright("LawOK")(mu, tau)$ 当且仅当：
+
+- 若 `ClassOf(mu) = StrictAssoc`，则 `AssocWitness(mu)` 表示元素类型 `tau` 上的严格结合律；且
+- 若 `ClassOf(mu) = DeterministicTree`，则 `tau in {Float, Double}`，并且
+  `AssocWitness(mu)` 表示与规范化 descriptor 绑定的固定规约树 witness。
+
+浮点 `reduce` 与 `scan` 只能通过 `DeterministicTree` 被准入；本规格不把 IEEE 754
+加法或乘法视为无约束的代数幺半群。
+
+*定义（浮点符合性 profile）.*
+记 $upright("FPProfile")(t)$ 为目标 `t` 声明的目标局部浮点环境，包括 rounding mode、
+contraction policy、NaN 与 infinity 处理、subnormal 处理，以及解释
+`DeterministicTree` 结果所需的其他条件。
+
+== ABI 布局同构
+
+只有在 MoonBit 布局与 C 布局同构时，才允许 zero-copy 借用或表示保持不变的 transfer。
+
+*定义（边界视图布局）.*
+对活动 backend 目标上的 layout-bearing buffer view，定义边界视图记录:
+
+#figure(
+  $
+    text("lv_view") ::= & "{" \
+                       & quad text("addr") ":" text("UIntPtr") "," \
+                       & quad text("len") ":" text("UInt64") "," \
+                       & quad text("kind") ":" text("UInt32") "," \
+                       & quad text("mode") ":" text("UInt32") "," \
+                       & quad text("stride") ":" text("UInt64") \
+                       & "}"
+  $,
+  caption: [规范边界 view。],
+)
+
+规范 boundary ABI 不是从未说明的机器字宽 `w` 推导出来的；它必须由一个受审计的目标
+profile `ABIProfile(t)` 选定。
+
+*定义（边界 ABI profile）.*
+`ABIProfile(t)` 必须声明目标 `t` 上 boundary record 所使用的唯一宽度、对齐与 endian
+合同，并给出 `UIntPtr`、`UInt64` 与 `UInt32` 的映射。
+
+并要求在 `ABIProfile(t)` 下满足下列布局方程:
+
+$
+  upright("sizeof")(upright("lv_view")) = upright("LVSize")(upright("ABIProfile")(t))
+  and upright("alignof")(upright("lv_view")) = upright("LVAlign")(upright("ABIProfile")(t))
+$
+
+$
+  upright("offset")(upright("addr")) = 0
+  and upright("offset")(upright("len")) = upright("OffLen")(upright("ABIProfile")(t))
+  and upright("offset")(upright("kind")) = upright("OffKind")(upright("ABIProfile")(t))
+$
+
+$
+  upright("offset")(upright("mode")) = upright("OffMode")(upright("ABIProfile")(t))
+  and upright("offset")(upright("stride")) = upright("OffStride")(upright("ABIProfile")(t))
+$
+
+*定义（布局记录）.*
+对任意标量或 buffer 元素类型 `tau`，定义:
+
+$
+  upright("Layout")(tau) = (upright("size")(tau), upright("align")(tau), upright("stride")(tau), upright("endian")(tau))
+$
+
+*定义（布局同构）.*
+记 $upright("Iso")(tau_M, tau_C)$ 当且仅当:
+
+$
+  upright("Layout")(tau_M) = upright("Layout")(tau_C)
+$
+
+且两边在标量解释、元素宽度和连续遍历语义上完全一致。
+
+*约束（边界布局 Gate）.*
+
+$
+  upright("Iso")(tau_M, tau_C)
+  /
+  upright("LayoutOK")(tau_M, tau_C)
+$
+
+若 $upright("LayoutOK")$ 失败，则实现只能显式拷贝到一个符合布局的表示，或直接拒绝请求。
+不得静默重解释布局。
+
+`LayoutOK` 还要求活动目标为承载该 view 的路径声明一个受审计的 `ABIProfile(t)`。
+实现不得依据偶然的宿主 ABI 兼容性替换记录布局。
+
+== 线性所有权状态机
+
+边界合同被建模为一个关于所有权资源上下文的有限状态转移系统。
+
+*所有权状态。*
+对任意 buffer 身份 `b`，允许的状态只有 `Own_M(b)`、`Borrow_MR(b)`、`Borrow_C(b)`、
+`Own_C(b)` 和 `Returned_M(b)`。
+
+`Returned_M(b)` 是一个可观察的“返还完成”中间态：C 可见 authority 已经放弃，但在 rehydration
+成功前，MoonBit 的可变 authority 尚未恢复。
+
+*转移规则。*
+
+#figure(
+  $
+    frac(
+      Gamma tack upright("Own_M")(b) and upright("LayoutOK")(tau_M, tau_C) and upright("Live")(b) and upright("ReadOnly")(q),
+      Gamma -> (Gamma - {upright("Own_M")(b)}) union {upright("Borrow_MR")(b), upright("Borrow_C")(b)}
+    ) quad text("(Borrow-Step)") \
+    frac(
+      Gamma tack upright("Own_M")(b) and upright("LayoutOK")(tau_M, tau_C) and upright("Exclusive")(b) and upright("TransferOK")(q),
+      Gamma -> (Gamma - {upright("Own_M")(b)}) union {upright("Own_C")(b)}
+    ) quad text("(Transfer-Step)") \
+    frac(
+      Gamma tack upright("Own_C")(b) and upright("Received")(b) and upright("Rebind")(b),
+      Gamma -> (Gamma - {upright("Own_C")(b)}) union {upright("Returned_M")(b)}
+    ) quad text("(Return-Step)") \
+    frac(
+      Gamma tack upright("Returned_M")(b) and upright("RehydrateOK")(b),
+      Gamma -> (Gamma - {upright("Returned_M")(b)}) union {upright("Own_M")(b)}
+    ) quad text("(Rehydrate-Step)") \
+    frac(
+      Gamma tack upright("Borrow_MR")(b) and upright("Borrow_C")(b) and upright("BorrowDone")(b),
+      Gamma -> (Gamma - {upright("Borrow_MR")(b), upright("Borrow_C")(b)}) union {upright("Own_M")(b)}
+    ) quad text("(Discharge-Step)")
+  $,
+  caption: [线性所有权转移。],
+)
+
+*线性条件。*
+任何可达上下文都不能同时包含同一 `b` 的 `Own_M(b)` 与 `Own_C(b)`；任何活动中的
+`Borrow_C(b)` 都会阻止 MoonBit 侧突变和 free，直到 borrow token 通过 `Discharge-Step`
+被释放。
+
+== 边界承载 Payload
+
+FFI 边界传输的是 Plan 与布局检查后的 view，而不是任意对象图。
+
+*Payload 骨架。*
+
+```c
+typedef struct {
+  PlanTag plan_tag;
+  CfgBits cfg_bits;
+  ViewVec views;
+  OpBits op_bits;
+  LawBits law_bits;
+} Payload;
+```
+
+每个 view 项都携带:
+
+- buffer 身份或边界 view handle；
+- scalar kind 标签；
+- 长度；
+- access mode；
+- layout witness 或 layout class 标签；
+- ownership mode（`Borrow` 或 `Transfer`）。
+
+*边界可接受性。*
+`Adm(t, q)` 仅当以下条件都成立:
+
+- payload 标签属于目标 `t` 的 payload 语法；
+- 每个承载 view 都满足 `LayoutOK`；
+- `q` 请求的每个 ownership transition 都在线性状态机中合法；
+- 每个 operator 或 monoid id 都能在目标 `t` 上解析到一个被准入的受信任 descriptor 或 law。
+
+== 包装层解析与描述子形成
+
+C wrapper 或 JS/N-API 边界是从 payload 语法到 runtime descriptor 的解释器。
+
+*Runtime descriptor。*
+
+```c
+typedef struct {
+  PlanTag plan_tag;
+  CfgNorm cfg_norm;
+  ChunkPolicy chunk_policy;
+  BufSliceVec buf_slices;
+  KernelDesc kernel_desc;
+  LawHandle law_handle;
+} Descriptor;
+```
+
+*Kernel descriptor 与 registry。*
+
+```c
+typedef struct {
+  KernelId kernel_id;
+  FnPtr fn_ptr;
+  PurityWitness purity_witness;
+  FootprintWitness footprint_witness;
+  LayoutContract layout_contract;
+  ArityMeta arity_meta;
+  LawMeta law_meta;
+  TargetMeta target_meta;
+} KernelDesc;
+```
+
+`KernelRegistry(t)` 是目标 `t` 上从 `KernelId` 到 `KernelDesc` 的静态受审计映射。
+`KernelId` 是 plan payload 中唯一允许出现的 kernel 级标识符；`FnPtr` 仅属于实现层，
+绝不跨越 MoonBit plan 边界。
+
+*解析关系。*
+
+记 $upright("ParseCore")(t, q, p, c, V, k, mu)$ 当且仅当：
+
+- `DecodePlan(q) = p`；
+- `NormCfg(q) = c`；
+- `NormViews(q) = V`；
+- `ResolveKernel(KernelRegistry(t), q) = k`；以及
+- `ResolveLaw(q) = mu`。
+
+记 $upright("ViewsOK")(V)$ 当且仅当每个 `v in V` 都同时满足 `LayoutOK(v)` 与
+`OwnerOK(v)`。
+
+记 $upright("ParseReady")(t, p, V, k, mu)$ 当且仅当 `KernelOK(k, p, V, mu, t)`。
+
+#figure(
+  $
+    frac(
+      upright("ParseCore")(t, q, p, c, V, k, mu) and upright("ViewsOK")(V) and upright("ParseReady")(t, p, V, k, mu),
+      upright("parse")(t, q) mapsto upright("Descriptor")(p, c, upright("ChunkPolicy")(c), V, k, mu)
+    )
+  $,
+  caption: [包装层解析关系。],
+)
+
+*描述子保真规则。*
+产出的 descriptor 必须保持 plan 的构造子类别、每个 buffer 的 scalar kind 与 layout
+class、每个边界 view 所附带的 ownership mode、plan 所选择的 `KernelId` 与其从受信任
+registry 中解析出的审计 descriptor、plan 构造子要求的 shape 义务，以及定义 `scan`
+前缀语义和 `map-reduce` lowering 的那组规范选择。
+
+== Fork-Join 操作语义
+
+我们给出一个关于配置 `Conf(C, H, S)` 的标记小步语义，其中 `H` 是宿主堆，
+`S` 是 worker 本地 store。第三部分会把这台抽象机器细化为适用于物理 C/OpenMP
+实现的显式 fail-closed 错误发布合同。
+
+*Worker 语法。*
+
+#figure(
+  $
+    text("Worker") ::= & text("Read") "(" text("Addr") ")" \
+                     |   & text("Write") "(" text("Addr") "," text("Val") ")" \
+                     |   & text("MapStep") "(" text("Op") "," text("Addr") "," text("Addr") ")" \
+                     |   & text("ScanStep") "(" text("Law") "," text("Addr") "," text("Addr") "," text("State") ")" \
+                     |   & text("Seq") "(" text("Worker") "," text("Worker") ")" \
+                     |   & text("Done") "(" text("Val") ")"
+  $,
+  caption: [worker 语法。],
+)
+
+*Read 规则。*
+
+#figure(
+  $
+    frac(
+      H(a) = v,
+      upright("Conf")(upright("Read")(a), H, S) -> upright("Conf")(upright("Done")(v), H, S)
+    )
+  $,
+  caption: [读步骤。],
+)
+
+*Write 规则。*
+
+#figure(
+  $
+    frac(
+      upright("Writable")(a, S),
+      upright("Conf")(upright("Write")(a, v), H, S) -> upright("Conf")(upright("Done")(v), H[a := v], S)
+    )
+  $,
+  caption: [写步骤。],
+)
+
+*Map 规则。*
+
+#figure(
+  $
+    frac(
+      H(a_s) = x and upright("Writable")(a_d, S) and upright("Apply")(op, x) = y,
+      upright("Conf")(upright("MapStep")(op, a_s, a_d), H, S) -> upright("Conf")(upright("Done")(y), H[a_d := y], S)
+    )
+  $,
+  caption: [映射步骤。],
+)
+
+*Scan 规则。*
+
+#figure(
+  $
+    frac(
+      H(a_s) = x and upright("Writable")(a_d, S) and upright("Combine")(mu, s, x) = s',
+      upright("Conf")(upright("ScanStep")(mu, a_s, a_d, s), H, S) -> upright("Conf")(upright("Done")(s'), H[a_d := s'], S)
+    )
+  $,
+  caption: [scan 步骤。],
+)
+
+*Sequence 规则。*
+
+#figure(
+  $
+    frac(
+      upright("Conf")(C_1, H, S) -> upright("Conf")(C_1', H', S'),
+      upright("Conf")(upright("Seq")(C_1, C_2), H, S) -> upright("Conf")(upright("Seq")(C_1', C_2), H', S')
+    ) \
+    frac(
+      upright("Conf")(C_2, H, S) -> upright("Conf")(C_2', H', S'),
+      upright("Conf")(upright("Seq")(upright("Done")(v), C_2), H, S) -> upright("Conf")(C_2', H', S')
+    )
+  $,
+  caption: [顺序组合步骤。],
+)
+
+*Footprint 合同。*
+`R(C)` 是 `C` 单步读取的地址集合，`W(C)` 是 `C` 单步写入的地址集合，
+`FP(C) = R(C) union W(C)`。
+
+*Descriptor 元数据区域。*
+对每个解析后的 descriptor `d`，定义 `MetaOf(d)` 为只读元数据区域，其中存放规范化的
+runtime configuration、operator handle 及其参数、law handle，以及 spawned workers
+所需的每计划常量。
+
+*Chunk 分块合同。*
+`Chunks(n, k) = [I_0, ..., I_(k-1)]` 只有在区间覆盖 `[0, n)` 且两两不相交时才成立。
+
+*Worker 实例化合同。*
+若 worker `C_i` 由切片 `I_i` 实例化，则 `FP(C_i)` 必须落在
+`AddrOf(I_i) union MetaOf(d)` 之内，且 `MetaOf(d)` 必须保持只读。
+
+*Fork 与 Join。*
+
+#figure(
+  $
+    frac(
+      upright("Chunks")(n, k) = [I_0, dots.c, I_(k-1)] and forall i. upright("Spawn")(d, I_i) = C_i,
+      upright("Conf")(upright("Fork")(d), H, S) -> upright("Conf")(upright("Par")([C_0, dots.c, C_(k-1)]), H, S)
+    ) \
+    frac(
+      forall i. C_i = upright("Done")(y_i),
+      upright("Conf")(upright("Par")([C_0, dots.c, C_(k-1)]), H, S) -> upright("Conf")(upright("Done")(upright("Fold")(mu, upright("TreeOf")(d), [y_0, dots.c, y_(k-1)])), H, S)
+    )
+  $,
+  caption: [fork 与 join 步骤。],
+)
+
+*Scan 与 map-reduce 的实现化规则。*
+若 `plan_tag(d) = ScanPlan`，则 `Spawn(d, I_i)` 必须生成一组 worker，使其从左到右的 join
+写出 `Den(ScanPlan(...))` 所要求的 inclusive prefix 结果。若 `plan_tag(d) =
+MapReducePlan`，则 descriptor normalization 必须保持 `Den(MapReducePlan(...))`
+使用的“先 map 再 reduce”的逻辑 lowering；只有在可观察结果不变时，实现才可以对物理执行做融合。
+
+*浮点组合规则。*
+若 `ClassOf(mu) = DeterministicTree`，则 `TreeOf(d)` 属于 descriptor normalization
+的一部分，并唯一决定 split-combine 顺序。worker 调度上的重排不会改变由 `d` 选定的
+组合树。该规则保证在单一目标局部 `FPProfile(t)` 下重复执行的结果稳定；跨目标相等只在被比较
+目标声明了兼容的受审计浮点 profile 时才被要求。
+
+*并行侧条件。*
+若 `Conf(C_i, H, S) -> Conf(C_i', H', S')`，则提升到 `Par(...)` 的步骤只在
+`W(C_i) ∩ FP(C_j) = emptyset` 对所有 `j != i` 都成立时才可接受。
+
+== JS ArrayBuffer 边界合同
+
+JavaScript 边界被建模为宿主视图上的目标特化转移系统。
+
+*JS 视图语法。*
+
+#figure(
+  $
+    text("JSView") ::= & "(" text("ArrayBufferKind") "," text("Offset") "," text("Len") "," text("ScalarKind") "," text("AccessMode") "," text("Share") ")"
+  $,
+  caption: [JavaScript 边界视图。],
+)
+
+*边界规则。*
+
+#figure(
+  $
+    frac(
+      upright("Kind")(v) = upright("SharedArrayBuffer") and upright("Access")(v) = upright("ReadOnly") and upright("LayoutOK")(v) and upright("AtomicOK")(v),
+      (upright("Own_M")(b), v) -> (upright("Borrow_MR")(b) * upright("Borrow_C")(b), v)
+    ) \
+    frac(
+      upright("Kind")(v) = upright("ArrayBuffer") and upright("CopyBytes")(b) = b' and upright("CopyOwner")(b') = upright("HostRuntime"),
+      (upright("Own_M")(b), v) -> (upright("Own_M")(b) * upright("Own_C")(b'), v)
+    ) \
+    frac(
+      upright("TransferOK")(v) and upright("Tombstone")(v),
+      (upright("Own_M")(b), v) -> (upright("Own_C")(b), v)
+    )
+  $,
+  caption: [JS 边界上的 borrow、copy 与 transfer。],
+)
+
+*锁定侧条件。*
+共享借用的每个推导都携带宿主侧锁义务：若 `Share` 中不包含相应原子纪律，
+则共享区域上的写入不可接受。
+
+*共享快照义务。*
+一条被准入的 `SharedArrayBuffer` 借用必须针对只读输入区域的一个逻辑快照来解释。实现可以通过复制、
+冻结视图，或其他在可观察行为上等价的机制实现该快照；但一旦执行被接受，它就必须对被快照时刻的输入
+保持 `Den(p)`，而不是对后续宿主写入保持 `Den(p)`。
+
+*JS 生命周期义务。*
+对 copy 规则，宿主 runtime 持有 `b'` 并且必须恰好释放一次，可通过显式 release 或 finalizer
+完成。对 transfer 规则，宿主对象在 transfer 准入后立即进入 tombstone 状态；explicit return
+优先于 finalizer 清理，而 finalizer 清理优先于 fault 情况下的泄漏式处理。若 transfer 之后
+runtime 准入或 worker 执行 fail closed，则目标必须为仍由 C 可见侧持有的 buffer 发布一条
+确定性的清理路径。
+
+== 分离与数据竞争检查
+
+*空间分离谓词。*
+
+$
+  upright("SepChunks")(b, [I_0, dots.c, I_(k-1)]) = forall i != j. upright("AddrOf")(I_i) inter upright("AddrOf")(I_j) = emptyset
+$
+
+*并行可接受性。*
+
+$
+  upright("ParOK")([C_0, dots.c, C_(k-1)]) = forall i != j. upright("W")(C_i) inter upright("FP")(C_j) = emptyset
+$
+
+*定理（数据竞争自由）。*
+若
+
+1. `KernelSafe(d)` 成立，即已解析的受审计 kernel descriptor 满足 `PurityWitness`、
+   `FootprintWitness`、`LayoutContract` 与 `LawMeta`；
+2. `SepChunks(b, [I_0, ..., I_(k-1)])`，
+3. 每个 worker `C_i` 都由 `I_i` 生成，
+4. `FP(C_i) subset.eq AddrOf(I_i) union MetaOf(d)` 对所有 `i` 成立，且
+5. `MetaOf(d)` 是只读的，
+
+则每个可达配置 `Conf(Par([C_0, ..., C_(k-1)]), H, S)` 都满足 `ParOK([C_0, ..., C_(k-1)])`。
+
+*证明。*
+对推导长度归纳。基例由 chunk-spawn 不变式和 `SepChunks` 的定义直接得到。前提 (1) 使该定理
+在“受审计 kernel 可接受性”假设下闭合，从而 worker footprint 的可推导性仅依赖 plan 数据。
+归纳步中，每次只有一个 worker `C_i` 进行小步。由前提 (4)，`C_i` 的写入落在 `AddrOf(I_i)` 中；
+对于任意 `j != i`，前提 (4) 给出 `FP(C_j) subset.eq AddrOf(I_j) union MetaOf(d)`。前提 (2)
+保证 `AddrOf(I_i)` 与 `AddrOf(I_j)` 不相交，前提 (5) 禁止写入 `MetaOf(d)`。因此
+`W(C_i) inter FP(C_j) = emptyset` 对所有 `j != i` 仍成立，故并行配置保持 `ParOK`。
+
+*推论（所有权安全）。*
+若 `Borrow_C(b)` 活动，MoonBit 不能导出释放或突变 `b` 的步骤；若 `Own_M(b) -> Own_C(b)`
+已经发生，则 MoonBit 不能在没有显式 `Return-Step` 与后续 `Rehydrate-Step` 的情况下恢复对 `b`
+的可变 authority；若 `Borrow_MR(b) * Borrow_C(b)` 活动，则 `Own_M(b)` 只能通过
+`Discharge-Step` 恢复。
