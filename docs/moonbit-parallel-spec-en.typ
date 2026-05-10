@@ -818,3 +818,296 @@ The specification is not closed unless all of the following hold:
 11. Every witness obligation maps to an auditable artifact format.
 12. Every invalid input vector fails by explicit status rather than crash or undefined behavior.
 13. Every referenced guarantee is stated in the document.
+
+= Part III: Implementation Conformance Verification
+
+== Exceptional Control Flow and Fail-Closed Semantics
+
+Part I models worker execution under successful local steps. A faithful physical
+realization must additionally close all exceptional control-flow paths that may arise in
+MoonBit, the C wrapper, or the native runtime.
+
+*Status taxonomy.*
+Every implementation-visible failure must belong to a closed status family:
+
+#figure(
+  $
+    text("RejectReason") ::= & text("ParseReject") \
+                          |   & text("LayoutReject") \
+                          |   & text("OwnershipReject") \
+                          |   & text("DescriptorReject") \
+                          |   & text("OperatorReject") \
+                          |   & text("KernelLookupReject") \
+                          |   & text("KernelWitnessReject") \
+                          |   & text("KernelLayoutReject") \
+                          |   & text("KernelArityReject") \
+                          |   & text("KernelLawReject") \
+                          |   & text("BorrowLifecycleReject") \
+                          |   & text("TransferLifecycleReject") \
+                          |   & text("JSLifecycleReject") \
+                          |   & text("DeterministicTreeReject") \
+                          |   & text("TargetSupportReject")
+  $,
+  caption: [Closed reject-reason family.],
+)
+
+#figure(
+  $
+    text("Status") ::= & text("Ok") \
+                    |   & text("Reject") "(" text("RejectReason") ")" \
+                    |   & text("Fault") "(" text("RuntimeFault") ")" \
+                    |   & text("Worker") "(" text("WorkerFault") ")"
+  $,
+  caption: [Tagged conformance status algebra.],
+)
+
+*Boundary result carrier.*
+Every MoonBit-exposed native kernel and wrapper entry used by runtime execution must return
+an ABI-safe result envelope:
+
+```c
+typedef struct {
+  Status status;
+  Payload payload;
+} FFIResult_Payload;
+```
+
+or an observationally equivalent target-specific record. No stack unwinding, panic
+propagation, or host exception propagation may cross the FFI boundary.
+
+*Phase mapping obligation.*
+Every non-`Ok` status must identify one of the following conformance phases:
+
+- facade construction rejection;
+- wrapper parse rejection;
+- descriptor admission rejection;
+- pre-parallel runtime rejection; or
+- in-region worker fail-closed publication.
+
+This phase mapping is part of the observable contract and must be recoverable by
+MoonBit-side pattern matching or by an observationally equivalent target-facing API.
+
+*Shared worker status.*
+Within a native parallel region, workers communicate failure only through a shared atomic
+status word initialized to `Ok`.
+
+```c
+typedef struct {
+  _Atomic uint32_t code;
+} AtomicStatusWord;
+```
+
+*Worker error publication rule.*
+If a worker detects an error status `e != Ok`, then it must:
+
+1. publish `e` to `AtomicStatusWord` with release ordering unless a prior non-`Ok` status is already visible;
+2. stop issuing further writes outside thread-local cleanup;
+3. take only cleanup or early-exit steps until the parallel region joins.
+
+All other workers must observe the shared status word with acquire semantics at admission
+or loop checkpoints and degrade to deterministic early exit once a non-`Ok` value is seen.
+
+*CFG closure obligation.*
+For every path reachable inside `#pragma omp parallel`, the implementation must prove by
+static analysis, code audit, or equivalent argument that control terminates in exactly one
+of the following ways:
+
+- normal worker completion with `Ok`;
+- explicit publication of a non-`Ok` status followed by local cleanup;
+- early exit caused by observing a previously published non-`Ok` status.
+
+No path may terminate by `abort()`, uncaught exception escape, cross-boundary unwinding, or
+undefined control transfer.
+
+== Layout Isomorphism Realization and Safe Degradation
+
+Part I defines `LayoutOK` abstractly. A conforming implementation must realize it through
+byte-level static assertions and dynamic admission checks.
+
+*C boundary record obligations.*
+For `lv_view`, the C realization must preserve the canonical size, alignment, and field
+offset equations of Part I through implementation-defined layout controls such as
+attributes, packing directives, or equivalent ABI-stabilizing mechanisms.
+
+The implementation must bind those checks to one declared `ABIProfile(t)` rather than to
+an inferred host word size.
+
+*Compile-time layout discharge.*
+The native wrapper must discharge at compile time:
+
+- `sizeof(lv_view)` and `alignof(lv_view)`;
+- field offsets for `addr`, `len`, `kind`, `mode`, and `stride`;
+- width checks for `UIntPtr`, `UInt64`, and `UInt32` in the active target profile;
+- scalar-width and endian assumptions required by the active target contract.
+
+These checks must be expressed by `static_assert` or an observationally equivalent
+compile-time mechanism.
+
+*Dynamic zero-copy gate.*
+Before a boundary view is admitted as borrowed or transferred without copying, descriptor
+formation must check:
+
+- base-pointer modulo alignment is zero for the required element alignment;
+- stride equals the declared contiguous traversal rule for the scalar kind;
+- total byte span is in range and free of arithmetic overflow;
+- source and destination layout witnesses agree on scalar interpretation and width.
+
+If any check fails, the implementation must not reinterpret the view in place.
+
+*Deterministic degradation rule.*
+For every target, the wrapper must document one of the following outcomes for non-isomorphic
+views:
+
+- `CopyConforming`: copy bytes into a conforming representation and continue; or
+- `RejectNonIsomorphic`: reject before runtime admission.
+
+That choice must be stable per target-path pair and may not depend on accidental host ABI
+compatibility.
+
+For every admitted target path, the implementation must document the `ABIProfile(t)` and
+the chosen degradation rule as one auditable boundary contract.
+
+== Operator Purity and Plan Admissibility
+
+The data-race-freedom theorem depends on worker footprints being derivable from plan data
+alone. Therefore the facade and lowering boundary must reject executable content that
+smuggles unverifiable effects across the FFI boundary.
+
+*Kernel registry surface.*
+Version 1 executable plans may carry only `KernelId` references that resolve in the static
+audited `KernelRegistry(t)` of the active target. Arbitrary MoonBit closures, arbitrary
+JavaScript host functions, uncatalogued native function pointers, and captured mutable
+environments are not admissible plan payloads.
+
+Each trusted `KernelDesc` must carry:
+
+- `KernelId`, the only kernel-level identifier visible to the plan;
+- hidden native `FnPtr`, which never crosses the MoonBit plan boundary;
+- `PurityWitness`;
+- `FootprintWitness`;
+- `LayoutContract`;
+- `ArityMeta`;
+- `LawMeta`; and
+- `TargetMeta`.
+
+Dynamic arbitrary kernel registration is outside the contract. Conformance claims may rely
+only on descriptors present in the static audited registry.
+
+For floating-point `reduce` and `scan`, admissibility additionally requires a
+`DeterministicTree` law witness so that the runtime descriptor fixes one canonical combine
+tree for the accepted execution.
+
+*Safe abstraction obligation.*
+A conforming MoonBit-facing API must ensure that any typechecked and admitted execution
+request lowers to a plan whose worker footprint is determined by:
+
+- the plan constructor;
+- explicit buffer views and layout witnesses;
+- the trusted `KernelId` and resolved `KernelDesc`; and
+- runtime configuration fields admitted by `PlanWF`.
+
+It must reject any construction path that would allow hidden writable aliases, escaped
+mutable references, or effectful operator bodies that cannot be justified against
+`SepChunks`, ownership linearity, and the boundary access mode.
+
+*Witness obligations.*
+For every admitted descriptor `k = KernelDesc(...)`:
+
+- `PurityWitness(k)` certifies that execution has no side effects outside the declared
+  input/output views and `MetaOf(d)`;
+- `FootprintWitness(k)` certifies that worker writes stay within the assigned chunk and that
+  any read outside the chunk is limited to declared read-only inputs or `MetaOf(d)`;
+- `LayoutContract(k)` must be discharged against all carried boundary views before runtime
+  execution;
+- `ArityMeta(k)` must match the constructor class and access modes of the plan; and
+- `LawMeta(k)` must satisfy the reduction-law obligations required by `mu`, including the
+  deterministic-tree requirement for floating-point reductions.
+
+Failure of these obligations must reject execution through the dedicated reject branches of
+`Status`.
+
+*Auditable witness format.*
+Every witness-bearing registry entry must expose an artifact bundle that is independently
+reviewable. The minimum acceptable bundle contains:
+
+- a stable kernel identifier and version/hash binding for the audited implementation;
+- a machine-checkable or tabulated summary of purity, footprint, layout, arity, and law
+  claims;
+- the admitted target or `ABIProfile(t)` and floating-point profile assumptions under which
+  the claims hold;
+- the audit method used for each claim: proof artifact, static analysis result, test
+  certificate, or manual review record; and
+- the audit verdict recorded in a form that lets a third party distinguish "missing",
+  "rejected", and "accepted" evidence.
+
+The semantic obligation is normative; the artifact format is the minimum acceptable
+evidence by which conformance claims become reviewable rather than self-asserted.
+
+== Contract-Based Validation Matrix
+
+Conformance claims must be backed by an executable validation matrix that covers acceptance,
+rejection, and fail-closed execution outcomes.
+
+*Validation dimensions.*
+
+1. Positive realization:
+   equivalent `map`, `reduce`, `scan`, and `map-reduce` plans preserve plan denotation and
+   ownership traces across the admitted native and JavaScript targets.
+2. Exceptional control flow:
+   injected operator faults, allocation failures, malformed payloads, and runtime admission
+   failures surface as explicit status codes rather than process termination.
+3. Layout and byte-level safety:
+   bad alignment, inconsistent stride, non-isomorphic scalar kind, and overflowing byte-span
+   calculations trigger `CopyConforming` or explicit rejection according to the target rule.
+4. Ownership and chunk safety:
+   overlapping writable chunks, stale aliases after transfer, mutation during active borrow,
+   and double-borrow attempts fail before unsound execution.
+5. Operator admissibility:
+   closure-carrying, host-function-carrying, uncatalogued `KernelId`, or otherwise
+   unverifiable plans are rejected at facade or wrapper admission time.
+6. Floating-point deterministic reduction:
+   repeated executions of the same admitted floating-point reduce or scan descriptor produce
+   the same combine tree and the same observable result despite differences in worker
+   scheduling under one target profile; cross-target equality is tested only for targets
+   whose audited floating-point profiles are declared compatible.
+7. Borrow lifecycle:
+   successful discharge restores `Own_M(b)`, while premature discharge, duplicate discharge,
+   or discharge without an active borrow is rejected.
+8. Transfer-return lifecycle:
+   successful `Return-Step` followed by `Rehydrate-Step` restores `Own_M(b)`, while reuse
+   from `Returned_M(b)`, duplicate return, or return without active `Own_C(b)` is rejected
+   through `TransferLifecycleReject`.
+9. JS lifecycle:
+   copied buffers have one owner and one disposal path; transfer tombstones prevent stale
+   host reuse; finalizer and explicit-return order follows the documented target rule; a
+   missing snapshot obligation or lifecycle violation rejects through `JSLifecycleReject`.
+10. Metadata discipline:
+   workers may read only `MetaOf(d)` outside their chunk footprint, and any writable or
+   malformed metadata region is rejected before unsound execution.
+11. Registry resolution:
+   known `KernelId` values resolve to audited descriptors, while unknown ids reject through
+   `KernelLookupReject`.
+12. Witness validation:
+   missing purity, footprint, layout, arity, law, profile, or target-support evidence
+   rejects through the corresponding dedicated reject branch.
+13. Audit artifact completeness:
+   every registry entry used by the validation matrix identifies its evidence bundle and
+   audit verdict.
+
+*Rejection-phase contract.*
+Every negative validation case must specify:
+
+- the violated precondition;
+- the phase of rejection or failure publication:
+  facade construction, wrapper parse, descriptor admission, pre-parallel runtime check, or
+  in-region worker fail-closed publication;
+- the expected tagged `Status` branch and reject subreason when applicable.
+
+In particular, borrow discharge violations map to `BorrowLifecycleReject`, transfer-return
+violations map to `TransferLifecycleReject`, and JS snapshot / copy / transfer lifecycle
+violations map to `JSLifecycleReject`.
+
+*Coverage obligation.*
+An implementation is conformance-complete only if every invalid input vector in the
+validation matrix resolves to an explicit spec-defined status and no invalid vector can
+produce segmentation fault, silent data corruption, or undefined behavior.
