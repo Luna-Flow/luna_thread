@@ -643,3 +643,134 @@ $
 已经发生，则 MoonBit 不能在没有显式 `Return-Step` 与后续 `Rehydrate-Step` 的情况下恢复对 `b`
 的可变 authority；若 `Borrow_MR(b) * Borrow_C(b)` 活动，则 `Own_M(b)` 只能通过
 `Discharge-Step` 恢复。
+
+= 第二部分：实现化与符合性
+
+== Native 实现化
+
+native 实现化路径为:
+
+`MoonBit facade -> MoonBit C FFI -> C wrapper -> runtime descriptor -> C runtime`
+
+一个符合性的 native 实现必须:
+
+- 只下放第一部分允许的 Plan ADT；
+- 对每条被准入的边界路径保持一个受审计的 `ABIProfile(t)`，或在布局不同时显式执行拷贝；
+- 按线性所有权状态机实现 borrow 与 transfer 边；
+- 只在满足第一部分分离合同的前提下调度可写 chunk。
+
+== JavaScript 实现化
+
+JavaScript 实现化路径为:
+
+`MoonBit facade -> MoonBit JS FFI -> JS wrapper -> N-API addon -> runtime descriptor -> C runtime`
+
+一个符合性的 JavaScript 实现必须:
+
+- 把 typed-array 兼容视图下放为携带显式元素种类标签的 payload view；
+- 拒绝所有不满足布局与所有权义务的宿主对象；
+- 与 native 实现保持相同的 Plan 指称和 split-combine 合同；只有当双方声明兼容的
+  `FPProfile` 时，才要求更强的跨目标相等性；
+- 对被准入的 `SharedArrayBuffer` 借用，以逻辑快照的方式保证指称语义；
+- 在 runtime 执行开始前，为 copy 与 transfer 路径定义 owner、tombstone、finalizer 与
+  explicit-return 行为；
+- 在 runtime 执行开始之前完成 borrow 或 transfer 纪律检查。
+
+== Facade 义务
+
+一个符合性的 facade 必须:
+
+- 只暴露纯 Plan 构造子和显式执行入口；
+- 拒绝把任意函数值环境或任意宿主函数编码进 Plan；
+- 为每个导出的边界 view 绑定显式 ownership mode 与 access mode；
+- 暴露与真实目标支持在外延上完全一致的 capability 查询。
+
+== Runtime 义务
+
+一个符合性的 runtime 必须:
+
+- 只通过第一部分定义的构造子类别解释 descriptor；
+- 对所有不满足分离或 side condition 的 descriptor 进行执行前拒绝；
+- 保持每个承载 view 所附带的 ownership mode；
+- 将失败提升为显式状态类别，而不是返回部分成功；
+- 禁止异常逃逸、panic 传播或栈展开跨越 FFI 边界；
+- 在 worker 执行开始前，对非同构视图执行确定性的布局降级或拒绝。
+
+== 不支持表面
+
+以下内容不属于 version-1 合同:
+
+- 任意 MoonBit 函数值在 foreign worker 线程上的执行；
+- 任意 JavaScript 宿主函数在 native worker 执行期间的运行；
+- 对非同构 ABI 记录或数组进行隐式布局重解释；
+- 不经过边界状态转移的隐式所有权变更；
+- 无法通过分离与 split-combine 约束验证的 chunk 调度。
+
+== 符合性
+
+一个实现只有在满足以下条件时才可以声称符合本规格:
+
+- 它的 MoonBit-facing API 只构造第一部分允许的 Plan ADT；
+- 它的边界 payload 保持显式 layout witness 与 ownership witness；
+- 它的 wrapper 满足解析保真与所有权保真；
+- 它的 runtime 满足 chunk 正交性和 split-combine 健全性；
+- 所有非法、非同构或生命周期不安全请求都必须在执行前 fail closed。
+
+== 符合性传递
+
+*忠实实现。*
+只有当实现满足以下条件时，才可称为忠实的:
+
+- 每个被接受 payload 都是某个良构 Plan 的 lowering；
+- 每个 borrow / transfer 边都遵守线性所有权状态机；
+- 每个可写 chunk 调度都满足 `SepChunks`；
+- 每个 reduction / scan combine 路径都由有效 monoid 描述子支撑。
+
+*符合性规则。*
+如果忠实实现接受某个 plan `p`，则执行 `p` 的可观察结果和所有权轨迹必须留在本规格范围内。
+如果它拒绝 `p`，则该拒绝必须是本规格允许的 fail-closed 结果。对浮点 `reduce` 与 `scan`，
+“可观察结果”的含义是：在单一已准入目标 profile 下重复执行结果稳定；跨目标相等只在显式兼容的
+受审计浮点 profile 之间被要求。
+
+== 验证场景
+
+1. 提交一个源视图与目标视图布局不同构的 Plan。
+   预期结果：显式拷贝到符合布局的表示，或直接 fail-closed 拒绝。
+2. 提交一个只读 borrow Plan，并在 borrow 释放前尝试从 MoonBit 侧突变该 buffer。
+   预期结果：该 mutation 被拒绝或被 borrow 纪律阻塞。
+3. 提交一个包含重叠区间的可写 chunk 调度。
+   预期结果：descriptor 形成或 runtime 准入在执行前失败。
+4. 提交一个使用无有效 monoid 描述子的 reduce 或 scan Plan。
+   预期结果：该 Plan 在 fork-join 执行前被拒绝。
+5. 提交一个 transfer Plan，并尝试通过旧 alias 在 MoonBit 侧释放该 buffer。
+   预期结果：可变别名权限不存在，因此该操作被拒绝。
+6. 在 native 与 JavaScript 两个目标上执行等价的浮点 reduce Plan，但两边的浮点 profile
+   不兼容。
+   预期结果：每个目标内部都保持确定性，但不声称跨目标相等。
+7. 在声明兼容浮点 profile 的目标上执行等价的浮点 reduce Plan。
+   预期结果：两边保持相同的已声明可观察结果和所有权纪律。
+8. 提交一个 transfer-return-reuse Plan，并在 `Rehydrate-Step` 之前尝试 reuse。
+   预期结果：在 rehydration 成功之前，reuse 被拒绝。
+9. 提交一个 JS copy 或 transfer Plan，并分别触发 explicit return、finalizer cleanup 和
+   fail-closed runtime admission。
+   预期结果：文档声明的生命周期优先级与单次释放义务成立。
+
+== Closure Checklist
+
+只有在以下条件全部成立时，本规格才算闭合：
+
+1. 每个导出执行请求都能由 Plan ADT 表示。
+2. 每个边界 view 都携带显式 layout witness 与 ownership witness。
+3. 每条 zero-copy 路径都满足布局同构。
+4. 每条 borrow 路径都冻结 MoonBit 侧突变直到 borrow 释放。
+5. 每条 transfer 路径都消费 MoonBit 侧的可变 authority，并且只通过显式 return 加
+   rehydration 恢复。
+6. 每个可写 chunk 调度都经过分离检查验证。
+7. 每条 reduction 或 scan combine 路径都由有效 monoid law 支撑。
+8. 不存在任何异常、panic 或 abort 路径跨越 FFI 边界逃逸。
+9. 每条 zero-copy 准入路径都完成字节级布局与对齐检查。
+10. 每条 JS copy 与 transfer 路径都具有一个闭合的清理故事，包括 finalizer 与 fail-closed
+    情况。
+11. 每个 witness 义务都映射到一个可审计的 artifact 格式。
+12. 每个非法输入向量都通过显式状态失败，而不是崩溃或触发未定义行为。
+13. 文档中引用的每项保证都已显式陈述。
