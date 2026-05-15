@@ -1,0 +1,78 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Luna-Flow/luna_thread/backend/native"
+
+import {
+  "Luna-Flow/luna_thread/plan",
+  "Luna-Flow/luna_thread/shared",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn backend_target() -> @shared.BackendTarget
+
+pub fn default_plan_kind() -> @plan.PlanKind
+
+pub fn map_request_from_plan(@plan.Plan) -> Result[NativeMapRequest, NativeRequestError]
+
+pub fn map_request_is_valid(NativeMapRequest) -> Bool
+
+pub fn map_request_value_type(NativeMapRequest) -> Int
+
+pub fn package_name() -> String
+
+pub fn reduce_request_from_plan(@plan.Plan) -> Result[NativeReduceRequest, NativeRequestError]
+
+pub fn reduce_request_is_valid(NativeReduceRequest) -> Bool
+
+pub fn reduce_request_kernel(NativeReduceRequest) -> Int
+
+pub fn reduce_request_value_type(NativeReduceRequest) -> Int
+
+pub fn supports_openmp() -> Bool
+
+// Errors
+
+// Types and methods
+pub struct NativeMapRequest {
+  input : @shared.NativeBuffer
+  output : @shared.NativeBuffer
+  element_count : Int
+  value_type : NativeValueType
+  worker_count : Int
+  chunk_size : Int
+} derive(Eq, @debug.Debug)
+
+pub struct NativeReduceRequest {
+  input : @shared.NativeBuffer
+  output : @shared.NativeBuffer
+  element_count : Int
+  value_type : NativeValueType
+  reduction_kernel : NativeReductionKernel
+  worker_count : Int
+  chunk_size : Int
+} derive(Eq, @debug.Debug)
+
+pub enum NativeReductionKernel {
+  Sum
+  Min
+  Max
+} derive(Eq, @debug.Debug)
+
+pub enum NativeRequestError {
+  UnsupportedBackend
+  UnsupportedMode
+  UnsupportedValueType
+  UnsupportedReductionKernel
+  InvalidArgument
+  Overflow
+} derive(Eq, @debug.Debug)
+
+pub enum NativeValueType {
+  I32
+  I64
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits
+
