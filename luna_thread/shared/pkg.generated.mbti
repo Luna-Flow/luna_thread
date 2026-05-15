@@ -1,0 +1,137 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Luna-Flow/luna_thread/shared"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn asynchronous_mode() -> ExecutionMode
+
+pub fn backend_label(BackendTarget) -> String
+
+pub fn is_parallel(ExecutionPolicy) -> Bool
+
+pub fn javascript_policy() -> ExecutionPolicy
+
+pub fn javascript_target() -> BackendTarget
+
+pub fn native_policy() -> ExecutionPolicy
+
+pub fn native_status_code(NativeStatus) -> Int
+
+pub fn native_status_from_code(Int) -> NativeStatus
+
+pub fn native_target() -> BackendTarget
+
+pub fn normalize_chunk_size(Int) -> Int
+
+pub fn normalize_worker_count(Int) -> Int
+
+pub fn package_name() -> String
+
+pub fn preserve_input_order() -> OrderingGuarantee
+
+pub fn relaxed_order() -> OrderingGuarantee
+
+pub fn synchronous_mode() -> ExecutionMode
+
+pub fn validate_policy(ExecutionPolicy) -> Array[PolicyIssue]
+
+// Errors
+
+// Types and methods
+pub enum BackendTarget {
+  Native
+  JavaScript
+} derive(Eq, @debug.Debug)
+
+pub enum ExecutionMode {
+  Synchronous
+  Asynchronous
+} derive(Eq, @debug.Debug)
+
+pub struct ExecutionPolicy {
+  backend : BackendTarget
+  mode : ExecutionMode
+  worker_count : Int
+  chunk_size : Int
+  ordering : OrderingGuarantee
+} derive(Eq, @debug.Debug)
+pub fn ExecutionPolicy::new(backend? : BackendTarget, mode? : ExecutionMode, worker_count? : Int, chunk_size? : Int, ordering? : OrderingGuarantee) -> Self
+
+pub struct NativeBuffer {
+  ptr : Int
+  length : Int
+} derive(Eq, @debug.Debug)
+pub fn NativeBuffer::length(Self) -> Int
+pub fn NativeBuffer::new(Int, Int) -> Self
+pub fn NativeBuffer::ptr(Self) -> Int
+
+pub struct NativeMapRequest {
+  input : NativeBuffer
+  output : NativeBuffer
+  element_count : Int
+  value_type : Int
+  worker_count : Int
+  chunk_size : Int
+} derive(Eq, @debug.Debug)
+pub fn NativeMapRequest::chunk_size(Self) -> Int
+pub fn NativeMapRequest::element_count(Self) -> Int
+pub fn NativeMapRequest::input(Self) -> NativeBuffer
+pub fn NativeMapRequest::new(NativeBuffer, NativeBuffer, Int, Int, Int, Int) -> Self
+pub fn NativeMapRequest::output(Self) -> NativeBuffer
+pub fn NativeMapRequest::value_type(Self) -> Int
+pub fn NativeMapRequest::worker_count(Self) -> Int
+
+pub struct NativeReduceRequest {
+  input : NativeBuffer
+  output : NativeBuffer
+  element_count : Int
+  value_type : Int
+  reduction_kernel : Int
+  worker_count : Int
+  chunk_size : Int
+} derive(Eq, @debug.Debug)
+pub fn NativeReduceRequest::chunk_size(Self) -> Int
+pub fn NativeReduceRequest::element_count(Self) -> Int
+pub fn NativeReduceRequest::input(Self) -> NativeBuffer
+pub fn NativeReduceRequest::new(NativeBuffer, NativeBuffer, Int, Int, Int, Int, Int) -> Self
+pub fn NativeReduceRequest::output(Self) -> NativeBuffer
+pub fn NativeReduceRequest::reduction_kernel(Self) -> Int
+pub fn NativeReduceRequest::value_type(Self) -> Int
+pub fn NativeReduceRequest::worker_count(Self) -> Int
+
+pub enum NativeStatus {
+  Ok
+  InvalidArgument
+  UnsupportedBackend
+  UnsupportedMode
+  UnsupportedValueType
+  UnsupportedReductionKernel
+  Overflow
+  NullPointer
+} derive(Eq, @debug.Debug)
+
+pub enum OrderingGuarantee {
+  PreserveInputOrder
+  RelaxedOrder
+} derive(Eq, @debug.Debug)
+
+pub enum PolicyIssue {
+  WorkerCountMustBePositive(Int)
+  ChunkSizeMustBePositive(Int)
+} derive(Eq, @debug.Debug)
+
+pub struct RuntimeCapabilities {
+  backend : BackendTarget
+  supports_parallelism : Bool
+  supports_async : Bool
+  supports_zero_copy_buffers : Bool
+} derive(Eq, @debug.Debug)
+pub fn RuntimeCapabilities::for_backend(BackendTarget) -> Self
+
+// Type aliases
+
+// Traits
+

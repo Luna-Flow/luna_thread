@@ -1,0 +1,59 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Luna-Flow/luna_thread"
+
+import {
+  "Luna-Flow/luna_thread/plan",
+  "Luna-Flow/luna_thread/shared",
+}
+
+// Values
+pub fn bytes_type() -> @plan.ValueType
+
+pub fn default_backend() -> @shared.BackendTarget
+
+pub fn default_policy() -> @shared.ExecutionPolicy
+
+pub fn f32_type() -> @plan.ValueType
+
+pub fn f64_type() -> @plan.ValueType
+
+pub fn i32_type() -> @plan.ValueType
+
+pub fn i64_type() -> @plan.ValueType
+
+pub fn is_ready(@plan.Plan) -> Bool
+
+pub fn javascript_policy() -> @shared.ExecutionPolicy
+
+pub fn map(String, @plan.ValueType, Int, policy? : @shared.ExecutionPolicy, ordering? : @shared.OrderingGuarantee) -> @plan.Plan
+
+pub fn map_reduce(String, @plan.ValueType, Int, @plan.ReductionKernel, policy? : @shared.ExecutionPolicy, ordering? : @shared.OrderingGuarantee) -> @plan.Plan
+
+pub fn max_reduction() -> @plan.ReductionKernel
+
+pub fn min_reduction() -> @plan.ReductionKernel
+
+pub fn opaque_type(String) -> @plan.ValueType
+
+pub fn reduce(String, @plan.ValueType, Int, @plan.ReductionKernel, policy? : @shared.ExecutionPolicy) -> @plan.Plan
+
+pub fn root_plan_package() -> String
+
+pub fn runtime_capabilities(@shared.BackendTarget) -> @shared.RuntimeCapabilities
+
+pub fn scaffold_status() -> String
+
+pub fn scan(String, @plan.ValueType, Int, policy? : @shared.ExecutionPolicy) -> @plan.Plan
+
+pub fn sum_reduction() -> @plan.ReductionKernel
+
+pub fn validate(@plan.Plan) -> Array[@plan.ValidationIssue]
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

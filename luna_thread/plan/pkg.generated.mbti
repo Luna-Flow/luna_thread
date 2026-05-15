@@ -1,0 +1,141 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Luna-Flow/luna_thread/plan"
+
+import {
+  "Luna-Flow/luna_thread/shared",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn bytes_type() -> ValueType
+
+pub fn custom_reduction(String) -> ReductionKernel
+
+pub fn default_backend_label() -> String
+
+pub fn f32_type() -> ValueType
+
+pub fn f64_type() -> ValueType
+
+pub fn has_sum_reduction(Plan) -> Bool
+
+pub fn i32_type() -> ValueType
+
+pub fn i64_type() -> ValueType
+
+pub fn is_chunk_size_too_large(ValidationIssue) -> Bool
+
+pub fn is_map(Plan) -> Bool
+
+pub fn is_map_reduce(Plan) -> Bool
+
+pub fn is_reduce(Plan) -> Bool
+
+pub fn is_runnable(Plan) -> Bool
+
+pub fn is_scan(Plan) -> Bool
+
+pub fn is_scan_requires_stable_ordering(ValidationIssue) -> Bool
+
+pub fn is_unsupported_backend(ValidationIssue) -> Bool
+
+pub fn is_unsupported_mode(ValidationIssue) -> Bool
+
+pub fn is_unsupported_reduction_kernel(ValidationIssue) -> Bool
+
+pub fn is_unsupported_value_type(ValidationIssue) -> Bool
+
+pub fn map(String, ValueType, Int, policy? : @shared.ExecutionPolicy, ordering? : @shared.OrderingGuarantee) -> Plan
+
+pub fn map_plan_kind() -> PlanKind
+
+pub fn map_reduce(String, ValueType, Int, ReductionKernel, policy? : @shared.ExecutionPolicy, ordering? : @shared.OrderingGuarantee) -> Plan
+
+pub fn map_reduce_plan_kind() -> PlanKind
+
+pub fn max_reduction() -> ReductionKernel
+
+pub fn min_reduction() -> ReductionKernel
+
+pub fn opaque_type(String) -> ValueType
+
+pub fn package_name() -> String
+
+pub fn reduce(String, ValueType, Int, ReductionKernel, policy? : @shared.ExecutionPolicy) -> Plan
+
+pub fn reduce_plan_kind() -> PlanKind
+
+pub fn scan(String, ValueType, Int, policy? : @shared.ExecutionPolicy) -> Plan
+
+pub fn scan_plan_kind() -> PlanKind
+
+pub fn sum_reduction() -> ReductionKernel
+
+pub fn validate(Plan) -> Array[ValidationIssue]
+
+// Errors
+
+// Types and methods
+pub struct DataDomain {
+  element_type : ValueType
+  input_length : Int
+} derive(Eq, @debug.Debug)
+pub fn DataDomain::element_type(Self) -> ValueType
+pub fn DataDomain::input_length(Self) -> Int
+pub fn DataDomain::new(ValueType, Int) -> Self
+
+pub struct Plan {
+  label : String
+  kind : PlanKind
+  domain : DataDomain
+  policy : @shared.ExecutionPolicy
+  reduction : ReductionKernel?
+  ordering : @shared.OrderingGuarantee
+} derive(Eq, @debug.Debug)
+pub fn Plan::domain(Self) -> DataDomain
+pub fn Plan::kind(Self) -> PlanKind
+pub fn Plan::label(Self) -> String
+pub fn Plan::new(String, PlanKind, DataDomain, policy? : @shared.ExecutionPolicy, reduction? : ReductionKernel, ordering? : @shared.OrderingGuarantee) -> Self
+pub fn Plan::ordering(Self) -> @shared.OrderingGuarantee
+pub fn Plan::policy(Self) -> @shared.ExecutionPolicy
+pub fn Plan::reduction(Self) -> ReductionKernel?
+
+pub enum PlanKind {
+  Map
+  Reduce
+  Scan
+  MapReduce
+} derive(Eq, @debug.Debug)
+
+pub enum ReductionKernel {
+  Sum
+  Min
+  Max
+  Custom(String)
+} derive(Eq, @debug.Debug)
+
+pub enum ValidationIssue {
+  EmptyInput
+  ChunkSizeDoesNotFitInput(chunk_size~ : Int, input_length~ : Int)
+  WorkerCountExceedsInput(worker_count~ : Int, input_length~ : Int)
+  MissingReductionKernel
+  ScanRequiresStableOrdering
+  UnsupportedValueType
+  UnsupportedReductionKernel
+  UnsupportedBackend
+  UnsupportedMode
+} derive(Eq, @debug.Debug)
+
+pub enum ValueType {
+  I32
+  I64
+  F32
+  F64
+  Bytes
+  Opaque(String)
+} derive(Eq, @debug.Debug)
+
+// Type aliases
+
+// Traits
+
