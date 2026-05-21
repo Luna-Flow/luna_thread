@@ -33,6 +33,8 @@ pub enum OrderingGuarantee {
 pub enum PolicyIssue {
   WorkerCountMustBePositive(Int)
   ChunkSizeMustBePositive(Int)
+  UnsupportedBackendForV1(BackendTarget)
+  UnsupportedModeForV1(ExecutionMode)
 } derive(Eq, Debug)
 
 ///|
@@ -42,6 +44,11 @@ pub struct ExecutionPolicy {
   worker_count : Int
   chunk_size : Int
   ordering : OrderingGuarantee
+} derive(Eq, Debug)
+
+///|
+pub struct PolicyError {
+  issue : PolicyIssue
 } derive(Eq, Debug)
 
 ///|
@@ -70,6 +77,17 @@ pub struct NativeMapRequest {
 
 ///|
 pub struct NativeReduceRequest {
+  input : NativeBuffer
+  output : NativeBuffer
+  element_count : Int
+  value_type : Int
+  reduction_kernel : Int
+  worker_count : Int
+  chunk_size : Int
+} derive(Eq, Debug)
+
+///|
+pub struct NativeScanRequest {
   input : NativeBuffer
   output : NativeBuffer
   element_count : Int
@@ -117,23 +135,17 @@ pub fn ExecutionPolicy::new(
   chunk_size? : Int = 1,
   ordering? : OrderingGuarantee = PreserveInputOrder,
 ) -> ExecutionPolicy {
-  {
-    backend,
-    mode,
-    worker_count: normalize_worker_count(worker_count),
-    chunk_size: normalize_chunk_size(chunk_size),
-    ordering,
-  }
+  make_execution_policy(backend~, mode~, worker_count~, chunk_size~, ordering~).unwrap()
 }
 
 ///|
 pub fn native_policy() -> ExecutionPolicy {
-  ExecutionPolicy::new()
+  make_execution_policy().unwrap()
 }
 
 ///|
 pub fn javascript_policy() -> ExecutionPolicy {
-  ExecutionPolicy::new(backend=JavaScript)
+  make_execution_policy(backend=JavaScript).unwrap()
 }
 
 ///|
@@ -159,24 +171,6 @@ pub fn RuntimeCapabilities::for_backend(
 }
 
 ///|
-pub fn normalize_worker_count(worker_count : Int) -> Int {
-  if worker_count <= 0 {
-    1
-  } else {
-    worker_count
-  }
-}
-
-///|
-pub fn normalize_chunk_size(chunk_size : Int) -> Int {
-  if chunk_size <= 0 {
-    1
-  } else {
-    chunk_size
-  }
-}
-
-///|
 pub fn validate_policy(policy : ExecutionPolicy) -> Array[PolicyIssue] {
   let issues = []
   if policy.worker_count <= 0 {
@@ -185,7 +179,36 @@ pub fn validate_policy(policy : ExecutionPolicy) -> Array[PolicyIssue] {
   if policy.chunk_size <= 0 {
     issues.push(ChunkSizeMustBePositive(policy.chunk_size))
   }
+  if policy.backend != Native {
+    issues.push(UnsupportedBackendForV1(policy.backend))
+  }
+  if policy.mode != Synchronous {
+    issues.push(UnsupportedModeForV1(policy.mode))
+  }
   issues
+}
+
+///|
+pub fn make_execution_policy(
+  backend? : BackendTarget = Native,
+  mode? : ExecutionMode = Synchronous,
+  worker_count? : Int = 1,
+  chunk_size? : Int = 1,
+  ordering? : OrderingGuarantee = PreserveInputOrder,
+) -> Result[ExecutionPolicy, PolicyError] {
+  if worker_count <= 0 {
+    return Err({ issue: WorkerCountMustBePositive(worker_count) })
+  }
+  if chunk_size <= 0 {
+    return Err({ issue: ChunkSizeMustBePositive(chunk_size) })
+  }
+  if backend != Native {
+    return Err({ issue: UnsupportedBackendForV1(backend) })
+  }
+  if mode != Synchronous {
+    return Err({ issue: UnsupportedModeForV1(mode) })
+  }
+  Ok({ backend, mode, worker_count, chunk_size, ordering })
 }
 
 ///|
@@ -284,6 +307,27 @@ pub fn NativeReduceRequest::new(
 }
 
 ///|
+pub fn NativeScanRequest::new(
+  input : NativeBuffer,
+  output : NativeBuffer,
+  element_count : Int,
+  value_type : Int,
+  reduction_kernel : Int,
+  worker_count : Int,
+  chunk_size : Int,
+) -> NativeScanRequest {
+  {
+    input,
+    output,
+    element_count,
+    value_type,
+    reduction_kernel,
+    worker_count,
+    chunk_size,
+  }
+}
+
+///|
 pub fn NativeMapRequest::input(self : NativeMapRequest) -> NativeBuffer {
   self.input
 }
@@ -345,5 +389,40 @@ pub fn NativeReduceRequest::worker_count(self : NativeReduceRequest) -> Int {
 
 ///|
 pub fn NativeReduceRequest::chunk_size(self : NativeReduceRequest) -> Int {
+  self.chunk_size
+}
+
+///|
+pub fn NativeScanRequest::input(self : NativeScanRequest) -> NativeBuffer {
+  self.input
+}
+
+///|
+pub fn NativeScanRequest::output(self : NativeScanRequest) -> NativeBuffer {
+  self.output
+}
+
+///|
+pub fn NativeScanRequest::element_count(self : NativeScanRequest) -> Int {
+  self.element_count
+}
+
+///|
+pub fn NativeScanRequest::value_type(self : NativeScanRequest) -> Int {
+  self.value_type
+}
+
+///|
+pub fn NativeScanRequest::reduction_kernel(self : NativeScanRequest) -> Int {
+  self.reduction_kernel
+}
+
+///|
+pub fn NativeScanRequest::worker_count(self : NativeScanRequest) -> Int {
+  self.worker_count
+}
+
+///|
+pub fn NativeScanRequest::chunk_size(self : NativeScanRequest) -> Int {
   self.chunk_size
 }

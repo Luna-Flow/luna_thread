@@ -1,0 +1,23 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Luna-Flow/luna_thread/backend/js"
+
+import {
+  "Luna-Flow/luna_thread/plan",
+  "Luna-Flow/luna_thread/shared",
+}
+
+// Values
+pub fn backend_target() -> @shared.BackendTarget
+
+pub fn default_plan_kind() -> @plan.PlanKind
+
+pub fn package_name() -> String
+
+// Errors
+
+// Types and methods
+
+// Type aliases
+
+// Traits
+

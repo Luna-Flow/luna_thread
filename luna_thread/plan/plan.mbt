@@ -36,6 +36,7 @@ pub enum ValidationIssue {
   UnsupportedReductionKernel
   UnsupportedBackend
   UnsupportedMode
+  UnsupportedOrdering(kind~ : PlanKind, ordering~ : @shared.OrderingGuarantee)
 } derive(Eq, Debug)
 
 ///|
@@ -122,6 +123,36 @@ pub fn max_reduction() -> ReductionKernel {
 ///|
 pub fn custom_reduction(name : String) -> ReductionKernel {
   Custom(name)
+}
+
+///|
+pub fn value_type_is_supported_in_v1(value_type : ValueType) -> Bool {
+  match value_type {
+    I32 => true
+    I64 => true
+    _ => false
+  }
+}
+
+///|
+pub fn reduction_kernel_is_supported_in_v1(kernel : ReductionKernel) -> Bool {
+  match kernel {
+    Sum => true
+    Min => true
+    Max => true
+    _ => false
+  }
+}
+
+///|
+pub fn ordering_is_valid_for_kind(
+  kind : PlanKind,
+  ordering : @shared.OrderingGuarantee,
+) -> Bool {
+  match kind {
+    Scan => ordering == @shared.preserve_input_order()
+    _ => true
+  }
 }
 
 ///|
@@ -219,6 +250,9 @@ pub fn validate(plan : Plan) -> Array[ValidationIssue] {
   if plan.domain.input_length <= 0 {
     issues.push(EmptyInput)
   }
+  if !value_type_is_supported_in_v1(plan.domain.element_type) {
+    issues.push(UnsupportedValueType)
+  }
   if plan.policy.chunk_size > plan.domain.input_length &&
     plan.domain.input_length > 0 {
     issues.push(
@@ -237,13 +271,23 @@ pub fn validate(plan : Plan) -> Array[ValidationIssue] {
       ),
     )
   }
+  if plan.policy.backend != @shared.native_target() {
+    issues.push(UnsupportedBackend)
+  }
+  if plan.policy.mode != @shared.synchronous_mode() {
+    issues.push(UnsupportedMode)
+  }
   match plan.kind {
     Reduce | MapReduce =>
       if plan.reduction == None {
         issues.push(MissingReductionKernel)
+      } else if plan.reduction is Some(kernel) &&
+        !reduction_kernel_is_supported_in_v1(kernel) {
+        issues.push(UnsupportedReductionKernel)
       }
     Scan =>
-      if plan.ordering != @shared.preserve_input_order() {
+      if !ordering_is_valid_for_kind(plan.kind, plan.ordering) {
+        issues.push(UnsupportedOrdering(kind=plan.kind, ordering=plan.ordering))
         issues.push(ScanRequiresStableOrdering)
       }
     _ => ()
@@ -325,6 +369,14 @@ pub fn is_unsupported_backend(issue : ValidationIssue) -> Bool {
 pub fn is_unsupported_mode(issue : ValidationIssue) -> Bool {
   match issue {
     UnsupportedMode => true
+    _ => false
+  }
+}
+
+///|
+pub fn is_unsupported_ordering(issue : ValidationIssue) -> Bool {
+  match issue {
+    UnsupportedOrdering(..) => true
     _ => false
   }
 }

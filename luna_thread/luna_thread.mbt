@@ -26,6 +26,23 @@ pub fn javascript_policy() -> @shared.ExecutionPolicy {
 }
 
 ///|
+pub fn make_policy(
+  backend? : @shared.BackendTarget = @shared.native_target(),
+  mode? : @shared.ExecutionMode = @shared.synchronous_mode(),
+  worker_count? : Int = 1,
+  chunk_size? : Int = 1,
+  ordering? : @shared.OrderingGuarantee = @shared.preserve_input_order(),
+) -> Result[@shared.ExecutionPolicy, @shared.PolicyError] {
+  @shared.make_execution_policy(
+    backend~,
+    mode~,
+    worker_count~,
+    chunk_size~,
+    ordering~,
+  )
+}
+
+///|
 pub fn runtime_capabilities(
   backend : @shared.BackendTarget,
 ) -> @shared.RuntimeCapabilities {

@@ -1,9 +1,9 @@
 ///|
 test {
-  let oversized_chunk = @shared.ExecutionPolicy::new(
+  let oversized_chunk = @shared.make_execution_policy(
     worker_count=2,
     chunk_size=64,
-  )
+  ).unwrap()
   let plan = @plan.map("oversized", @plan.i64_type(), 8, policy=oversized_chunk)
   let issues = @plan.validate(plan)
   assert_eq(issues.length(), 1)
@@ -23,36 +23,42 @@ test {
     ordering=@shared.relaxed_order(),
   )
   let issues = @plan.validate(relaxed_scan)
-  assert_eq(issues.length(), 1)
-  assert_eq(@plan.is_scan_requires_stable_ordering(issues[0]), true)
+  assert_eq(issues.length(), 2)
+  let has_scan_stable = issues.any(@plan.is_scan_requires_stable_ordering)
+  let has_unsupported_ordering = issues.any(@plan.is_unsupported_ordering)
+  assert_eq(has_scan_stable, true)
+  assert_eq(has_unsupported_ordering, true)
 }
 
 ///|
 test {
-  let js_policy = @shared.ExecutionPolicy::new(
-    backend=@shared.javascript_target(),
-  )
-  let plan = @plan.map("js-plan", @plan.i32_type(), 4, policy=js_policy)
-  match @native.map_request_from_plan(plan) {
-    Err(@native.UnsupportedBackend) => ()
+  match @shared.make_execution_policy(backend=@shared.javascript_target()) {
+    Err({ issue: @shared.UnsupportedBackendForV1(@shared.JavaScript) }) => ()
     _ => panic()
   }
 }
 
 ///|
 test {
-  let async_policy = @shared.ExecutionPolicy::new(
-    mode=@shared.asynchronous_mode(),
-  )
-  let plan = @plan.reduce(
-    "async-reduce",
-    @plan.i64_type(),
-    4,
-    @plan.sum_reduction(),
-    policy=async_policy,
-  )
-  match @native.reduce_request_from_plan(plan) {
-    Err(@native.UnsupportedMode) => ()
+  match @shared.make_execution_policy(mode=@shared.asynchronous_mode()) {
+    Err({ issue: @shared.UnsupportedModeForV1(@shared.Asynchronous) }) => ()
+    _ => panic()
+  }
+}
+
+///|
+test {
+  let policy = @shared.make_execution_policy(
+    worker_count=4,
+    chunk_size=2,
+  ).unwrap()
+  let plan = @plan.scan("prefix-sum", @plan.i32_type(), 8, policy=policy)
+  match @native.scan_request_from_plan(plan) {
+    Ok(req) => {
+      assert_eq(@native.scan_request_is_valid(req), true)
+      assert_eq(@native.scan_request_value_type(req), 0)
+      assert_eq(@native.scan_request_kernel(req), 0)
+    }
     _ => panic()
   }
 }

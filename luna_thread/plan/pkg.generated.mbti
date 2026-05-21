@@ -41,6 +41,8 @@ pub fn is_unsupported_backend(ValidationIssue) -> Bool
 
 pub fn is_unsupported_mode(ValidationIssue) -> Bool
 
+pub fn is_unsupported_ordering(ValidationIssue) -> Bool
+
 pub fn is_unsupported_reduction_kernel(ValidationIssue) -> Bool
 
 pub fn is_unsupported_value_type(ValidationIssue) -> Bool
@@ -59,11 +61,15 @@ pub fn min_reduction() -> ReductionKernel
 
 pub fn opaque_type(String) -> ValueType
 
+pub fn ordering_is_valid_for_kind(PlanKind, @shared.OrderingGuarantee) -> Bool
+
 pub fn package_name() -> String
 
 pub fn reduce(String, ValueType, Int, ReductionKernel, policy? : @shared.ExecutionPolicy) -> Plan
 
 pub fn reduce_plan_kind() -> PlanKind
+
+pub fn reduction_kernel_is_supported_in_v1(ReductionKernel) -> Bool
 
 pub fn scan(String, ValueType, Int, policy? : @shared.ExecutionPolicy) -> Plan
 
@@ -72,6 +78,8 @@ pub fn scan_plan_kind() -> PlanKind
 pub fn sum_reduction() -> ReductionKernel
 
 pub fn validate(Plan) -> Array[ValidationIssue]
+
+pub fn value_type_is_supported_in_v1(ValueType) -> Bool
 
 // Errors
 
@@ -124,6 +132,7 @@ pub enum ValidationIssue {
   UnsupportedReductionKernel
   UnsupportedBackend
   UnsupportedMode
+  UnsupportedOrdering(kind~ : PlanKind, ordering~ : @shared.OrderingGuarantee)
 } derive(Eq, @debug.Debug)
 
 pub enum ValueType {

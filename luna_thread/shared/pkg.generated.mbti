@@ -16,6 +16,8 @@ pub fn javascript_policy() -> ExecutionPolicy
 
 pub fn javascript_target() -> BackendTarget
 
+pub fn make_execution_policy(backend? : BackendTarget, mode? : ExecutionMode, worker_count? : Int, chunk_size? : Int, ordering? : OrderingGuarantee) -> Result[ExecutionPolicy, PolicyError]
+
 pub fn native_policy() -> ExecutionPolicy
 
 pub fn native_status_code(NativeStatus) -> Int
@@ -23,10 +25,6 @@ pub fn native_status_code(NativeStatus) -> Int
 pub fn native_status_from_code(Int) -> NativeStatus
 
 pub fn native_target() -> BackendTarget
-
-pub fn normalize_chunk_size(Int) -> Int
-
-pub fn normalize_worker_count(Int) -> Int
 
 pub fn package_name() -> String
 
@@ -102,6 +100,24 @@ pub fn NativeReduceRequest::reduction_kernel(Self) -> Int
 pub fn NativeReduceRequest::value_type(Self) -> Int
 pub fn NativeReduceRequest::worker_count(Self) -> Int
 
+pub struct NativeScanRequest {
+  input : NativeBuffer
+  output : NativeBuffer
+  element_count : Int
+  value_type : Int
+  reduction_kernel : Int
+  worker_count : Int
+  chunk_size : Int
+} derive(Eq, @debug.Debug)
+pub fn NativeScanRequest::chunk_size(Self) -> Int
+pub fn NativeScanRequest::element_count(Self) -> Int
+pub fn NativeScanRequest::input(Self) -> NativeBuffer
+pub fn NativeScanRequest::new(NativeBuffer, NativeBuffer, Int, Int, Int, Int, Int) -> Self
+pub fn NativeScanRequest::output(Self) -> NativeBuffer
+pub fn NativeScanRequest::reduction_kernel(Self) -> Int
+pub fn NativeScanRequest::value_type(Self) -> Int
+pub fn NativeScanRequest::worker_count(Self) -> Int
+
 pub enum NativeStatus {
   Ok
   InvalidArgument
@@ -118,9 +134,15 @@ pub enum OrderingGuarantee {
   RelaxedOrder
 } derive(Eq, @debug.Debug)
 
+pub struct PolicyError {
+  issue : PolicyIssue
+} derive(Eq, @debug.Debug)
+
 pub enum PolicyIssue {
   WorkerCountMustBePositive(Int)
   ChunkSizeMustBePositive(Int)
+  UnsupportedBackendForV1(BackendTarget)
+  UnsupportedModeForV1(ExecutionMode)
 } derive(Eq, @debug.Debug)
 
 pub struct RuntimeCapabilities {
@@ -134,4 +156,3 @@ pub fn RuntimeCapabilities::for_backend(BackendTarget) -> Self
 // Type aliases
 
 // Traits
-
