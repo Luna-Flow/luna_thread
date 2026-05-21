@@ -28,6 +28,14 @@ pub fn reduce_request_kernel(NativeReduceRequest) -> Int
 
 pub fn reduce_request_value_type(NativeReduceRequest) -> Int
 
+pub fn scan_request_from_plan(@plan.Plan) -> Result[NativeScanRequest, NativeRequestError]
+
+pub fn scan_request_is_valid(NativeScanRequest) -> Bool
+
+pub fn scan_request_kernel(NativeScanRequest) -> Int
+
+pub fn scan_request_value_type(NativeScanRequest) -> Int
+
 pub fn supports_openmp() -> Bool
 
 // Errors
@@ -43,6 +51,16 @@ pub struct NativeMapRequest {
 } derive(Eq, @debug.Debug)
 
 pub struct NativeReduceRequest {
+  input : @shared.NativeBuffer
+  output : @shared.NativeBuffer
+  element_count : Int
+  value_type : NativeValueType
+  reduction_kernel : NativeReductionKernel
+  worker_count : Int
+  chunk_size : Int
+} derive(Eq, @debug.Debug)
+
+pub struct NativeScanRequest {
   input : @shared.NativeBuffer
   output : @shared.NativeBuffer
   element_count : Int
@@ -75,4 +93,3 @@ pub enum NativeValueType {
 // Type aliases
 
 // Traits
-

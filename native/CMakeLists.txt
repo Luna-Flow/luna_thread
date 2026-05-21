@@ -28,7 +28,7 @@ if(LUNA_THREAD_ENABLE_OPENMP)
     target_link_libraries(luna_thread_runtime PUBLIC OpenMP::OpenMP_C)
     target_compile_definitions(luna_thread_runtime PUBLIC LUNA_THREAD_HAVE_OPENMP=1)
   else()
-    message(WARNING "OpenMP requested but not found. Install libomp on macOS before native parallel work.")
+    message(FATAL_ERROR "OpenMP requested but not found. Install libomp on macOS before native parallel work.")
   endif()
 endif()
 

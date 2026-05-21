@@ -7,14 +7,15 @@ int main(void) {
   int32_t input[] = {1, 2, 3, 4};
   int32_t mapped[] = {0, 0, 0, 0};
   int32_t reduced = 0;
+  int32_t scanned[] = {0, 0, 0, 0};
 
   luna_thread_map_request map_req = {
     .input = { .ptr = input, .length = 4 },
     .output = { .ptr = mapped, .length = 4 },
     .element_count = 4,
     .value_type = LUNA_THREAD_VALUE_I32,
-    .worker_count = 1,
-    .chunk_size = 1,
+    .worker_count = 2,
+    .chunk_size = 2,
   };
 
   luna_thread_reduce_request reduce_req = {
@@ -23,14 +24,31 @@ int main(void) {
     .element_count = 4,
     .value_type = LUNA_THREAD_VALUE_I32,
     .reduction_kernel = LUNA_THREAD_REDUCTION_SUM,
-    .worker_count = 1,
-    .chunk_size = 1,
+    .worker_count = 2,
+    .chunk_size = 2,
+  };
+
+  luna_thread_scan_request scan_req = {
+    .input = { .ptr = input, .length = 4 },
+    .output = { .ptr = scanned, .length = 4 },
+    .element_count = 4,
+    .value_type = LUNA_THREAD_VALUE_I32,
+    .reduction_kernel = LUNA_THREAD_REDUCTION_SUM,
+    .worker_count = 2,
+    .chunk_size = 2,
   };
 
   if (luna_thread_map_i32(&map_req) != LUNA_THREAD_STATUS_OK) {
     return 1;
   }
   if (luna_thread_reduce_sum_i32(&reduce_req) != LUNA_THREAD_STATUS_OK) {
+    return 1;
+  }
+  if (luna_thread_scan_i32(&scan_req) != LUNA_THREAD_STATUS_OK) {
+    return 1;
+  }
+  if (mapped[0] != 2 || reduced != 10 || scanned[0] != 1 || scanned[1] != 3 ||
+      scanned[2] != 6 || scanned[3] != 10) {
     return 1;
   }
 
@@ -67,6 +85,22 @@ int main(void) {
     }
   }
 
-  printf("%s %d %d\n", luna_thread_runtime_name(), mapped[0], reduced);
+  {
+    int32_t unsupported_scan_out[] = {0, 0, 0, 0};
+    luna_thread_scan_request bad_scan_req = {
+      .input = { .ptr = input, .length = 4 },
+      .output = { .ptr = unsupported_scan_out, .length = 4 },
+      .element_count = 4,
+      .value_type = LUNA_THREAD_VALUE_I32,
+      .reduction_kernel = LUNA_THREAD_REDUCTION_MIN,
+      .worker_count = 2,
+      .chunk_size = 2,
+    };
+    if (luna_thread_scan_i32(&bad_scan_req) != LUNA_THREAD_STATUS_UNSUPPORTED_REDUCTION_KERNEL) {
+      return 4;
+    }
+  }
+
+  printf("%s %d %d %d\n", luna_thread_runtime_name(), mapped[0], reduced, scanned[3]);
   return 0;
 }

@@ -53,6 +53,16 @@ typedef struct {
   int chunk_size;
 } luna_thread_reduce_request;
 
+typedef struct {
+  luna_thread_buffer input;
+  luna_thread_buffer output;
+  int element_count;
+  luna_thread_value_type value_type;
+  luna_thread_reduction_kernel reduction_kernel;
+  int worker_count;
+  int chunk_size;
+} luna_thread_scan_request;
+
 const char *luna_thread_runtime_name(void);
 int luna_thread_runtime_has_openmp(void);
 
@@ -64,6 +74,8 @@ luna_thread_status luna_thread_reduce_min_i32(const luna_thread_reduce_request *
 luna_thread_status luna_thread_reduce_min_i64(const luna_thread_reduce_request *req);
 luna_thread_status luna_thread_reduce_max_i32(const luna_thread_reduce_request *req);
 luna_thread_status luna_thread_reduce_max_i64(const luna_thread_reduce_request *req);
+luna_thread_status luna_thread_scan_i32(const luna_thread_scan_request *req);
+luna_thread_status luna_thread_scan_i64(const luna_thread_scan_request *req);
 
 #ifdef __cplusplus
 }
