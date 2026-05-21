@@ -344,21 +344,25 @@ step succeeds.
 No reachable context may contain both `Own_M(b)` and `Own_C(b)` for the same `b`, and any
 active `Borrow_C(b)` blocks MoonBit-side mutation and free until the borrow token is discharged by `Discharge-Step`.
 
+Version 1 `Borrow` means read-only borrow only. Any writable boundary view must use
+`Transfer-Step`; this specification defines no writable-borrow state transition.
+
 == Boundary Payloads
 
 The FFI boundary transports plans and layout-checked views, not arbitrary object graphs.
 
-*Payload skeleton.*
+*Payload skeleton by constructor.*
 
 ```c
-typedef struct {
-  PlanTag plan_tag;
-  CfgBits cfg_bits;
-  ViewVec views;
-  OpBits op_bits;
-  LawBits law_bits;
-} Payload;
+typedef struct { PlanTag plan_tag; CfgBits cfg_bits; ViewVec views; OpBits op_bits; } Payload_Map;
+typedef struct { PlanTag plan_tag; CfgBits cfg_bits; ViewVec views; LawBits law_bits; } Payload_Reduce;
+typedef struct { PlanTag plan_tag; CfgBits cfg_bits; ViewVec views; LawBits law_bits; } Payload_Scan;
+typedef struct { PlanTag plan_tag; CfgBits cfg_bits; ViewVec views; OpBits op_bits; LawBits law_bits; } Payload_MapReduce;
 ```
+
+`Payload_Map` carries no `LawBits`. `Payload_Reduce` and `Payload_Scan` carry no `OpBits`.
+`Payload_MapReduce` carries both. No constructor may rely on absent fields, target-defined
+sentinels, or ignored payload bytes.
 
 where each view entry carries:
 
@@ -369,12 +373,16 @@ where each view entry carries:
 - layout witness or layout class tag;
 - ownership mode (`Borrow` or `Transfer`).
 
+In version 1, ownership mode `Borrow` is admissible only for read-only views. Writable
+boundary outputs must be lowered with ownership mode `Transfer`.
+
 *Boundary admissibility.*
 `Adm(t, q)` holds only when:
 
 - the payload tag belongs to the target-specific payload grammar;
 - every carried view satisfies `LayoutOK`;
 - every requested ownership transition is legal under the linear state machine;
+- every carried `Borrow` view is `ReadOnly`;
 - every operator or monoid id resolves to a target-admitted trusted descriptor or law for `t`.
 
 == Wrapper Parsing and Descriptor Formation
@@ -382,18 +390,17 @@ where each view entry carries:
 The C wrapper or JS/N-API boundary is the interpreter from payload syntax to runtime
 descriptors.
 
-*Runtime descriptor.*
+*Runtime descriptor by constructor.*
 
 ```c
-typedef struct {
-  PlanTag plan_tag;
-  CfgNorm cfg_norm;
-  ChunkPolicy chunk_policy;
-  BufSliceVec buf_slices;
-  KernelDesc kernel_desc;
-  LawHandle law_handle;
-} Descriptor;
+typedef struct { PlanTag plan_tag; CfgNorm cfg_norm; ChunkPolicy chunk_policy; BufSliceVec buf_slices; KernelDesc kernel_desc; } Descriptor_Map;
+typedef struct { PlanTag plan_tag; CfgNorm cfg_norm; ChunkPolicy chunk_policy; BufSliceVec buf_slices; KernelDesc kernel_desc; LawHandle law_handle; } Descriptor_Reduce;
+typedef struct { PlanTag plan_tag; CfgNorm cfg_norm; ChunkPolicy chunk_policy; BufSliceVec buf_slices; KernelDesc kernel_desc; LawHandle law_handle; } Descriptor_Scan;
+typedef struct { PlanTag plan_tag; CfgNorm cfg_norm; ChunkPolicy chunk_policy; BufSliceVec buf_slices; KernelDesc kernel_desc; LawHandle law_handle; } Descriptor_MapReduce;
 ```
+
+`Descriptor_Map` carries no `LawHandle`. `Descriptor_Reduce`, `Descriptor_Scan`, and
+`Descriptor_MapReduce` each carry one resolved `LawHandle`.
 
 *Kernel descriptor and registry.*
 
@@ -416,7 +423,15 @@ is implementation-only and never crosses the MoonBit plan boundary.
 
 *Parsing relation.*
 
-Write $upright("ParseCore")(t, q, p, c, V, k, mu)$ iff:
+Write $upright("ParseCoreMap")(t, q, p, c, V, k)$ iff:
+
+- `DecodePlan(q) = p`;
+- `NormCfg(q) = c`;
+- `NormViews(q) = V`;
+- `ResolveKernel(KernelRegistry(t), q) = k`; and
+- `plan_tag(p) = MapPlan`.
+
+Write $upright("ParseCoreLaw")(t, q, p, c, V, k, mu)$ iff:
 
 - `DecodePlan(q) = p`;
 - `NormCfg(q) = c`;
@@ -427,13 +442,27 @@ Write $upright("ParseCore")(t, q, p, c, V, k, mu)$ iff:
 Write $upright("ViewsOK")(V)$ iff every `v in V` satisfies both `LayoutOK(v)` and
 `OwnerOK(v)`.
 
-Write $upright("ParseReady")(t, p, V, k, mu)$ iff `KernelOK(k, p, V, mu, t)`.
+Write $upright("ParseReadyMap")(t, p, V, k)$ iff `KernelOK(k, p, V, emptyset, t)`.
+
+Write $upright("ParseReadyLaw")(t, p, V, k, mu)$ iff `KernelOK(k, p, V, mu, t)`.
 
 #figure(
   $
     frac(
-      upright("ParseCore")(t, q, p, c, V, k, mu) and upright("ViewsOK")(V) and upright("ParseReady")(t, p, V, k, mu),
-      upright("parse")(t, q) mapsto upright("Descriptor")(p, c, upright("ChunkPolicy")(c), V, k, mu)
+      upright("ParseCoreMap")(t, q, p, c, V, k) and upright("ViewsOK")(V) and upright("ParseReadyMap")(t, p, V, k),
+      upright("parse")(t, q) mapsto upright("Descriptor_Map")(p, c, upright("ChunkPolicy")(c), V, k)
+    ) \
+    frac(
+      upright("ParseCoreLaw")(t, q, p, c, V, k, mu) and upright("ViewsOK")(V) and upright("ParseReadyLaw")(t, p, V, k, mu) and upright("plan_tag")(p) = upright("ReducePlan"),
+      upright("parse")(t, q) mapsto upright("Descriptor_Reduce")(p, c, upright("ChunkPolicy")(c), V, k, mu)
+    ) \
+    frac(
+      upright("ParseCoreLaw")(t, q, p, c, V, k, mu) and upright("ViewsOK")(V) and upright("ParseReadyLaw")(t, p, V, k, mu) and upright("plan_tag")(p) = upright("ScanPlan"),
+      upright("parse")(t, q) mapsto upright("Descriptor_Scan")(p, c, upright("ChunkPolicy")(c), V, k, mu)
+    ) \
+    frac(
+      upright("ParseCoreLaw")(t, q, p, c, V, k, mu) and upright("ViewsOK")(V) and upright("ParseReadyLaw")(t, p, V, k, mu) and upright("plan_tag")(p) = upright("MapReducePlan"),
+      upright("parse")(t, q) mapsto upright("Descriptor_MapReduce")(p, c, upright("ChunkPolicy")(c), V, k, mu)
     )
   $,
   caption: [Wrapper parsing relation.],
@@ -448,6 +477,13 @@ The produced descriptor must preserve:
 - the `KernelId` selected by the plan and the audited descriptor resolved from the trusted registry;
 - the shape obligations required by the plan constructor; and
 - the denotation-defining choice of scan prefix semantics and map-reduce lowering.
+
+Additionally:
+
+- `Descriptor_Map` preserves no `LawHandle`;
+- `Descriptor_Reduce` and `Descriptor_MapReduce` preserve one reduction law handle; and
+- `Descriptor_Scan` preserves one scan law handle and the sequential join contract used for
+  carry correctness.
 
 == Fork-Join Operational Semantics
 
@@ -550,6 +586,12 @@ disjoint.
 If worker `C_i` is instantiated for slice `I_i`, then `FP(C_i)` must stay within
 `AddrOf(I_i) union MetaOf(d)`, and `MetaOf(d)` must remain read-only.
 
+*Sequential join-state relation.*
+Write $upright("JoinState")(d, sigma)$ for the constructor-specific sequential state used
+after worker completion. `JoinState` is empty for `MapPlan`, carries one fold accumulator
+for `ReducePlan` and `MapReducePlan`, and carries left-to-right chunk summaries and prefix
+carries for `ScanPlan`.
+
 *Fork and join rules.*
 
 #figure(
@@ -559,19 +601,33 @@ If worker `C_i` is instantiated for slice `I_i`, then `FP(C_i)` must stay within
       upright("Conf")(upright("Fork")(d), H, S) -> upright("Conf")(upright("Par")([C_0, dots.c, C_(k-1)]), H, S)
     ) \
     frac(
-      forall i. C_i = upright("Done")(y_i),
+      upright("plan_tag")(d) = upright("MapPlan") and forall i. C_i = upright("Done")(y_i),
+      upright("Conf")(upright("Par")([C_0, dots.c, C_(k-1)]), H, S) -> upright("Conf")(upright("Done")(upright("MapResult")(d)), H, S)
+    ) \
+    frac(
+      upright("plan_tag")(d) in {upright("ReducePlan"), upright("MapReducePlan")} and forall i. C_i = upright("Done")(y_i),
       upright("Conf")(upright("Par")([C_0, dots.c, C_(k-1)]), H, S) -> upright("Conf")(upright("Done")(upright("Fold")(mu, upright("TreeOf")(d), [y_0, dots.c, y_(k-1)])), H, S)
+    ) \
+    frac(
+      upright("plan_tag")(d) = upright("ScanPlan") and forall i. C_i = upright("Done")(y_i) and upright("JoinScan")(d, [y_0, dots.c, y_(k-1)]) = sigma,
+      upright("Conf")(upright("Par")([C_0, dots.c, C_(k-1)]), H, S) -> upright("Conf")(upright("Done")(upright("ScanResult")(d, sigma)), H, S)
     )
   $,
   caption: [Fork and join steps.],
 )
 
 *Scan and map-reduce realization rule.*
-If `plan_tag(d) = ScanPlan`, then `Spawn(d, I_i)` must emit workers whose left-to-right
-join writes the inclusive prefix result required by `Den(ScanPlan(...))`. If
-`plan_tag(d) = MapReducePlan`, then descriptor normalization must preserve the logical
-lowering to map-then-reduce used by `Den(MapReducePlan(...))`; implementations may fuse
-the physical execution only when the observable result remains the same as that denotation.
+If `plan_tag(d) = ScanPlan`, then `Spawn(d, I_i)` must emit workers that produce only
+chunk-local scan outputs and one chunk summary each. `JoinScan(d, ...)` must combine those
+summaries left-to-right and derive the inclusive prefix result required by
+`Den(ScanPlan(...))`. If `plan_tag(d) = MapReducePlan`, then descriptor normalization must
+preserve the logical lowering to map-then-reduce used by `Den(MapReducePlan(...))`;
+implementations may fuse the physical execution only when the observable result remains the
+same as that denotation.
+
+For `ScanPlan`, carry correctness depends on `JoinScan` as a sequential join contract; it
+is not encoded as writable metadata and does not authorize an audited scratch region in
+version 1.
 
 *Floating-point combine rule.*
 If `ClassOf(mu) = DeterministicTree`, then `TreeOf(d)` is part of descriptor normalization
@@ -584,6 +640,9 @@ when the compared targets declare compatible audited floating-point profiles.
 If `Conf(C_i, H, S) -> Conf(C_i', H', S')`, then the lifted step on
 `Par([C_0, ..., C_i, ..., C_(k-1)])` is admissible only when
 `W(C_i) ∩ FP(C_j) = emptyset` for every `j != i`.
+
+This side condition does not apply to `JoinState` because `JoinState` is evaluated only
+after the worker-parallel phase completes.
 
 == JS ArrayBuffer Boundary Semantics
 
@@ -627,6 +686,10 @@ An admitted `SharedArrayBuffer` borrow is interpreted against one logical snapsh
 read-only input region. The implementation may realize that snapshot by copying, freezing,
 or an observationally equivalent mechanism, but the accepted execution must preserve
 `Den(p)` for the snapped input rather than for later host-side writes.
+
+If snapshotting is realized by copying, that copy is unobservable at the specification
+layer: it does not allocate a new normative buffer identity, does not alter ownership
+fidelity, and does not reclassify the admitted path from borrow to copy.
 
 *JS lifecycle obligation.*
 For the copy rule, the host runtime owns `b'` and must dispose it exactly once by explicit
@@ -693,7 +756,7 @@ A conforming native realization must:
 - lower only plan ADT values admitted by Part I;
 - preserve one audited `ABIProfile(t)` for each admitted boundary path, or perform
   explicit copying when layout is not isomorphic;
-- implement borrow and transfer edges according to the linear state machine;
+- implement read-only borrow and transfer edges according to the linear state machine;
 - schedule writable chunks only under the separation contract of Part I.
 
 == JavaScript Realization
@@ -722,6 +785,8 @@ A conforming facade must:
 - expose only pure plan constructors and explicit execution entry points;
 - refuse to encode arbitrary function-value environments or arbitrary host functions into plans;
 - attach explicit ownership mode and access mode to every exported boundary view;
+- reject any construction path that attempts writable lowering through ownership mode
+  `Borrow`;
 - surface capability queries that are extensionally equal to actual target support.
 
 == Runtime Obligations
@@ -729,6 +794,7 @@ A conforming facade must:
 A conforming runtime must:
 
 - interpret descriptors only through the constructor classes defined in Part I;
+- reject any descriptor that combines writable access with ownership mode `Borrow`;
 - reject any descriptor whose chunk schedule fails separation or side-condition checks;
 - preserve the ownership mode attached to each carried view;
 - lift failures into explicit status classes rather than partial success;
@@ -763,7 +829,9 @@ An implementation is faithful only if:
 - every accepted payload is the lowering of a well-formed plan;
 - every borrow or transfer edge follows the linear ownership state machine;
 - every writable chunk schedule satisfies `SepChunks`;
-- every reduction or scan combine path is justified by a valid monoid descriptor.
+- every reduction or scan combine path is justified by a valid monoid descriptor; and
+- every constructor-specific payload, descriptor, and join path preserves the constructor
+  class admitted by Part I.
 
 *Conformance rule.*
 If a faithful implementation accepts a plan `p`, then the observable result and ownership
@@ -1081,16 +1149,19 @@ rejection, and fail-closed execution outcomes.
    copied buffers have one owner and one disposal path; transfer tombstones prevent stale
    host reuse; finalizer and explicit-return order follows the documented target rule; a
    missing snapshot obligation or lifecycle violation rejects through `JSLifecycleReject`.
-10. Metadata discipline:
+10. Borrow discipline:
+   any view lowered with ownership mode `Borrow` is `ReadOnly`; writable borrow attempts
+   reject before execution.
+11. Metadata discipline:
    workers may read only `MetaOf(d)` outside their chunk footprint, and any writable or
    malformed metadata region is rejected before unsound execution.
-11. Registry resolution:
+12. Registry resolution:
    known `KernelId` values resolve to audited descriptors, while unknown ids reject through
    `KernelLookupReject`.
-12. Witness validation:
+13. Witness validation:
    missing purity, footprint, layout, arity, law, profile, or target-support evidence
    rejects through the corresponding dedicated reject branch.
-13. Audit artifact completeness:
+14. Audit artifact completeness:
    every registry entry used by the validation matrix identifies its evidence bundle and
    audit verdict.
 

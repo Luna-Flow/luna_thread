@@ -323,21 +323,25 @@ $
 `Borrow_C(b)` 都会阻止 MoonBit 侧突变和 free，直到 borrow token 通过 `Discharge-Step`
 被释放。
 
+version 1 中的 `Borrow` 只表示只读借用。任何可写边界 view 都必须使用 `Transfer-Step`；
+本规格不定义可写借用的状态转移。
+
 == 边界承载 Payload
 
 FFI 边界传输的是 Plan 与布局检查后的 view，而不是任意对象图。
 
-*Payload 骨架。*
+*按构造子的 Payload 骨架。*
 
 ```c
-typedef struct {
-  PlanTag plan_tag;
-  CfgBits cfg_bits;
-  ViewVec views;
-  OpBits op_bits;
-  LawBits law_bits;
-} Payload;
+typedef struct { PlanTag plan_tag; CfgBits cfg_bits; ViewVec views; OpBits op_bits; } Payload_Map;
+typedef struct { PlanTag plan_tag; CfgBits cfg_bits; ViewVec views; LawBits law_bits; } Payload_Reduce;
+typedef struct { PlanTag plan_tag; CfgBits cfg_bits; ViewVec views; LawBits law_bits; } Payload_Scan;
+typedef struct { PlanTag plan_tag; CfgBits cfg_bits; ViewVec views; OpBits op_bits; LawBits law_bits; } Payload_MapReduce;
 ```
+
+`Payload_Map` 不携带 `LawBits`。`Payload_Reduce` 与 `Payload_Scan` 不携带 `OpBits`。
+`Payload_MapReduce` 同时携带二者。任何构造子都不得依赖 absent 字段、target-defined 哑元，
+或被忽略的 payload 字节。
 
 每个 view 项都携带:
 
@@ -348,30 +352,33 @@ typedef struct {
 - layout witness 或 layout class 标签；
 - ownership mode（`Borrow` 或 `Transfer`）。
 
+在 version 1 中，ownership mode `Borrow` 只对只读 view 可接受。可写边界输出必须以
+ownership mode `Transfer` 下放。
+
 *边界可接受性。*
 `Adm(t, q)` 仅当以下条件都成立:
 
 - payload 标签属于目标 `t` 的 payload 语法；
 - 每个承载 view 都满足 `LayoutOK`；
 - `q` 请求的每个 ownership transition 都在线性状态机中合法；
+- 每个以 `Borrow` 承载的 view 都是 `ReadOnly`；
 - 每个 operator 或 monoid id 都能在目标 `t` 上解析到一个被准入的受信任 descriptor 或 law。
 
 == 包装层解析与描述子形成
 
 C wrapper 或 JS/N-API 边界是从 payload 语法到 runtime descriptor 的解释器。
 
-*Runtime descriptor。*
+*按构造子的 Runtime descriptor。*
 
 ```c
-typedef struct {
-  PlanTag plan_tag;
-  CfgNorm cfg_norm;
-  ChunkPolicy chunk_policy;
-  BufSliceVec buf_slices;
-  KernelDesc kernel_desc;
-  LawHandle law_handle;
-} Descriptor;
+typedef struct { PlanTag plan_tag; CfgNorm cfg_norm; ChunkPolicy chunk_policy; BufSliceVec buf_slices; KernelDesc kernel_desc; } Descriptor_Map;
+typedef struct { PlanTag plan_tag; CfgNorm cfg_norm; ChunkPolicy chunk_policy; BufSliceVec buf_slices; KernelDesc kernel_desc; LawHandle law_handle; } Descriptor_Reduce;
+typedef struct { PlanTag plan_tag; CfgNorm cfg_norm; ChunkPolicy chunk_policy; BufSliceVec buf_slices; KernelDesc kernel_desc; LawHandle law_handle; } Descriptor_Scan;
+typedef struct { PlanTag plan_tag; CfgNorm cfg_norm; ChunkPolicy chunk_policy; BufSliceVec buf_slices; KernelDesc kernel_desc; LawHandle law_handle; } Descriptor_MapReduce;
 ```
+
+`Descriptor_Map` 不携带 `LawHandle`。`Descriptor_Reduce`、`Descriptor_Scan` 和
+`Descriptor_MapReduce` 各携带一个已解析的 `LawHandle`。
 
 *Kernel descriptor 与 registry。*
 
@@ -394,7 +401,15 @@ typedef struct {
 
 *解析关系。*
 
-记 $upright("ParseCore")(t, q, p, c, V, k, mu)$ 当且仅当：
+记 $upright("ParseCoreMap")(t, q, p, c, V, k)$ 当且仅当：
+
+- `DecodePlan(q) = p`；
+- `NormCfg(q) = c`；
+- `NormViews(q) = V`；
+- `ResolveKernel(KernelRegistry(t), q) = k`；且
+- `plan_tag(p) = MapPlan`。
+
+记 $upright("ParseCoreLaw")(t, q, p, c, V, k, mu)$ 当且仅当：
 
 - `DecodePlan(q) = p`；
 - `NormCfg(q) = c`；
@@ -405,13 +420,27 @@ typedef struct {
 记 $upright("ViewsOK")(V)$ 当且仅当每个 `v in V` 都同时满足 `LayoutOK(v)` 与
 `OwnerOK(v)`。
 
-记 $upright("ParseReady")(t, p, V, k, mu)$ 当且仅当 `KernelOK(k, p, V, mu, t)`。
+记 $upright("ParseReadyMap")(t, p, V, k)$ 当且仅当 `KernelOK(k, p, V, emptyset, t)`。
+
+记 $upright("ParseReadyLaw")(t, p, V, k, mu)$ 当且仅当 `KernelOK(k, p, V, mu, t)`。
 
 #figure(
   $
     frac(
-      upright("ParseCore")(t, q, p, c, V, k, mu) and upright("ViewsOK")(V) and upright("ParseReady")(t, p, V, k, mu),
-      upright("parse")(t, q) mapsto upright("Descriptor")(p, c, upright("ChunkPolicy")(c), V, k, mu)
+      upright("ParseCoreMap")(t, q, p, c, V, k) and upright("ViewsOK")(V) and upright("ParseReadyMap")(t, p, V, k),
+      upright("parse")(t, q) mapsto upright("Descriptor_Map")(p, c, upright("ChunkPolicy")(c), V, k)
+    ) \
+    frac(
+      upright("ParseCoreLaw")(t, q, p, c, V, k, mu) and upright("ViewsOK")(V) and upright("ParseReadyLaw")(t, p, V, k, mu) and upright("plan_tag")(p) = upright("ReducePlan"),
+      upright("parse")(t, q) mapsto upright("Descriptor_Reduce")(p, c, upright("ChunkPolicy")(c), V, k, mu)
+    ) \
+    frac(
+      upright("ParseCoreLaw")(t, q, p, c, V, k, mu) and upright("ViewsOK")(V) and upright("ParseReadyLaw")(t, p, V, k, mu) and upright("plan_tag")(p) = upright("ScanPlan"),
+      upright("parse")(t, q) mapsto upright("Descriptor_Scan")(p, c, upright("ChunkPolicy")(c), V, k, mu)
+    ) \
+    frac(
+      upright("ParseCoreLaw")(t, q, p, c, V, k, mu) and upright("ViewsOK")(V) and upright("ParseReadyLaw")(t, p, V, k, mu) and upright("plan_tag")(p) = upright("MapReducePlan"),
+      upright("parse")(t, q) mapsto upright("Descriptor_MapReduce")(p, c, upright("ChunkPolicy")(c), V, k, mu)
     )
   $,
   caption: [包装层解析关系。],
@@ -422,6 +451,13 @@ typedef struct {
 class、每个边界 view 所附带的 ownership mode、plan 所选择的 `KernelId` 与其从受信任
 registry 中解析出的审计 descriptor、plan 构造子要求的 shape 义务，以及定义 `scan`
 前缀语义和 `map-reduce` lowering 的那组规范选择。
+
+此外：
+
+- `Descriptor_Map` 不保留任何 `LawHandle`；
+- `Descriptor_Reduce` 与 `Descriptor_MapReduce` 各保留一个 reduction law handle；且
+- `Descriptor_Scan` 保留一个 scan law handle 以及其 carry correctness 所依赖的顺序
+  join contract。
 
 == Fork-Join 操作语义
 
@@ -523,6 +559,11 @@ runtime configuration、operator handle 及其参数、law handle，以及 spawn
 若 worker `C_i` 由切片 `I_i` 实例化，则 `FP(C_i)` 必须落在
 `AddrOf(I_i) union MetaOf(d)` 之内，且 `MetaOf(d)` 必须保持只读。
 
+*顺序 join-state 关系。*
+记 $upright("JoinState")(d, sigma)$ 为 worker 完成之后使用的构造子特化顺序状态。
+对 `MapPlan`，`JoinState` 为空；对 `ReducePlan` 与 `MapReducePlan`，它携带一个 fold
+accumulator；对 `ScanPlan`，它携带从左到右的 chunk summaries 与 prefix carries。
+
 *Fork 与 Join。*
 
 #figure(
@@ -532,18 +573,30 @@ runtime configuration、operator handle 及其参数、law handle，以及 spawn
       upright("Conf")(upright("Fork")(d), H, S) -> upright("Conf")(upright("Par")([C_0, dots.c, C_(k-1)]), H, S)
     ) \
     frac(
-      forall i. C_i = upright("Done")(y_i),
+      upright("plan_tag")(d) = upright("MapPlan") and forall i. C_i = upright("Done")(y_i),
+      upright("Conf")(upright("Par")([C_0, dots.c, C_(k-1)]), H, S) -> upright("Conf")(upright("Done")(upright("MapResult")(d)), H, S)
+    ) \
+    frac(
+      upright("plan_tag")(d) in {upright("ReducePlan"), upright("MapReducePlan")} and forall i. C_i = upright("Done")(y_i),
       upright("Conf")(upright("Par")([C_0, dots.c, C_(k-1)]), H, S) -> upright("Conf")(upright("Done")(upright("Fold")(mu, upright("TreeOf")(d), [y_0, dots.c, y_(k-1)])), H, S)
+    ) \
+    frac(
+      upright("plan_tag")(d) = upright("ScanPlan") and forall i. C_i = upright("Done")(y_i) and upright("JoinScan")(d, [y_0, dots.c, y_(k-1)]) = sigma,
+      upright("Conf")(upright("Par")([C_0, dots.c, C_(k-1)]), H, S) -> upright("Conf")(upright("Done")(upright("ScanResult")(d, sigma)), H, S)
     )
   $,
   caption: [fork 与 join 步骤。],
 )
 
 *Scan 与 map-reduce 的实现化规则。*
-若 `plan_tag(d) = ScanPlan`，则 `Spawn(d, I_i)` 必须生成一组 worker，使其从左到右的 join
-写出 `Den(ScanPlan(...))` 所要求的 inclusive prefix 结果。若 `plan_tag(d) =
+若 `plan_tag(d) = ScanPlan`，则 `Spawn(d, I_i)` 生成的 worker 只能产出 chunk-local scan
+输出和每个 chunk 的一个 summary。`JoinScan(d, ...)` 必须按从左到右的顺序组合这些 summary，
+并据此导出 `Den(ScanPlan(...))` 所要求的 inclusive prefix 结果。若 `plan_tag(d) =
 MapReducePlan`，则 descriptor normalization 必须保持 `Den(MapReducePlan(...))`
 使用的“先 map 再 reduce”的逻辑 lowering；只有在可观察结果不变时，实现才可以对物理执行做融合。
+
+对 `ScanPlan`，carry correctness 依赖 `JoinScan` 这一顺序 join contract；它既不编码为可写
+metadata，也不在 version 1 中授权单独的 audited scratch region。
 
 *浮点组合规则。*
 若 `ClassOf(mu) = DeterministicTree`，则 `TreeOf(d)` 属于 descriptor normalization
@@ -554,6 +607,8 @@ MapReducePlan`，则 descriptor normalization 必须保持 `Den(MapReducePlan(..
 *并行侧条件。*
 若 `Conf(C_i, H, S) -> Conf(C_i', H', S')`，则提升到 `Par(...)` 的步骤只在
 `W(C_i) ∩ FP(C_j) = emptyset` 对所有 `j != i` 都成立时才可接受。
+
+该并行侧条件不适用于 `JoinState`，因为 `JoinState` 只在 worker 并行阶段结束后才被求值。
 
 == JS ArrayBuffer 边界合同
 
@@ -596,6 +651,9 @@ JavaScript 边界被建模为宿主视图上的目标特化转移系统。
 一条被准入的 `SharedArrayBuffer` 借用必须针对只读输入区域的一个逻辑快照来解释。实现可以通过复制、
 冻结视图，或其他在可观察行为上等价的机制实现该快照；但一旦执行被接受，它就必须对被快照时刻的输入
 保持 `Den(p)`，而不是对后续宿主写入保持 `Den(p)`。
+
+若快照通过复制实现，该复制在规范层不可观察：它不会分配新的规范 buffer identity，不会改变
+ownership fidelity，也不会把该被准入路径从 borrow 重分类为 copy。
 
 *JS 生命周期义务。*
 对 copy 规则，宿主 runtime 持有 `b'` 并且必须恰好释放一次，可通过显式 release 或 finalizer
@@ -656,7 +714,7 @@ native 实现化路径为:
 
 - 只下放第一部分允许的 Plan ADT；
 - 对每条被准入的边界路径保持一个受审计的 `ABIProfile(t)`，或在布局不同时显式执行拷贝；
-- 按线性所有权状态机实现 borrow 与 transfer 边；
+- 按线性所有权状态机实现只读 borrow 与 transfer 边；
 - 只在满足第一部分分离合同的前提下调度可写 chunk。
 
 == JavaScript 实现化
@@ -683,6 +741,7 @@ JavaScript 实现化路径为:
 - 只暴露纯 Plan 构造子和显式执行入口；
 - 拒绝把任意函数值环境或任意宿主函数编码进 Plan；
 - 为每个导出的边界 view 绑定显式 ownership mode 与 access mode；
+- 拒绝任何试图通过 ownership mode `Borrow` 进行可写 lowering 的构造路径；
 - 暴露与真实目标支持在外延上完全一致的 capability 查询。
 
 == Runtime 义务
@@ -690,6 +749,7 @@ JavaScript 实现化路径为:
 一个符合性的 runtime 必须:
 
 - 只通过第一部分定义的构造子类别解释 descriptor；
+- 拒绝任何把可写 access 与 ownership mode `Borrow` 组合在一起的 descriptor；
 - 对所有不满足分离或 side condition 的 descriptor 进行执行前拒绝；
 - 保持每个承载 view 所附带的 ownership mode；
 - 将失败提升为显式状态类别，而不是返回部分成功；
@@ -724,7 +784,8 @@ JavaScript 实现化路径为:
 - 每个被接受 payload 都是某个良构 Plan 的 lowering；
 - 每个 borrow / transfer 边都遵守线性所有权状态机；
 - 每个可写 chunk 调度都满足 `SepChunks`；
-- 每个 reduction / scan combine 路径都由有效 monoid 描述子支撑。
+- 每个 reduction / scan combine 路径都由有效 monoid 描述子支撑；且
+- 每条构造子特化的 payload、descriptor 与 join 路径都保持第一部分准入的构造子类别。
 
 *符合性规则。*
 如果忠实实现接受某个 plan `p`，则执行 `p` 的可观察结果和所有权轨迹必须留在本规格范围内。
@@ -1013,15 +1074,18 @@ descriptor。
    copy 出来的 buffer 只有一个 owner 且只有一条释放路径；transfer tombstone 会阻止陈旧宿主复用；
    finalizer 与 explicit-return 的顺序遵守文档声明的目标规则；缺失 snapshot 义务或违反
    生命周期时，必须通过 `JSLifecycleReject` 拒绝。
-10. 元数据纪律：
+10. Borrow 纪律：
+   任何以 ownership mode `Borrow` 下放的 view 都必须是 `ReadOnly`；可写 borrow 尝试必须在
+   执行前被拒绝。
+11. 元数据纪律：
    worker 在其 chunk footprint 之外只能读取 `MetaOf(d)`；任何可写或畸形的元数据区域都必须
    在不健全执行发生前被拒绝。
-11. Registry 解析：
+12. Registry 解析：
    已知 `KernelId` 会解析为受审计 descriptor；未知 id 必须通过 `KernelLookupReject` 拒绝。
-12. Witness 校验：
+13. Witness 校验：
    缺失 purity、footprint、layout、arity、law、profile 或 target-support 证据时，必须通过
    对应的专用拒绝分支拒绝。
-13. 审计 artifact 完整性：
+14. 审计 artifact 完整性：
    验证矩阵使用到的每个 registry 条目都必须标识其证据 bundle 与审计结论。
 
 *拒绝阶段合同。*
