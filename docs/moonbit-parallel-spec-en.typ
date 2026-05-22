@@ -1,27 +1,29 @@
 #import "template/jmlr-paper-template.typ": jmlr-paper, diagram-box, diagram-panel, down-arrow, split-arrows
 
 #show: jmlr-paper.with(
-  title: [A Normative Specification for a MoonBit Parallel FFI Library],
-  subtitle: [Part I defines the engineering contract for plans, ownership, and separation-safe scheduling],
+  title: [A Normative Specification for a MoonBit Workflow and Parallel FFI Runtime],
+  subtitle: [Part I defines the engineering contract for workflow graphs, capabilities, ownership, and separation-safe execution],
   authors: [Zhehao Zhu],
   affiliation: [Luna-Flow],
   email: [GitHub: KCN-judu],
   abstract: [
-    This document specifies a MoonBit parallel FFI library as a contract over plan
-    representation, ownership transfer, and concurrent buffer safety. The semantic core is
-    not a redefinition of `map` and `reduce` as elementary functions, but a precise
-    engineering account of three boundary-critical questions: how MoonBit constructs a pure parallel plan, how
-    that plan crosses the FFI boundary as an ABI-constrained payload, and how the C
-    runtime executes chunked parallel work without data races or lifetime violations. Part
-    I defines a plan ADT, layout isomorphism constraints, a linear ownership state
-    machine, borrow and transfer rules, and separation checks for chunk
-    scheduling. Part II states realization and conformance obligations for native and
-    JavaScript targets. Part III refines those obligations into implementation-level
-    conformance checks for exceptional control flow, byte-level layout validation, safe
-    operator admissibility, and fail-closed validation scenarios. The English text is
-    authoritative; the Chinese text is a strict mirror.
+    This document specifies a MoonBit workflow and parallel FFI runtime as a contract over
+    workflow-graph representation, capability protocols, ownership transfer, and concurrent
+    buffer safety. The semantic core is not a redefinition of `map` and `reduce` as
+    elementary functions, but a precise engineering account of three boundary-critical
+    questions: how MoonBit constructs a pure workflow graph, how that graph crosses the
+    FFI boundary as an ABI-constrained descriptor family, and how the native runtime
+    executes task, synchronization, and compute nodes without data races or lifetime
+    violations. Part I defines a workflow ADT, a compute sub-IR, capability classes,
+    layout isomorphism constraints, a linear ownership state machine, and separation-safe
+    execution obligations. Part II states realization and conformance obligations for the
+    native scheduler layer, the native compute lane, and the JavaScript compatibility
+    surface. Part III refines those obligations into implementation-level conformance
+    checks for exceptional control flow, byte-level layout validation, safe operator
+    admissibility, and fail-closed validation scenarios. The English text is authoritative;
+    the Chinese text is a strict mirror.
   ],
-  keywords: [MoonBit, FFI, OpenMP, separation safety, linear ownership, ABI, engineering specification],
+  keywords: [MoonBit, workflow runtime, FFI, OpenMP, pthread, separation safety, linear ownership, ABI, engineering specification],
 )
 
 = Part I: Semantic Core
@@ -31,22 +33,24 @@
 This specification defines the version-1 contract of a MoonBit parallel library across
 three layers:
 
-- a MoonBit facade that constructs pure parallel plans;
-- a backend-specific FFI boundary that lowers those plans into ABI-constrained payloads;
-- a shared C runtime that interprets payloads as chunked fork-join executions.
+- a MoonBit facade that constructs pure workflow graphs;
+- a backend-specific FFI boundary that lowers workflow graphs and compute subplans into
+  ABI-constrained payloads and descriptors;
+- a native runtime split into a workflow scheduler layer and a compute lane.
 
 Normative force is limited to:
 
-- the algebraic shape of the MoonBit-side plan;
+- the algebraic shape of the MoonBit-side workflow graph;
 - the exact classes of values that may cross the FFI boundary;
 - the layout isomorphism obligations required for zero-copy or borrowed views;
 - the linear ownership state transitions between MoonBit and C-visible heaps;
-- the separation-logic obligations required for race-free chunk scheduling; and
+- the separation-logic obligations required for race-free chunk scheduling and safe
+  workflow capability use; and
 - the conformance obligations for faithful native and JavaScript realizations.
 
-Scheduler heuristics, OpenMP tuning details, and local optimization strategy are
-non-normative unless they affect the observable ownership, layout, or race-safety
-contract.
+Scheduler heuristics, queue policies, OpenMP tuning details, and local optimization
+strategy are non-normative unless they affect the observable ownership, layout, or
+race-safety contract.
 
 == Notation and Meta-Level Conventions
 
@@ -68,11 +72,90 @@ We use the following notation throughout:
 - $upright("parse")(t, q) mapsto d$ for wrapper parsing into runtime descriptor $d$;
 - $upright("exec")(d) = y$ for runtime execution of descriptor $d$.
 
-== Semantic Plan Calculus
+== Semantic Workflow Calculus
 
-The facade is a pure plan algebra. Its constructors carry enough information for the
-lowering and execution layers to interpret parallel work without crossing a function-value
-or runtime-state boundary.
+The facade is a pure workflow algebra. Its constructors carry enough information for the
+lowering and execution layers to interpret task, synchronization, and compute work without
+crossing a function-value or runtime-state boundary.
+
+*Workflow-first rule.*
+Version 1 admits `Workflow` as the only top-level execution request. The historical
+`MapPlan`, `ReducePlan`, `ScanPlan`, and `MapReducePlan` remain normative only as a
+compute sub-IR that may appear inside `ComputeNode`.
+
+*Execution entry-point rule.*
+Version 1 admits both asynchronous and blocking execution entry points for workflow
+graphs. A blocking submit is defined extensionally as `submit_async` followed by `wait`
+and resource destruction, and its return status is the final `WorkflowResult.status`.
+
+*Workflow capability classes.*
+Version 1 admits the following first-class capability classes:
+
+- `OwnedBuffer`
+- `SharedReadView`
+- `AtomicCell`
+- `Mutex`
+- `Condvar`
+- `RwLock`
+- `Semaphore`
+- `Barrier`
+- `Channel`
+- `OpaqueCapability(name)`
+
+The native realization in this version is required to execute only the subset
+`OwnedBuffer`, `SharedReadView`, `AtomicCell`, `Mutex`, `Condvar`, `Barrier`, and
+`Channel`. `RwLock`, `Semaphore`, and `OpaqueCapability(name)` remain descriptor-level
+surface classes whose runtime execution must fail closed with an explicit unsupported
+status.
+
+*Workflow node classes.*
+Version 1 admits:
+
+- `ComputeNode(plan)`
+- `SpawnNode`
+- `JoinNode`
+- `SendNode`
+- `RecvNode`
+- `LockNode`
+- `UnlockNode`
+- `WaitNode`
+- `SignalNode`
+- `BarrierNode`
+- `ReadSharedNode`
+- `WriteSharedNode`
+
+*Workflow edge classes.*
+Version 1 admits:
+
+- `DataDependency`
+- `ControlDependency`
+- `OwnershipTransfer`
+- `SynchronizationDependency`
+
+*Workflow well-formedness.*
+Write `WorkflowWF(w)` iff:
+
+- `w` contains at least one node;
+- every node id is unique;
+- every referenced capability id is unique and resolvable;
+- every edge endpoint references an existing node;
+- no edge is a self-edge;
+- the dependency graph is acyclic;
+- every node that requires a capability names one;
+- every node/capability pairing respects the protocol class of the capability;
+- every compute node carries a compute subplan admitted by the compute sub-IR;
+- every capability access mode is valid for its capability class.
+
+*Barrier group rule.*
+Barrier groups are derived from workflow structure rather than from an explicit participant
+count field. In version 1, a barrier group is keyed by `(barrier capability id, node
+depth)`. A derived barrier group whose participant count is less than `2` is invalid and
+must fail closed with `BARRIER_BROKEN`.
+
+*Compute sub-IR rule.*
+The compute sub-IR remains the constructor family `MapPlan`, `ReducePlan`, `ScanPlan`, and
+`MapReducePlan`. In this version, compute plans are no longer top-level requests; they are
+payloads of `ComputeNode(plan)` and keep their prior denotation and split-combine laws.
 
 #figure(
   $
@@ -749,15 +832,21 @@ Borrow_C(b)` is active, `Own_M(b)` is restored only by `Discharge-Step`.
 
 The native realization is:
 
-`MoonBit facade -> MoonBit C FFI -> C wrapper -> runtime descriptor -> C runtime`
+`MoonBit facade -> workflow descriptor -> pthread scheduler runtime -> compute lane -> OpenMP compute runtime`
 
 A conforming native realization must:
 
-- lower only plan ADT values admitted by Part I;
+- lower only workflow graphs admitted by Part I;
 - preserve one audited `ABIProfile(t)` for each admitted boundary path, or perform
   explicit copying when layout is not isomorphic;
 - implement read-only borrow and transfer edges according to the linear state machine;
-- schedule writable chunks only under the separation contract of Part I.
+- schedule writable chunks only under the separation contract of Part I;
+- maintain a workflow scheduler layer for task, synchronization, and capability-state
+  transitions;
+- route compute nodes through a dedicated compute lane rather than opening OpenMP teams
+  inside ordinary scheduler workers;
+- expose a blocking workflow submit whose status is definitionally the final status of the
+  underlying async workflow result.
 
 == JavaScript Realization
 
@@ -767,9 +856,10 @@ The JavaScript realization is:
 
 A conforming JavaScript realization must:
 
-- lower typed-array-compatible views into payload views with explicit element-kind tags;
+- lower workflow graphs and typed-array-compatible compute views into payload views with
+  explicit element-kind tags;
 - reject host objects that do not satisfy layout and ownership obligations;
-- preserve the same plan denotation and split-combine contract as the native realization,
+- preserve the same workflow and compute denotation contracts as the native realization,
   and require stronger cross-target equality only when both sides declare compatible
   `FPProfile`;
 - realize admitted `SharedArrayBuffer` borrows as logical snapshots for denotation
@@ -782,8 +872,10 @@ A conforming JavaScript realization must:
 
 A conforming facade must:
 
-- expose only pure plan constructors and explicit execution entry points;
-- refuse to encode arbitrary function-value environments or arbitrary host functions into plans;
+- expose only pure workflow constructors, compute-subplan constructors, and explicit
+  execution entry points;
+- refuse to encode arbitrary function-value environments or arbitrary host functions into
+  workflow graphs or compute subplans;
 - attach explicit ownership mode and access mode to every exported boundary view;
 - reject any construction path that attempts writable lowering through ownership mode
   `Borrow`;
@@ -793,13 +885,19 @@ A conforming facade must:
 
 A conforming runtime must:
 
-- interpret descriptors only through the constructor classes defined in Part I;
+- interpret descriptors only through the workflow and compute constructor classes defined
+  in Part I;
 - reject any descriptor that combines writable access with ownership mode `Borrow`;
 - reject any descriptor whose chunk schedule fails separation or side-condition checks;
 - preserve the ownership mode attached to each carried view;
 - lift failures into explicit status classes rather than partial success;
 - prohibit exception escape, panic propagation, or stack unwinding across the FFI boundary;
-- implement deterministic layout fallback or rejection for non-isomorphic views before worker execution starts.
+- implement deterministic layout fallback or rejection for non-isomorphic views before
+  worker execution starts;
+- treat temporary synchronization unavailability as a blocking state rather than as an
+  immediate failure;
+- fail closed when encountering runtime classes that are descriptor-valid but not yet
+  executable in this version, including `RwLock`, `Semaphore`, and `OpaqueCapability`.
 
 == Unsupported Surface
 
@@ -809,16 +907,22 @@ The following are outside the version-1 contract:
 - arbitrary JavaScript host-function execution inside native worker execution;
 - implicit layout reinterpretation across non-isomorphic ABI records or arrays;
 - implicit ownership transfer without a boundary state transition;
-- chunk schedules that cannot be justified by separation and split-combine laws.
+- chunk schedules that cannot be justified by separation and split-combine laws;
+- running compute nodes by recursively opening OpenMP teams inside ordinary workflow
+  scheduler workers;
+- silently accepting `RwLock`, `Semaphore`, or `OpaqueCapability` as executable native
+  workflow primitives.
 
 == Conformance
 
 An implementation may claim conformance only if:
 
-- its MoonBit-facing API constructs only the plan ADT admitted by Part I;
+- its MoonBit-facing API constructs only the workflow graph and compute sub-IR admitted by
+  Part I;
 - its boundary payloads preserve explicit layout and ownership witnesses;
 - its wrappers satisfy parsing fidelity and ownership fidelity;
-- its runtime satisfies chunk orthogonality and split-combine soundness;
+- its scheduler/runtime satisfies workflow capability safety, chunk orthogonality, and
+  split-combine soundness;
 - invalid, non-isomorphic, or lifetime-unsafe requests fail closed before execution.
 
 == Conformance Transfer
@@ -826,52 +930,65 @@ An implementation may claim conformance only if:
 *Faithful realization.*
 An implementation is faithful only if:
 
-- every accepted payload is the lowering of a well-formed plan;
+- every accepted payload is the lowering of a well-formed workflow graph;
 - every borrow or transfer edge follows the linear ownership state machine;
 - every writable chunk schedule satisfies `SepChunks`;
 - every reduction or scan combine path is justified by a valid monoid descriptor; and
-- every constructor-specific payload, descriptor, and join path preserves the constructor
-  class admitted by Part I.
+- every constructor-specific payload, workflow descriptor, compute descriptor, and join
+  path preserves the constructor class admitted by Part I.
 
 *Conformance rule.*
-If a faithful implementation accepts a plan `p`, then the observable result and ownership
-trace of executing `p` must stay within Part I. If it rejects `p`, that rejection must be a
-spec-valid fail-closed outcome. For floating-point `reduce` and `scan`, "the observable
-result" means stable repeated results under one admitted target profile, and cross-target
-equality only under explicitly compatible audited floating-point profiles.
+If a faithful implementation accepts a workflow `w`, then the observable result and
+ownership trace of executing `w` must stay within Part I. If it rejects `w`, that
+rejection must be a spec-valid fail-closed outcome. For floating-point compute nodes,
+"the observable result" means stable repeated results under one admitted target profile,
+and cross-target equality only under explicitly compatible audited floating-point
+profiles.
 
 == Validation Scenarios
 
-1. Submit a plan whose source and destination layouts are not isomorphic.
+1. Submit a workflow whose compute node carries source and destination layouts that are not
+   isomorphic.
    Expected result: explicit copy into a conforming layout, or fail-closed rejection.
-2. Submit a read-only borrow plan and attempt MoonBit-side mutation before borrow
+2. Submit a workflow containing a read-only borrow path and attempt MoonBit-side mutation before borrow
    discharge.
    Expected result: mutation is rejected or blocked by the borrow discipline.
-3. Submit a writable chunk schedule with overlapping intervals.
+3. Submit a workflow whose compute node requires a writable chunk schedule with overlapping intervals.
    Expected result: descriptor formation or runtime admission fails before execution.
-4. Submit a reduce or scan plan with an operator lacking a valid monoid descriptor.
-   Expected result: the plan is rejected before fork-join execution.
-5. Submit a transfer plan and attempt MoonBit-side free through an old alias.
+4. Submit a workflow containing a reduce or scan compute node with an operator lacking a
+   valid monoid descriptor.
+   Expected result: the compute node is rejected before fork-join execution.
+5. Submit a transfer workflow and attempt MoonBit-side free through an old alias.
    Expected result: mutable alias permission is absent; the operation is rejected.
-6. Execute equivalent floating-point reduce plans on native and JavaScript targets with
+6. Execute equivalent floating-point compute nodes on native and JavaScript targets with
    layout-compatible views but incompatible floating-point profiles.
    Expected result: each target is internally deterministic, but cross-target equality is
    not claimed.
-7. Execute equivalent floating-point reduce plans on targets that declare compatible
+7. Execute equivalent floating-point compute nodes on targets that declare compatible
    floating-point profiles.
    Expected result: both targets preserve the same declared observable result and ownership
    discipline.
-8. Submit a transfer-return-reuse plan and attempt reuse before `Rehydrate-Step`.
+8. Submit a transfer-return-reuse workflow and attempt reuse before `Rehydrate-Step`.
    Expected result: reuse is rejected until rehydration succeeds.
-9. Submit a JS copy or transfer plan and trigger explicit return, finalizer cleanup, and
+9. Submit a JS copy or transfer workflow and trigger explicit return, finalizer cleanup, and
    fail-closed runtime admission on separate runs.
    Expected result: the documented lifecycle priority and single-disposal obligations hold.
+10. Submit a workflow whose nodes form a cycle.
+   Expected result: facade validation or native admission rejects the workflow before execution.
+11. Submit a workflow that binds `LockNode` to `Channel`.
+   Expected result: facade validation or native admission rejects the capability mismatch.
+12. Submit a workflow that uses `RwLock`, `Semaphore`, or `OpaqueCapability`.
+   Expected result: descriptor admission may succeed structurally, but native runtime fails
+   closed with an explicit unsupported-runtime status before execution.
+13. Submit a workflow with exactly one `BarrierNode` in one derived barrier group.
+   Expected result: the final workflow status is `BARRIER_BROKEN`.
 
 == Closure Checklist
 
 The specification is not closed unless all of the following hold:
 
-1. Every exported execution request is representable by the plan ADT.
+1. Every exported execution request is representable by the workflow ADT, with compute
+   requests represented as compute subnodes.
 2. Every boundary view carries explicit layout and ownership witnesses.
 3. Every zero-copy path satisfies layout isomorphism.
 4. Every borrow path freezes MoonBit mutation until discharge.

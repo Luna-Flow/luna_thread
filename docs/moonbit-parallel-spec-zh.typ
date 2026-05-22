@@ -1,22 +1,23 @@
 #import "template/jmlr-paper-template.typ": jmlr-paper, diagram-box, diagram-panel, down-arrow, split-arrows
 
 #show: jmlr-paper.with(
-  title: [MoonBit 并行 FFI 库的规范性规格],
-  subtitle: [第一部分定义 Plan、所有权与分离安全调度的工程合同],
+  title: [MoonBit Workflow 与并行 FFI Runtime 的规范性规格],
+  subtitle: [第一部分定义 workflow 图、capability、所有权与分离安全执行的工程合同],
   authors: [朱哲皓],
   affiliation: [Luna-Flow],
   email: [GitHub: KCN-judu],
   abstract: [
-    本文把一个 MoonBit 并行 FFI 库规定为关于 Plan 表示、所有权转移和并发 buffer 安全的合同。
-    语义核心不是重新定义 $upright("map")$ 与 $upright("reduce")$ 的基础函数意义，而是精确回答三个跨边界致命问题：
-    MoonBit 如何构造纯并行 Plan，该 Plan 如何以 ABI 受约束的 payload 形式跨越 FFI，以及共享
-    C runtime 如何在不产生数据竞争和生命周期错误的前提下执行 chunk 化的 fork-join 工作。
-    第一部分定义 Plan ADT、布局同构约束、线性所有权状态机、borrow / transfer 规则，以及
-    chunk 调度的分离检查。第二部分给出 native 与 JavaScript 目标的实现化与符合性义务。
-    第三部分把这些义务细化为实现层面的一致性检查，覆盖异常控制流、字节级布局校验、
-    安全算子准入与 fail-closed 验证场景。英文文本是权威版本，中文文本是严格镜像。
+    本文把一个 MoonBit workflow 与并行 FFI runtime 规定为关于 workflow 图表示、
+    capability 协议、所有权转移和并发 buffer 安全的合同。语义核心不是重新定义
+    $upright("map")$ 与 $upright("reduce")$ 的基础函数意义，而是精确回答三个跨边界致命问题：
+    MoonBit 如何构造纯 workflow 图，该图如何以 ABI 受约束的 descriptor 族跨越 FFI，以及
+    native runtime 如何在不产生数据竞争和生命周期错误的前提下执行任务、同步与 compute 节点。
+    第一部分定义 workflow ADT、compute 子 IR、布局同构约束、线性所有权状态机，以及
+    分离安全执行义务。第二部分给出 native scheduler 层、native compute lane 与 JavaScript
+    兼容面的实现化与符合性义务。第三部分把这些义务细化为实现层面的一致性检查，覆盖异常控制流、
+    字节级布局校验、安全算子准入与 fail-closed 验证场景。英文文本是权威版本，中文文本是严格镜像。
   ],
-  keywords: [MoonBit, FFI, OpenMP, separation safety, linear ownership, ABI, engineering specification],
+  keywords: [MoonBit, workflow runtime, FFI, OpenMP, pthread, separation safety, linear ownership, ABI, engineering specification],
   text-font: "STFangsong",
   title-font: "Helvetica",
   code-font: "Menlo",
@@ -27,22 +28,22 @@
 
 == 规范性范围
 
-本规格把一个 MoonBit 并行库的 version-1 合同划分为三层:
+本规格把一个 MoonBit workflow 并行库的 version-1 合同划分为三层:
 
-- 构造纯并行 Plan 的 MoonBit facade；
-- 将 Plan 下放为 ABI 受约束 payload 的后端特化 FFI 边界；
-- 将 payload 解释为 chunk 化 fork-join 执行的共享 C runtime。
+- 构造纯 workflow 图的 MoonBit facade；
+- 将 workflow 图与 compute 子计划下放为 ABI 受约束 payload / descriptor 的后端特化 FFI 边界；
+- 分为 workflow scheduler 层与 compute lane 的 native runtime。
 
 具有规范约束力的内容仅限于:
 
-- MoonBit 侧 Plan 的代数形状；
+- MoonBit 侧 workflow 图的代数形状；
 - 允许穿越 FFI 的值类别；
 - zero-copy 或借用视图所要求的布局同构条件；
 - MoonBit 堆和 C 可见堆之间的线性所有权状态转移；
-- race-free chunk 调度所要求的分离逻辑义务；
+- race-free chunk 调度与安全 workflow capability 使用所要求的分离逻辑义务；
 - native 与 JavaScript 目标的 faithful realization 所必须满足的符合性义务。
 
-调度启发式、OpenMP 调优细节和局部优化策略均不属于规范性内容，除非它们影响外部可观察的所有权、
+调度启发式、队列策略、OpenMP 调优细节和局部优化策略均不属于规范性内容，除非它们影响外部可观察的所有权、
 布局或竞争安全合同。
 
 == 记号与元层约定
@@ -63,10 +64,24 @@
 - $upright("parse")(t, q) mapsto d$ 表示包装层将 payload 解析为 runtime descriptor $d$；
 - $upright("exec")(d) = y$ 表示 runtime descriptor $d$ 执行得到可观察结果 $y$。
 
-== 语义 Plan 演算
+== 语义 Workflow 演算
 
-facade 是纯 Plan 代数。它的构造子携带足够信息，使下层可以解释并行工作，而无需跨越函数值
-或运行时状态边界。
+facade 是纯 workflow 代数。它的构造子携带足够信息，使下层可以解释任务、同步与 compute 工作，
+而无需跨越函数值或运行时状态边界。
+
+*workflow 优先规则。*
+version 1 只把 `Workflow` 视为顶层执行请求。历史上的 `MapPlan`、`ReducePlan`、`ScanPlan`
+与 `MapReducePlan` 仍然是规范性内容，但只作为 `ComputeNode` 中可携带的 compute 子 IR。
+
+*执行入口规则。*
+version 1 同时准入 workflow 图的异步与阻塞执行入口。阻塞式 submit 在外延上定义为
+`submit_async` 后接 `wait` 与资源销毁，并且它的返回状态以最终 `WorkflowResult.status`
+为唯一语义来源。
+
+*barrier group 规则。*
+barrier group 由 workflow 结构推导，而不是由显式参与者数字段给出。在 version 1 中，
+barrier group 的键固定为 `(barrier capability id, node depth)`。若某个导出 barrier group
+的参与者数小于 `2`，则它是非法 group，必须以 `BARRIER_BROKEN` fail closed。
 
 #figure(
   $
@@ -708,14 +723,19 @@ $
 
 native 实现化路径为:
 
-`MoonBit facade -> MoonBit C FFI -> C wrapper -> runtime descriptor -> C runtime`
+`MoonBit facade -> workflow descriptor -> pthread scheduler runtime -> compute lane -> OpenMP compute runtime`
 
 一个符合性的 native 实现必须:
 
-- 只下放第一部分允许的 Plan ADT；
+- 只下放第一部分允许的 workflow 图；
 - 对每条被准入的边界路径保持一个受审计的 `ABIProfile(t)`，或在布局不同时显式执行拷贝；
 - 按线性所有权状态机实现只读 borrow 与 transfer 边；
-- 只在满足第一部分分离合同的前提下调度可写 chunk。
+- 只在满足第一部分分离合同的前提下调度可写 chunk；
+- 维护一个处理任务、同步与 capability 状态迁移的 workflow scheduler 层；
+- 让 compute 节点经由专用 compute lane 执行，而不是在普通 scheduler worker 中直接递归开
+  OpenMP team；
+- 暴露阻塞式 workflow submit，并保证其返回状态在定义上等于底层异步 workflow result 的最终
+  status。
 
 == JavaScript 实现化
 
@@ -727,7 +747,7 @@ JavaScript 实现化路径为:
 
 - 把 typed-array 兼容视图下放为携带显式元素种类标签的 payload view；
 - 拒绝所有不满足布局与所有权义务的宿主对象；
-- 与 native 实现保持相同的 Plan 指称和 split-combine 合同；只有当双方声明兼容的
+- 与 native 实现保持相同的 workflow / compute 指称和 split-combine 合同；只有当双方声明兼容的
   `FPProfile` 时，才要求更强的跨目标相等性；
 - 对被准入的 `SharedArrayBuffer` 借用，以逻辑快照的方式保证指称语义；
 - 在 runtime 执行开始前，为 copy 与 transfer 路径定义 owner、tombstone、finalizer 与
@@ -738,8 +758,8 @@ JavaScript 实现化路径为:
 
 一个符合性的 facade 必须:
 
-- 只暴露纯 Plan 构造子和显式执行入口；
-- 拒绝把任意函数值环境或任意宿主函数编码进 Plan；
+- 只暴露纯 workflow 构造子、compute 子计划构造子和显式执行入口；
+- 拒绝把任意函数值环境或任意宿主函数编码进 workflow 图或 compute 子计划；
 - 为每个导出的边界 view 绑定显式 ownership mode 与 access mode；
 - 拒绝任何试图通过 ownership mode `Borrow` 进行可写 lowering 的构造路径；
 - 暴露与真实目标支持在外延上完全一致的 capability 查询。
@@ -748,13 +768,16 @@ JavaScript 实现化路径为:
 
 一个符合性的 runtime 必须:
 
-- 只通过第一部分定义的构造子类别解释 descriptor；
+- 只通过第一部分定义的 workflow / compute 构造子类别解释 descriptor；
 - 拒绝任何把可写 access 与 ownership mode `Borrow` 组合在一起的 descriptor；
 - 对所有不满足分离或 side condition 的 descriptor 进行执行前拒绝；
 - 保持每个承载 view 所附带的 ownership mode；
 - 将失败提升为显式状态类别，而不是返回部分成功；
 - 禁止异常逃逸、panic 传播或栈展开跨越 FFI 边界；
-- 在 worker 执行开始前，对非同构视图执行确定性的布局降级或拒绝。
+- 在 worker 执行开始前，对非同构视图执行确定性的布局降级或拒绝；
+- 把“同步条件暂未满足”解释为 blocking 状态，而不是立即失败；
+- 当遇到 descriptor 级允许、但本版本尚未真实执行的 runtime 类别时 fail closed，包括
+  `RwLock`、`Semaphore` 与 `OpaqueCapability`。
 
 == 不支持表面
 
@@ -764,16 +787,18 @@ JavaScript 实现化路径为:
 - 任意 JavaScript 宿主函数在 native worker 执行期间的运行；
 - 对非同构 ABI 记录或数组进行隐式布局重解释；
 - 不经过边界状态转移的隐式所有权变更；
-- 无法通过分离与 split-combine 约束验证的 chunk 调度。
+- 无法通过分离与 split-combine 约束验证的 chunk 调度；
+- 在普通 workflow scheduler worker 内递归开 OpenMP team 来执行 compute 节点；
+- 默默接受 `RwLock`、`Semaphore` 或 `OpaqueCapability` 作为可执行 native workflow 原语。
 
 == 符合性
 
 一个实现只有在满足以下条件时才可以声称符合本规格:
 
-- 它的 MoonBit-facing API 只构造第一部分允许的 Plan ADT；
+- 它的 MoonBit-facing API 只构造第一部分允许的 workflow 图与 compute 子 IR；
 - 它的边界 payload 保持显式 layout witness 与 ownership witness；
 - 它的 wrapper 满足解析保真与所有权保真；
-- 它的 runtime 满足 chunk 正交性和 split-combine 健全性；
+- 它的 scheduler/runtime 满足 workflow capability 安全、chunk 正交性和 split-combine 健全性；
 - 所有非法、非同构或生命周期不安全请求都必须在执行前 fail closed。
 
 == 符合性传递
@@ -781,46 +806,56 @@ JavaScript 实现化路径为:
 *忠实实现。*
 只有当实现满足以下条件时，才可称为忠实的:
 
-- 每个被接受 payload 都是某个良构 Plan 的 lowering；
+- 每个被接受 payload 都是某个良构 workflow 图的 lowering；
 - 每个 borrow / transfer 边都遵守线性所有权状态机；
 - 每个可写 chunk 调度都满足 `SepChunks`；
 - 每个 reduction / scan combine 路径都由有效 monoid 描述子支撑；且
-- 每条构造子特化的 payload、descriptor 与 join 路径都保持第一部分准入的构造子类别。
+- 每条构造子特化的 payload、workflow descriptor、compute descriptor 与 join 路径都保持
+  第一部分准入的构造子类别。
 
 *符合性规则。*
-如果忠实实现接受某个 plan `p`，则执行 `p` 的可观察结果和所有权轨迹必须留在本规格范围内。
-如果它拒绝 `p`，则该拒绝必须是本规格允许的 fail-closed 结果。对浮点 `reduce` 与 `scan`，
+如果忠实实现接受某个 workflow `w`，则执行 `w` 的可观察结果和所有权轨迹必须留在本规格范围内。
+如果它拒绝 `w`，则该拒绝必须是本规格允许的 fail-closed 结果。对浮点 compute 节点，
 “可观察结果”的含义是：在单一已准入目标 profile 下重复执行结果稳定；跨目标相等只在显式兼容的
 受审计浮点 profile 之间被要求。
 
 == 验证场景
 
-1. 提交一个源视图与目标视图布局不同构的 Plan。
+1. 提交一个 workflow，其中某个 compute 节点携带源视图与目标视图布局不同构的请求。
    预期结果：显式拷贝到符合布局的表示，或直接 fail-closed 拒绝。
-2. 提交一个只读 borrow Plan，并在 borrow 释放前尝试从 MoonBit 侧突变该 buffer。
+2. 提交一个包含只读 borrow 路径的 workflow，并在 borrow 释放前尝试从 MoonBit 侧突变该 buffer。
    预期结果：该 mutation 被拒绝或被 borrow 纪律阻塞。
-3. 提交一个包含重叠区间的可写 chunk 调度。
+3. 提交一个 workflow，其中某个 compute 节点要求的可写 chunk 调度发生重叠。
    预期结果：descriptor 形成或 runtime 准入在执行前失败。
-4. 提交一个使用无有效 monoid 描述子的 reduce 或 scan Plan。
-   预期结果：该 Plan 在 fork-join 执行前被拒绝。
-5. 提交一个 transfer Plan，并尝试通过旧 alias 在 MoonBit 侧释放该 buffer。
+4. 提交一个 workflow，其中某个 reduce 或 scan compute 节点使用了无有效 monoid 描述子的算子。
+   预期结果：该 compute 节点在 fork-join 执行前被拒绝。
+5. 提交一个 transfer workflow，并尝试通过旧 alias 在 MoonBit 侧释放该 buffer。
    预期结果：可变别名权限不存在，因此该操作被拒绝。
-6. 在 native 与 JavaScript 两个目标上执行等价的浮点 reduce Plan，但两边的浮点 profile
+6. 在 native 与 JavaScript 两个目标上执行等价的浮点 compute 节点，但两边的浮点 profile
    不兼容。
    预期结果：每个目标内部都保持确定性，但不声称跨目标相等。
-7. 在声明兼容浮点 profile 的目标上执行等价的浮点 reduce Plan。
+7. 在声明兼容浮点 profile 的目标上执行等价的浮点 compute 节点。
    预期结果：两边保持相同的已声明可观察结果和所有权纪律。
-8. 提交一个 transfer-return-reuse Plan，并在 `Rehydrate-Step` 之前尝试 reuse。
+8. 提交一个 transfer-return-reuse workflow，并在 `Rehydrate-Step` 之前尝试 reuse。
    预期结果：在 rehydration 成功之前，reuse 被拒绝。
-9. 提交一个 JS copy 或 transfer Plan，并分别触发 explicit return、finalizer cleanup 和
+9. 提交一个 JS copy 或 transfer workflow，并分别触发 explicit return、finalizer cleanup 和
    fail-closed runtime admission。
    预期结果：文档声明的生命周期优先级与单次释放义务成立。
+10. 提交一个节点之间存在环的 workflow。
+   预期结果：facade 校验或 native 准入在执行前拒绝。
+11. 提交一个把 `LockNode` 绑定到 `Channel` 的 workflow。
+   预期结果：facade 校验或 native 准入拒绝 capability 不匹配。
+12. 提交一个使用 `RwLock`、`Semaphore` 或 `OpaqueCapability` 的 workflow。
+   预期结果：descriptor 结构上可被接受，但 native runtime 在执行前以显式 unsupported
+   runtime status fail closed。
+13. 提交一个只包含单个 `BarrierNode` 的导出 barrier group。
+   预期结果：该 workflow 的最终状态为 `BARRIER_BROKEN`。
 
 == Closure Checklist
 
 只有在以下条件全部成立时，本规格才算闭合：
 
-1. 每个导出执行请求都能由 Plan ADT 表示。
+1. 每个导出执行请求都能由 workflow ADT 表示，而 compute 请求则作为 compute 子节点表示。
 2. 每个边界 view 都携带显式 layout witness 与 ownership witness。
 3. 每条 zero-copy 路径都满足布局同构。
 4. 每条 borrow 路径都冻结 MoonBit 侧突变直到 borrow 释放。
