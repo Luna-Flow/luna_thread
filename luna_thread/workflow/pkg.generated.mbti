@@ -1,0 +1,166 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "Luna-Flow/luna_thread/workflow"
+
+import {
+  "Luna-Flow/luna_thread/plan",
+  "Luna-Flow/luna_thread/shared",
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn atomic_cell_capability() -> CapabilityKind
+pub fn barrier_capability() -> CapabilityKind
+pub fn barrier_node(Int, String, capability? : Int) -> Node
+pub fn channel_capability() -> CapabilityKind
+pub fn compute_node(Int, String, @plan.Plan) -> Node
+pub fn condvar_capability() -> CapabilityKind
+pub fn control_dependency() -> EdgeKind
+pub fn data_dependency() -> EdgeKind
+pub fn is_cyclic_dependency(WorkflowIssue) -> Bool
+pub fn is_invalid_compute_plan(WorkflowIssue) -> Bool
+pub fn is_missing_capability(WorkflowIssue) -> Bool
+pub fn is_ready(Workflow) -> Bool
+pub fn is_unsupported_shared_write(WorkflowIssue) -> Bool
+pub fn join_node(Int, String, capability? : Int) -> Node
+pub fn lock_node(Int, String, capability? : Int) -> Node
+pub fn move_only_access() -> AccessMode
+pub fn mutex_capability() -> CapabilityKind
+pub fn owned_buffer_capability() -> CapabilityKind
+pub fn ownership_transfer_dependency() -> EdgeKind
+pub fn opaque_capability(String) -> CapabilityKind
+pub fn package_name() -> String
+pub fn read_only_access() -> AccessMode
+pub fn read_shared_node(Int, String, capability? : Int) -> Node
+pub fn read_write_access() -> AccessMode
+pub fn recv_node(Int, String, capability? : Int) -> Node
+pub fn rwlock_capability() -> CapabilityKind
+pub fn semaphore_capability() -> CapabilityKind
+pub fn send_node(Int, String, capability? : Int) -> Node
+pub fn shared_read_view_capability() -> CapabilityKind
+pub fn signal_node(Int, String, capability? : Int) -> Node
+pub fn spawn_node(Int, String, capability? : Int) -> Node
+pub fn submit(Workflow, backend? : @shared.BackendTarget) -> Submission
+pub fn synchronize_only_access() -> AccessMode
+pub fn synchronization_dependency() -> EdgeKind
+pub fn unlock_node(Int, String, capability? : Int) -> Node
+pub fn validate(Workflow) -> Array[WorkflowIssue]
+pub fn wait_node(Int, String, capability? : Int) -> Node
+pub fn write_only_access() -> AccessMode
+pub fn write_shared_node(Int, String, capability? : Int) -> Node
+
+// Types and methods
+pub enum AccessMode {
+  ReadOnly
+  WriteOnly
+  ReadWrite
+  SynchronizeOnly
+  MoveOnly
+} derive(Eq, @debug.Debug)
+
+pub struct Capability {
+  id : Int
+  label : String
+  kind : CapabilityKind
+  access : AccessMode
+} derive(Eq, @debug.Debug)
+pub fn Capability::new(Int, String, CapabilityKind, AccessMode) -> Self
+
+pub enum CapabilityKind {
+  OwnedBuffer
+  SharedReadView
+  AtomicCell
+  Mutex
+  Condvar
+  RwLock
+  Semaphore
+  Barrier
+  Channel
+  Opaque(String)
+} derive(Eq, @debug.Debug)
+
+pub struct Edge {
+  from : Int
+  to : Int
+  kind : EdgeKind
+} derive(Eq, @debug.Debug)
+pub fn Edge::new(Int, Int, EdgeKind) -> Self
+
+pub enum EdgeKind {
+  DataDependency
+  ControlDependency
+  OwnershipTransfer
+  SynchronizationDependency
+} derive(Eq, @debug.Debug)
+
+pub struct Node {
+  id : Int
+  label : String
+  kind : NodeKind
+  capability : Int?
+} derive(Eq, @debug.Debug)
+pub fn Node::new(Int, String, NodeKind, capability? : Int) -> Self
+
+pub enum NodeKind {
+  Compute(@plan.Plan)
+  Spawn
+  Join
+  Send
+  Recv
+  Lock
+  Unlock
+  Wait
+  Signal
+  Barrier
+  ReadShared
+  WriteShared
+} derive(Eq, @debug.Debug)
+
+pub struct Submission {
+  workflow : Workflow
+  backend : @shared.BackendTarget
+  accepted : Bool
+  completed : Bool
+  issues : Array[WorkflowIssue]
+} derive(Eq, @debug.Debug)
+pub fn Submission::accepted(Self) -> Bool
+pub fn Submission::backend(Self) -> @shared.BackendTarget
+pub fn Submission::completed(Self) -> Bool
+pub fn Submission::issues(Self) -> Array[WorkflowIssue]
+
+pub struct Workflow {
+  label : String
+  policy : @shared.ExecutionPolicy
+  capabilities : Array[Capability]
+  nodes : Array[Node]
+  edges : Array[Edge]
+} derive(Eq, @debug.Debug)
+pub fn Workflow::add_capability(Self, Capability) -> Self
+pub fn Workflow::add_edge(Self, Edge) -> Self
+pub fn Workflow::add_node(Self, Node) -> Self
+pub fn Workflow::capabilities(Self) -> Array[Capability]
+pub fn Workflow::edges(Self) -> Array[Edge]
+pub fn Workflow::label(Self) -> String
+pub fn Workflow::new(String, policy? : @shared.ExecutionPolicy) -> Self
+pub fn Workflow::nodes(Self) -> Array[Node]
+pub fn Workflow::policy(Self) -> @shared.ExecutionPolicy
+
+pub enum WorkflowIssue {
+  EmptyWorkflow
+  InvalidNodeReference(node_id~ : Int)
+  SelfEdge(node_id~ : Int)
+  CyclicDependency
+  DuplicateNodeId(node_id~ : Int)
+  DuplicateCapabilityId(capability_id~ : Int)
+  MissingCapability(capability_id~ : Int)
+  MissingNodeCapability(node_id~ : Int)
+  InvalidDependency(from_id~ : Int, to_id~ : Int)
+  UnsupportedSharedWrite(node_id~ : Int)
+  InvalidCapabilityAccess(capability_id~ : Int)
+  InvalidChannelNode(node_id~ : Int)
+  InvalidMutexNode(node_id~ : Int)
+  InvalidCondvarNode(node_id~ : Int)
+  InvalidBarrierNode(node_id~ : Int)
+  UnsupportedCapability(kind~ : CapabilityKind)
+  InvalidPolicy(issue~ : @shared.PolicyIssue)
+  InvalidComputePlan(node_id~ : Int, issue~ : @plan.ValidationIssue)
+} derive(Eq, @debug.Debug)
