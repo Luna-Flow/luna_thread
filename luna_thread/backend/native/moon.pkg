@@ -1,4 +1,12 @@
 import {
   "Luna-Flow/luna_thread/plan" @plan,
   "Luna-Flow/luna_thread/shared" @shared,
+  "Luna-Flow/luna_thread/workflow" @workflow,
 }
+
+options(
+  "native-stub": ["ffi_stub.c", "ffi_runtime_bridge.c", "ffi_runtime_impl.c"],
+  "targets": {
+    "ffi_native.mbt": ["native"],
+  },
+)

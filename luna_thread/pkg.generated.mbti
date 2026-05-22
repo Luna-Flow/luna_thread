@@ -4,6 +4,7 @@ package "Luna-Flow/luna_thread"
 import {
   "Luna-Flow/luna_thread/plan",
   "Luna-Flow/luna_thread/shared",
+  "Luna-Flow/luna_thread/workflow",
 }
 
 // Values
@@ -41,13 +42,35 @@ pub fn reduce(String, @plan.ValueType, Int, @plan.ReductionKernel, policy? : @sh
 
 pub fn root_plan_package() -> String
 
+pub fn root_workflow_package() -> String
+
 pub fn runtime_capabilities(@shared.BackendTarget) -> @shared.RuntimeCapabilities
 
 pub fn scaffold_status() -> String
 
+pub fn shared_read_capability(Int, String) -> @workflow.Capability
+
+pub fn spawn_task(Int, String) -> @workflow.Node
+
+pub fn submit_workflow(@workflow.Workflow, backend? : @shared.BackendTarget) -> @workflow.Submission
+
 pub fn scan(String, @plan.ValueType, Int, policy? : @shared.ExecutionPolicy) -> @plan.Plan
 
 pub fn sum_reduction() -> @plan.ReductionKernel
+
+pub fn workflow(String, policy? : @shared.ExecutionPolicy) -> @workflow.Workflow
+
+pub fn workflow_is_ready(@workflow.Workflow) -> Bool
+
+pub fn workflow_validate(@workflow.Workflow) -> Array[@workflow.WorkflowIssue]
+
+pub fn compute_task(Int, String, @plan.Plan) -> @workflow.Node
+
+pub fn join_task(Int, String) -> @workflow.Node
+
+pub fn channel_capability(Int, String) -> @workflow.Capability
+
+pub fn mutex_capability(Int, String) -> @workflow.Capability
 
 pub fn validate(@plan.Plan) -> Array[@plan.ValidationIssue]
 
@@ -58,4 +81,3 @@ pub fn validate(@plan.Plan) -> Array[@plan.ValidationIssue]
 // Type aliases
 
 // Traits
-

@@ -4,6 +4,7 @@ package "Luna-Flow/luna_thread/backend/native"
 import {
   "Luna-Flow/luna_thread/plan",
   "Luna-Flow/luna_thread/shared",
+  "Luna-Flow/luna_thread/workflow",
   "moonbitlang/core/debug",
 }
 
@@ -36,7 +37,11 @@ pub fn scan_request_kernel(NativeScanRequest) -> Int
 
 pub fn scan_request_value_type(NativeScanRequest) -> Int
 
+pub fn submit_workflow(@workflow.Workflow) -> @workflow.Submission
+
 pub fn supports_openmp() -> Bool
+
+pub fn workflow_is_supported(@workflow.Workflow) -> Bool
 
 // Errors
 

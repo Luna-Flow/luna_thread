@@ -23,6 +23,28 @@ pub enum NativeRequestError {
 } derive(Eq, Debug)
 
 ///|
+pub enum WorkflowRuntimeState {
+  Submitted
+  Running
+  Completed
+  Failed
+  Rejected
+} derive(Eq, Debug)
+
+///|
+pub struct WorkflowHandle {
+  raw : NativeWorkflowHandle
+}
+
+///|
+pub struct WorkflowResult {
+  state : WorkflowRuntimeState
+  status : Int
+  completed_nodes : Int
+  failed_node_id : Int
+} derive(Eq, Debug)
+
+///|
 pub struct NativeMapRequest {
   input : @shared.NativeBuffer
   output : @shared.NativeBuffer
@@ -72,6 +94,141 @@ pub fn default_plan_kind() -> @plan.PlanKind {
 ///|
 pub fn supports_openmp() -> Bool {
   true
+}
+
+///|
+pub fn workflow_is_supported(
+  workflow : @workflow.Workflow,
+) -> Bool {
+  @workflow.validate(workflow).length() == 0 &&
+  workflow.policy().backend == @shared.native_target()
+}
+
+///|
+pub fn submit_workflow(
+  workflow : @workflow.Workflow,
+) -> @workflow.Submission {
+  @workflow.submit(workflow, backend=@shared.native_target())
+}
+
+///|
+pub fn execute_map_i32(
+  input : FixedArray[Int],
+  worker_count : Int,
+  chunk_size : Int,
+) -> Result[FixedArray[Int], NativeRequestError] {
+  let output = FixedArray::make(input.length(), 0)
+  let status = ffi_execute_map_i32(
+    input,
+    input.length(),
+    worker_count,
+    chunk_size,
+    output,
+  )
+  guard status == 0 else { return Err(status_code_to_error(status)) }
+  Ok(output)
+}
+
+///|
+pub fn execute_reduce_sum_i32(
+  input : FixedArray[Int],
+  worker_count : Int,
+  chunk_size : Int,
+) -> Int {
+  ffi_execute_reduce_sum_i32(input, input.length(), worker_count, chunk_size)
+}
+
+///|
+pub fn execute_scan_sum_i32(
+  input : FixedArray[Int],
+  worker_count : Int,
+  chunk_size : Int,
+) -> Result[FixedArray[Int], NativeRequestError] {
+  let output = FixedArray::make(input.length(), 0)
+  let status = ffi_execute_scan_sum_i32(
+    input,
+    input.length(),
+    worker_count,
+    chunk_size,
+    output,
+  )
+  guard status == 0 else { return Err(status_code_to_error(status)) }
+  Ok(output)
+}
+
+///|
+pub fn submit_workflow_async(
+  workflow : @workflow.Workflow,
+) -> Result[WorkflowHandle, NativeRequestError] {
+  let capabilities = workflow.capabilities()
+  let nodes = workflow.nodes()
+  let edges = workflow.edges()
+  let capability_ids = FixedArray::make(capabilities.length(), 0)
+  let capability_kinds = FixedArray::make(capabilities.length(), 0)
+  for i = 0; i < capabilities.length(); i = i + 1 {
+    capability_ids[i] = capabilities[i].id
+    capability_kinds[i] = capability_kind_code(capabilities[i].kind)
+  }
+  let node_ids = FixedArray::make(nodes.length(), 0)
+  let node_kinds = FixedArray::make(nodes.length(), 0)
+  let node_caps = FixedArray::make(nodes.length(), -1)
+  for i = 0; i < nodes.length(); i = i + 1 {
+    node_ids[i] = nodes[i].id
+    node_kinds[i] = node_kind_code(nodes[i].kind)
+    match nodes[i].capability {
+      Some(id) => node_caps[i] = id
+      None => ()
+    }
+  }
+  let edge_froms = FixedArray::make(edges.length(), 0)
+  let edge_tos = FixedArray::make(edges.length(), 0)
+  let edge_kinds = FixedArray::make(edges.length(), 0)
+  for i = 0; i < edges.length(); i = i + 1 {
+    edge_froms[i] = edges[i].from
+    edge_tos[i] = edges[i].to
+    edge_kinds[i] = edge_kind_code(edges[i].kind)
+  }
+  let raw = ffi_submit_workflow_async(
+    workflow.policy().worker_count,
+    capability_ids,
+    capability_kinds,
+    capabilities.length(),
+    node_ids,
+    node_kinds,
+    node_caps,
+    nodes.length(),
+    edge_froms,
+    edge_tos,
+    edge_kinds,
+    edges.length(),
+  )
+  Ok(WorkflowHandle::{ raw })
+}
+
+///|
+pub fn poll_workflow(handle : WorkflowHandle) -> WorkflowResult {
+  {
+    state: workflow_state_from_code(ffi_workflow_poll_state(handle.raw)),
+    status: ffi_workflow_poll_status(handle.raw),
+    completed_nodes: ffi_workflow_poll_completed_nodes(handle.raw),
+    failed_node_id: ffi_workflow_poll_failed_node_id(handle.raw),
+  }
+}
+
+///|
+pub fn wait_workflow(handle : WorkflowHandle) -> WorkflowResult {
+  let wait_status = ffi_workflow_wait_status(handle.raw)
+  {
+    state: workflow_state_from_code(ffi_workflow_poll_state(handle.raw)),
+    status: wait_status,
+    completed_nodes: ffi_workflow_poll_completed_nodes(handle.raw),
+    failed_node_id: ffi_workflow_poll_failed_node_id(handle.raw),
+  }
+}
+
+///|
+pub fn drop_workflow(handle : WorkflowHandle) -> Unit {
+  ffi_workflow_destroy(handle.raw)
 }
 
 ///|
@@ -248,5 +405,72 @@ fn request_error_from_issue(
     UnsupportedBackend => UnsupportedBackend
     UnsupportedMode => UnsupportedMode
     UnsupportedOrdering(..) => InvalidArgument
+  }
+}
+
+///|
+fn status_code_to_error(code : Int) -> NativeRequestError {
+  match code {
+    4 => UnsupportedValueType
+    5 => UnsupportedReductionKernel
+    6 => Overflow
+    2 => UnsupportedBackend
+    3 => UnsupportedMode
+    _ => InvalidArgument
+  }
+}
+
+///|
+fn capability_kind_code(kind : @workflow.CapabilityKind) -> Int {
+  match kind {
+    OwnedBuffer => 0
+    SharedReadView => 1
+    AtomicCell => 2
+    Mutex => 3
+    Condvar => 4
+    RwLock => 5
+    Semaphore => 6
+    Barrier => 7
+    Channel => 8
+    Opaque(_) => 9
+  }
+}
+
+///|
+fn node_kind_code(kind : @workflow.NodeKind) -> Int {
+  match kind {
+    Compute(_) => 0
+    Spawn => 1
+    Join => 2
+    Send => 3
+    Recv => 4
+    Lock => 5
+    Unlock => 6
+    Wait => 7
+    Signal => 8
+    Barrier => 9
+    ReadShared => 10
+    WriteShared => 11
+  }
+}
+
+///|
+fn edge_kind_code(kind : @workflow.EdgeKind) -> Int {
+  match kind {
+    DataDependency => 0
+    ControlDependency => 1
+    OwnershipTransfer => 2
+    SynchronizationDependency => 3
+  }
+}
+
+///|
+fn workflow_state_from_code(code : Int) -> WorkflowRuntimeState {
+  match code {
+    0 => Submitted
+    1 => Running
+    2 => Completed
+    3 => Failed
+    _ => Rejected
   }
 }

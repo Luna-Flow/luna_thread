@@ -16,6 +16,11 @@ pub fn root_plan_package() -> String {
 }
 
 ///|
+pub fn root_workflow_package() -> String {
+  @workflow.package_name()
+}
+
+///|
 pub fn default_policy() -> @shared.ExecutionPolicy {
   @shared.native_policy()
 }
@@ -103,6 +108,148 @@ pub fn map_reduce(
 ///|
 pub fn validate(plan : @plan.Plan) -> Array[@plan.ValidationIssue] {
   @plan.validate(plan)
+}
+
+///|
+pub fn workflow(
+  label : String,
+  policy? : @shared.ExecutionPolicy = default_policy(),
+) -> @workflow.Workflow {
+  @workflow.Workflow::new(label, policy~)
+}
+
+///|
+pub fn compute_task(
+  id : Int,
+  label : String,
+  plan : @plan.Plan,
+) -> @workflow.Node {
+  @workflow.compute_node(id, label, plan)
+}
+
+///|
+pub fn spawn_task(id : Int, label : String) -> @workflow.Node {
+  @workflow.spawn_node(id, label)
+}
+
+///|
+pub fn join_task(id : Int, label : String) -> @workflow.Node {
+  @workflow.join_node(id, label)
+}
+
+///|
+pub fn channel_capability(
+  id : Int,
+  label : String,
+) -> @workflow.Capability {
+  @workflow.Capability::new(
+    id,
+    label,
+    @workflow.channel_capability(),
+    @workflow.move_only_access(),
+  )
+}
+
+///|
+pub fn mutex_capability(
+  id : Int,
+  label : String,
+) -> @workflow.Capability {
+  @workflow.Capability::new(
+    id,
+    label,
+    @workflow.mutex_capability(),
+    @workflow.synchronize_only_access(),
+  )
+}
+
+///|
+pub fn shared_read_capability(
+  id : Int,
+  label : String,
+) -> @workflow.Capability {
+  @workflow.Capability::new(
+    id,
+    label,
+    @workflow.shared_read_view_capability(),
+    @workflow.read_only_access(),
+  )
+}
+
+///|
+pub fn workflow_validate(
+  workflow : @workflow.Workflow,
+) -> Array[@workflow.WorkflowIssue] {
+  @workflow.validate(workflow)
+}
+
+///|
+pub fn workflow_is_ready(workflow : @workflow.Workflow) -> Bool {
+  @workflow.is_ready(workflow)
+}
+
+///|
+pub fn submit_workflow(
+  workflow : @workflow.Workflow,
+  backend? : @shared.BackendTarget = default_backend(),
+) -> @workflow.Submission {
+  match backend {
+    Native => @native.submit_workflow(workflow)
+    _ => @workflow.submit(workflow, backend~)
+  }
+}
+
+///|
+pub fn execute_map_i32(
+  input : FixedArray[Int],
+  worker_count? : Int = 1,
+  chunk_size? : Int = 1,
+) -> Result[FixedArray[Int], @native.NativeRequestError] {
+  @native.execute_map_i32(input, worker_count, chunk_size)
+}
+
+///|
+pub fn execute_reduce_sum_i32(
+  input : FixedArray[Int],
+  worker_count? : Int = 1,
+  chunk_size? : Int = 1,
+) -> Int {
+  @native.execute_reduce_sum_i32(input, worker_count, chunk_size)
+}
+
+///|
+pub fn execute_scan_sum_i32(
+  input : FixedArray[Int],
+  worker_count? : Int = 1,
+  chunk_size? : Int = 1,
+) -> Result[FixedArray[Int], @native.NativeRequestError] {
+  @native.execute_scan_sum_i32(input, worker_count, chunk_size)
+}
+
+///|
+pub fn submit_workflow_async(
+  workflow : @workflow.Workflow,
+) -> Result[@native.WorkflowHandle, @native.NativeRequestError] {
+  @native.submit_workflow_async(workflow)
+}
+
+///|
+pub fn poll_workflow(
+  handle : @native.WorkflowHandle,
+) -> @native.WorkflowResult {
+  @native.poll_workflow(handle)
+}
+
+///|
+pub fn wait_workflow(
+  handle : @native.WorkflowHandle,
+) -> @native.WorkflowResult {
+  @native.wait_workflow(handle)
+}
+
+///|
+pub fn drop_workflow(handle : @native.WorkflowHandle) -> Unit {
+  @native.drop_workflow(handle)
 }
 
 ///|

@@ -2,4 +2,5 @@ import {
   "Luna-Flow/luna_thread/backend/native" @native,
   "Luna-Flow/luna_thread/plan" @plan,
   "Luna-Flow/luna_thread/shared" @shared,
+  "Luna-Flow/luna_thread/workflow" @workflow,
 }
