@@ -1,0 +1,316 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Luna-Flow documentation\n"
+"Report-Msgid-Bugs-To: https://github.com/Luna-Flow\n"
+"Language: ja_JP\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: conf.json:summary
+msgid "A MoonBit library for parallel execution through native and JavaScript FFI runtimes, defined by a normative specification."
+msgstr "ネイティブおよび JavaScript の FFI ランタイムを通じて並列実行を行う MoonBit ライブラリで、規範的な仕様によって定義されている。"
+
+#: manual/api/backend.md:1
+msgid "backend API"
+msgstr "backend API リファレンス"
+
+#: manual/api/backend.md:3
+msgid "backend is part of Luna-Flow/luna_thread. This page should describe the public types, constructors, functions, traits, and observable semantics that are implemented in the current branch."
+msgstr "backend は Luna-Flow/luna_thread の一部です。このページでは、現在のブランチで実装されている公開型、コンストラクタ、関数、trait、および可観測セマンティクスを記述します。"
+
+#: manual/api/backend.md:5
+#: manual/api/facade.md:5
+msgid "Scope"
+msgstr "範囲"
+
+#: manual/api/backend.md:7
+msgid "Source boundary: `native and js`"
+msgstr "ソース境界: `native and js`"
+
+#: manual/api/backend.md:8
+#: manual/api/facade.md:8
+msgid "Audience: package users, integrators, and maintainers who need the exported contract"
+msgstr "想定読者: 公開契約に依存する利用者、統合担当者、保守者"
+
+#: manual/api/backend.md:9
+#: manual/api/facade.md:9
+msgid "Status: active"
+msgstr "状態: active"
+
+#: manual/api/backend.md:11
+#: manual/api/facade.md:11
+msgid "Public Contract"
+msgstr "公開契約"
+
+#: manual/api/backend.md:13
+#: manual/api/facade.md:13
+msgid "Describe only exported behavior that exists today."
+msgstr "今日存在する公開挙動だけを記述する。"
+
+#: manual/api/backend.md:14
+#: manual/api/facade.md:14
+msgid "Call out backend or subtype differences when they are observable."
+msgstr "バックエンドや実行経路に可観測差異がある場合は明記する。"
+
+#: manual/api/backend.md:15
+#: manual/api/facade.md:15
+msgid "Keep naming, argument ordering, and error semantics aligned with sibling modules when possible."
+msgstr "可能な限り、兄弟モジュールと命名・引数順・エラー意味論をそろえる。"
+
+#: manual/api/facade.md:1
+msgid "facade API"
+msgstr "facade API リファレンス"
+
+#: manual/api/facade.md:3
+msgid "facade is part of Luna-Flow/luna_thread. This page should describe the public types, constructors, functions, traits, and observable semantics that are implemented in the current branch."
+msgstr "facade は Luna-Flow/luna_thread の一部です。このページでは、現在のブランチで実装されている公開型、コンストラクタ、関数、trait、および可観測セマンティクスを記述します。"
+
+#: manual/api/facade.md:7
+msgid "Source boundary: `luna_thread`"
+msgstr "ソース境界: `luna_thread`"
+
+#: manual/design/backend.md:1
+msgid "backend Design"
+msgstr "backend 設計"
+
+#: manual/design/backend.md:3
+msgid "This subsystem covers the native C runtime scaffold and the Node.js addon scaffold used to realize the FFI design."
+msgstr "このサブシステムは、FFI 設計を実現するためのネイティブ C ランタイムの雛形と Node.js アドオンの雛形を扱います。"
+
+#: manual/design/backend.md:5
+#: manual/design/facade.md:5
+msgid "Responsibilities"
+msgstr "責務"
+
+#: manual/design/backend.md:7
+msgid "Keep the code and docs aligned around `native and js`."
+msgstr "`native and js` を軸にコードと文書の整合を保つ。"
+
+#: manual/design/backend.md:8
+#: manual/design/facade.md:8
+msgid "Preserve the real execution model instead of smoothing over important internal differences."
+msgstr "重要な内部差異を隠さず、実際の実行モデルをそのまま説明する。"
+
+#: manual/design/backend.md:9
+#: manual/design/facade.md:9
+msgid "Note extension points, invariants, and limitations that maintainers must keep stable."
+msgstr "保守者が維持すべき拡張点、不変条件、制約を書く。"
+
+#: manual/design/backend.md:11
+#: manual/design/facade.md:11
+msgid "Maintenance Notes"
+msgstr "保守メモ"
+
+#: manual/design/backend.md:13
+#: manual/design/facade.md:13
+msgid "Update this page whenever the module boundary, core algorithm, or observable semantics change."
+msgstr "モジュール境界、主要アルゴリズム、可観測意味論が変わったら更新する。"
+
+#: manual/design/backend.md:14
+#: manual/design/facade.md:14
+msgid "If the module is intentionally incomplete, say so here instead of documenting speculative APIs."
+msgstr "未完成なモジュールなら、その事実を明記し、未来の API を捏造しない。"
+
+#: manual/design/facade.md:1
+msgid "facade Design"
+msgstr "facade 設計"
+
+#: manual/design/facade.md:3
+msgid "Use this page to explain the structural responsibilities and implementation constraints of this module. facade in Luna-Flow/luna_thread."
+msgstr "このページは、このモジュールの構造上の責務と実装制約を説明します。 Luna-Flow/luna_thread の facade を対象にします。"
+
+#: manual/design/facade.md:7
+msgid "Keep the code and docs aligned around `luna_thread`."
+msgstr "`luna_thread` を軸にコードと文書の整合を保つ。"
+
+#: manual/index.md:1
+msgid "luna_thread"
+msgstr "luna_thread"
+
+#: manual/index.md:3
+msgid "luna_thread is a MoonBit library workspace for parallel execution through the foreign function interface. MoonBit code builds a workflow graph, and a native runtime executes it; a JavaScript compatibility path reaches the same runtime through an N-API addon."
+msgstr "luna_thread は、外部関数インターフェース（FFI）を通じて並列実行を行う MoonBit ライブラリのワークスペースです。MoonBit のコードが workflow グラフを構築し、ネイティブランタイムがそれを実行します。JavaScript 互換経路は N-API アドオンを介して同じランタイムに到達します。"
+
+#: manual/index.md:5
+msgid "Realization paths"
+msgstr "実現経路"
+
+#: manual/index.md:7
+msgid "MoonBit facade → MoonBit C FFI → C wrapper → C runtime"
+msgstr "MoonBit facade → MoonBit C FFI → C ラッパー → C ランタイム"
+
+#: manual/index.md:8
+msgid "MoonBit facade → MoonBit JS FFI → JS wrapper → N-API addon → C runtime"
+msgstr "MoonBit facade → MoonBit JS FFI → JS ラッパー → N-API アドオン → C ランタイム"
+
+#: manual/index.md:10
+msgid "Packages"
+msgstr "パッケージ"
+
+#: manual/index.md:12
+msgid "**`facade`** (`luna_thread/`): the root MoonBit package that applications import. See the [API reference](api/facade.md), the [design notes](design/facade.md) and the [tutorial](tutorial/facade.md)."
+msgstr "**`facade`**（`luna_thread/`）：アプリケーションがインポートする MoonBit のルートパッケージ。[API リファレンス](api/facade.md)、[設計ノート](design/facade.md)、[チュートリアル](tutorial/facade.md)を参照してください。"
+
+#: manual/index.md:13
+msgid "**`backend`** (`native/`, `js/` and `luna_thread/backend/`): the native C runtime and the Node.js addon that realize the FFI design. See the [API reference](api/backend.md), the [design notes](design/backend.md) and the [tutorial](tutorial/backend.md)."
+msgstr "**`backend`**（`native/`、`js/`、`luna_thread/backend/`）：FFI 設計を実現するネイティブ C ランタイムと Node.js アドオン。[API リファレンス](api/backend.md)、[設計ノート](design/backend.md)、[チュートリアル](tutorial/backend.md)を参照してください。"
+
+#: manual/index.md:15
+msgid "Specification"
+msgstr "仕様"
+
+#: manual/index.md:17
+msgid "The specification is the authoritative design narrative for the workspace: it defines the workflow graph, capabilities, ownership transfer and separation-safe execution that the facade and the backends must realize. The English text is normative; the Chinese text is a strict mirror of it."
+msgstr "この仕様はワークスペースの権威ある設計記述であり、facade と各バックエンドが実現すべき workflow グラフ、capability、所有権の移転、分離安全な実行を定義します。英語版が規範であり、中国語版はその厳密な対訳です。"
+
+#: manual/index.md:19
+msgid "[A Normative Specification for a MoonBit Workflow and Parallel FFI Runtime](../attachments/moonbit_parallel_spec/main.typ)"
+msgstr "[MoonBit Workflow と並列 FFI ランタイムの規範的仕様](../attachments/moonbit_parallel_spec/main.typ)"
+
+#: manual/tutorial/backend.md:1
+msgid "backend Tutorial"
+msgstr "backend チュートリアル"
+
+#: manual/tutorial/backend.md:3
+msgid "Use this page as the starting point for practical workflows around this module. backend in Luna-Flow/luna_thread."
+msgstr "このページは、このモジュールの実用的な利用フローを説明する出発点です。 Luna-Flow/luna_thread の backend を対象にします。"
+
+#: manual/tutorial/backend.md:5
+#: manual/tutorial/facade.md:5
+msgid "Suggested Flow"
+msgstr "推奨フロー"
+
+#: manual/tutorial/backend.md:7
+msgid "Read the repository README and the backend API reference."
+msgstr "まずリポジトリ README と backend の API 文書を読む。"
+
+#: manual/tutorial/backend.md:8
+msgid "Start from the constructors or entry points under `native and js`."
+msgstr "`native and js` にあるコンストラクタまたは入口から始める。"
+
+#: manual/tutorial/backend.md:9
+#: manual/tutorial/facade.md:9
+msgid "Validate behavior with the existing tests or examples before depending on edge-case semantics."
+msgstr "境界挙動へ依存する前に、既存のテストや例で意味論を確認する。"
+
+#: manual/tutorial/backend.md:11
+#: manual/tutorial/facade.md:11
+msgid "Practical Guidance"
+msgstr "実践ガイド"
+
+#: manual/tutorial/backend.md:13
+#: manual/tutorial/facade.md:13
+msgid "Prefer the documented entry points over internal helpers."
+msgstr "内部ヘルパーではなく、文書化された入口を優先する。"
+
+#: manual/tutorial/backend.md:14
+#: manual/tutorial/facade.md:14
+msgid "Record runtime, numeric, or proof-state assumptions explicitly in downstream code."
+msgstr "ランタイム・数値・証明状態の前提を下流コードに明示する。"
+
+#: manual/tutorial/facade.md:1
+msgid "facade Tutorial"
+msgstr "facade チュートリアル"
+
+#: manual/tutorial/facade.md:3
+msgid "Begin with `luna_thread/luna_thread.mbt` and the package tests to understand the exposed MoonBit facade."
+msgstr "公開されている MoonBit facade を理解するには、`luna_thread/luna_thread.mbt` とパッケージのテストから始めてください。"
+
+#: manual/tutorial/facade.md:7
+msgid "Read the repository README and the facade API reference."
+msgstr "まずリポジトリ README と facade の API 文書を読む。"
+
+#: manual/tutorial/facade.md:8
+msgid "Start from the constructors or entry points under `luna_thread`."
+msgstr "`luna_thread` にあるコンストラクタまたは入口から始める。"
+
+#~ msgid "spec is part of Luna-Flow/luna_thread. This page should describe the public types, constructors, functions, traits, and observable semantics that are implemented in the current branch."
+#~ msgstr "spec は Luna-Flow/luna_thread の一部です。このページでは、現在のブランチで実装されている公開型、コンストラクタ、関数、trait、および可観測セマンティクスを記述します。"
+
+#~ msgid "Source boundary: `docs`"
+#~ msgstr "ソース境界: `docs`"
+
+#~ msgid "Documentation Standard"
+#~ msgstr "ドキュメント標準"
+
+#~ msgid "This repository's documentation must describe the real implementation on the current branch for Luna-Flow/luna_thread. It should stay aligned with the exported surface, repository layout, and release narrative."
+#~ msgstr "Luna-Flow/luna_thread のドキュメントは、現在のブランチに存在する実装だけを記述し、公開面・リポジトリ構成・リリース叙述と常に整合していなければなりません。"
+
+#~ msgid "Provide `README.md`, `doc_standard.md`, and structured module or subsystem documents for every supported locale."
+#~ msgstr "各対応言語で `README.md`、`doc_standard.md`、モジュールまたはサブシステム文書をそろえる。"
+
+#~ msgid "Document only APIs, workflows, and design decisions that exist in the current branch."
+#~ msgstr "現在のブランチに存在しない API や運用手順は書かない。"
+
+#~ msgid "Keep the directory layout aligned with real package or subsystem boundaries."
+#~ msgstr "ディレクトリ構成は実際のパッケージ境界またはサブシステム境界に合わせる。"
+
+#~ msgid "Each module or subsystem directory must contain `api.md`, `tutorial.md`, and `design.md`."
+#~ msgstr "各モジュールまたはサブシステム配下に `api.md`、`tutorial.md`、`design.md` を置く。"
+
+#~ msgid "Use cross-links between related mutable/immutable, runtime/frontend, or spec/implementation areas when semantics differ."
+#~ msgstr "可観測な差異がある場合は、関連ページを相互参照しつつ明示する。"
+
+#~ msgid "spec Design"
+#~ msgstr "spec 設計"
+
+#~ msgid "Keep the code and docs aligned around `docs`."
+#~ msgstr "`docs` を軸にコードと文書の整合を保つ。"
+
+#~ msgid "This documentation tracks the current branch state."
+#~ msgstr "このドキュメントは現在のブランチ状態を追跡します。"
+
+#~ msgid "Repository Positioning"
+#~ msgstr "リポジトリの位置付け"
+
+#~ msgid "MoonBit parallel FFI specification workspace with runtime backends and spec assets."
+#~ msgstr "ランタイムバックエンドと仕様資産を持つ MoonBit 並列 FFI 仕様ワークスペースです。"
+
+#~ msgid "Documentation Layout"
+#~ msgstr "ドキュメント構成"
+
+#~ msgid "`README.md` for the repository narrative and release baseline."
+#~ msgstr "`README.md` にリポジトリ叙述とリリース基線を書く。"
+
+#~ msgid "`doc_standard.md` for the documentation contract."
+#~ msgstr "`doc_standard.md` に文書契約を書く。"
+
+#~ msgid "Module or subsystem folders with `api.md`, `tutorial.md`, and `design.md`."
+#~ msgstr "モジュールまたはサブシステム配下に `api.md`、`tutorial.md`、`design.md` を置く。"
+
+#~ msgid "Module Overview"
+#~ msgstr "モジュール概要"
+
+#~ msgid "**`facade`**: Implemented around `luna_thread`."
+#~ msgstr "**`facade`**: 主な実装は `luna_thread` にあります。"
+
+#~ msgid "**`backend`**: Implemented around `native and js`."
+#~ msgstr "**`backend`**: 主な実装は `native and js` にあります。"
+
+#~ msgid "**`spec`**: Implemented around `docs`."
+#~ msgstr "**`spec`**: 主な実装は `docs` にあります。"
+
+#~ msgid "Documentation Entry Points"
+#~ msgstr "ドキュメント入口"
+
+#~ msgid "API Reference: [facade](./api/facade.md)"
+#~ msgstr "API リファレンス: [facade](./api/facade.md)"
+
+#~ msgid "API Reference: [backend](./api/backend.md)"
+#~ msgstr "API リファレンス: [backend](./api/backend.md)"
+
+#~ msgid "API Reference: [spec](./api/spec.md)"
+#~ msgstr "API リファレンス: [spec](./api/spec.md)"
+
+#~ msgid "spec Tutorial"
+#~ msgstr "spec チュートリアル"
+
+#~ msgid "Use this page as the starting point for practical workflows around this module. spec in Luna-Flow/luna_thread."
+#~ msgstr "このページは、このモジュールの実用的な利用フローを説明する出発点です。 Luna-Flow/luna_thread の spec を対象にします。"
+
+#~ msgid "Read the repository README and the spec API reference."
+#~ msgstr "まずリポジトリ README と spec の API 文書を読む。"
+
+#~ msgid "Start from the constructors or entry points under `docs`."
+#~ msgstr "`docs` にあるコンストラクタまたは入口から始める。"

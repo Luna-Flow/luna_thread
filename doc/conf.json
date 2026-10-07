@@ -1,0 +1,8 @@
+{
+  "title": "luna_thread",
+  "summary": "A MoonBit library for parallel execution through native and JavaScript FFI runtimes, defined by a normative specification.",
+  "locales": [
+    "zh_CN",
+    "ja_JP"
+  ]
+}

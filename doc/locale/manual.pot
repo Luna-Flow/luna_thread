@@ -1,0 +1,226 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Luna-Flow documentation\n"
+"Report-Msgid-Bugs-To: https://github.com/Luna-Flow\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: conf.json:summary
+msgid "A MoonBit library for parallel execution through native and JavaScript FFI runtimes, defined by a normative specification."
+msgstr ""
+
+#: manual/api/backend.md:1
+msgid "backend API"
+msgstr ""
+
+#: manual/api/backend.md:3
+msgid "backend is part of Luna-Flow/luna_thread. This page should describe the public types, constructors, functions, traits, and observable semantics that are implemented in the current branch."
+msgstr ""
+
+#: manual/api/backend.md:5
+#: manual/api/facade.md:5
+msgid "Scope"
+msgstr ""
+
+#: manual/api/backend.md:7
+msgid "Source boundary: `native and js`"
+msgstr ""
+
+#: manual/api/backend.md:8
+#: manual/api/facade.md:8
+msgid "Audience: package users, integrators, and maintainers who need the exported contract"
+msgstr ""
+
+#: manual/api/backend.md:9
+#: manual/api/facade.md:9
+msgid "Status: active"
+msgstr ""
+
+#: manual/api/backend.md:11
+#: manual/api/facade.md:11
+msgid "Public Contract"
+msgstr ""
+
+#: manual/api/backend.md:13
+#: manual/api/facade.md:13
+msgid "Describe only exported behavior that exists today."
+msgstr ""
+
+#: manual/api/backend.md:14
+#: manual/api/facade.md:14
+msgid "Call out backend or subtype differences when they are observable."
+msgstr ""
+
+#: manual/api/backend.md:15
+#: manual/api/facade.md:15
+msgid "Keep naming, argument ordering, and error semantics aligned with sibling modules when possible."
+msgstr ""
+
+#: manual/api/facade.md:1
+msgid "facade API"
+msgstr ""
+
+#: manual/api/facade.md:3
+msgid "facade is part of Luna-Flow/luna_thread. This page should describe the public types, constructors, functions, traits, and observable semantics that are implemented in the current branch."
+msgstr ""
+
+#: manual/api/facade.md:7
+msgid "Source boundary: `luna_thread`"
+msgstr ""
+
+#: manual/design/backend.md:1
+msgid "backend Design"
+msgstr ""
+
+#: manual/design/backend.md:3
+msgid "This subsystem covers the native C runtime scaffold and the Node.js addon scaffold used to realize the FFI design."
+msgstr ""
+
+#: manual/design/backend.md:5
+#: manual/design/facade.md:5
+msgid "Responsibilities"
+msgstr ""
+
+#: manual/design/backend.md:7
+msgid "Keep the code and docs aligned around `native and js`."
+msgstr ""
+
+#: manual/design/backend.md:8
+#: manual/design/facade.md:8
+msgid "Preserve the real execution model instead of smoothing over important internal differences."
+msgstr ""
+
+#: manual/design/backend.md:9
+#: manual/design/facade.md:9
+msgid "Note extension points, invariants, and limitations that maintainers must keep stable."
+msgstr ""
+
+#: manual/design/backend.md:11
+#: manual/design/facade.md:11
+msgid "Maintenance Notes"
+msgstr ""
+
+#: manual/design/backend.md:13
+#: manual/design/facade.md:13
+msgid "Update this page whenever the module boundary, core algorithm, or observable semantics change."
+msgstr ""
+
+#: manual/design/backend.md:14
+#: manual/design/facade.md:14
+msgid "If the module is intentionally incomplete, say so here instead of documenting speculative APIs."
+msgstr ""
+
+#: manual/design/facade.md:1
+msgid "facade Design"
+msgstr ""
+
+#: manual/design/facade.md:3
+msgid "Use this page to explain the structural responsibilities and implementation constraints of this module. facade in Luna-Flow/luna_thread."
+msgstr ""
+
+#: manual/design/facade.md:7
+msgid "Keep the code and docs aligned around `luna_thread`."
+msgstr ""
+
+#: manual/index.md:1
+msgid "luna_thread"
+msgstr ""
+
+#: manual/index.md:3
+msgid "luna_thread is a MoonBit library workspace for parallel execution through the foreign function interface. MoonBit code builds a workflow graph, and a native runtime executes it; a JavaScript compatibility path reaches the same runtime through an N-API addon."
+msgstr ""
+
+#: manual/index.md:5
+msgid "Realization paths"
+msgstr ""
+
+#: manual/index.md:7
+msgid "MoonBit facade → MoonBit C FFI → C wrapper → C runtime"
+msgstr ""
+
+#: manual/index.md:8
+msgid "MoonBit facade → MoonBit JS FFI → JS wrapper → N-API addon → C runtime"
+msgstr ""
+
+#: manual/index.md:10
+msgid "Packages"
+msgstr ""
+
+#: manual/index.md:12
+msgid "**`facade`** (`luna_thread/`): the root MoonBit package that applications import. See the [API reference](api/facade.md), the [design notes](design/facade.md) and the [tutorial](tutorial/facade.md)."
+msgstr ""
+
+#: manual/index.md:13
+msgid "**`backend`** (`native/`, `js/` and `luna_thread/backend/`): the native C runtime and the Node.js addon that realize the FFI design. See the [API reference](api/backend.md), the [design notes](design/backend.md) and the [tutorial](tutorial/backend.md)."
+msgstr ""
+
+#: manual/index.md:15
+msgid "Specification"
+msgstr ""
+
+#: manual/index.md:17
+msgid "The specification is the authoritative design narrative for the workspace: it defines the workflow graph, capabilities, ownership transfer and separation-safe execution that the facade and the backends must realize. The English text is normative; the Chinese text is a strict mirror of it."
+msgstr ""
+
+#: manual/index.md:19
+msgid "[A Normative Specification for a MoonBit Workflow and Parallel FFI Runtime](../attachments/moonbit_parallel_spec/main.typ)"
+msgstr ""
+
+#: manual/tutorial/backend.md:1
+msgid "backend Tutorial"
+msgstr ""
+
+#: manual/tutorial/backend.md:3
+msgid "Use this page as the starting point for practical workflows around this module. backend in Luna-Flow/luna_thread."
+msgstr ""
+
+#: manual/tutorial/backend.md:5
+#: manual/tutorial/facade.md:5
+msgid "Suggested Flow"
+msgstr ""
+
+#: manual/tutorial/backend.md:7
+msgid "Read the repository README and the backend API reference."
+msgstr ""
+
+#: manual/tutorial/backend.md:8
+msgid "Start from the constructors or entry points under `native and js`."
+msgstr ""
+
+#: manual/tutorial/backend.md:9
+#: manual/tutorial/facade.md:9
+msgid "Validate behavior with the existing tests or examples before depending on edge-case semantics."
+msgstr ""
+
+#: manual/tutorial/backend.md:11
+#: manual/tutorial/facade.md:11
+msgid "Practical Guidance"
+msgstr ""
+
+#: manual/tutorial/backend.md:13
+#: manual/tutorial/facade.md:13
+msgid "Prefer the documented entry points over internal helpers."
+msgstr ""
+
+#: manual/tutorial/backend.md:14
+#: manual/tutorial/facade.md:14
+msgid "Record runtime, numeric, or proof-state assumptions explicitly in downstream code."
+msgstr ""
+
+#: manual/tutorial/facade.md:1
+msgid "facade Tutorial"
+msgstr ""
+
+#: manual/tutorial/facade.md:3
+msgid "Begin with `luna_thread/luna_thread.mbt` and the package tests to understand the exposed MoonBit facade."
+msgstr ""
+
+#: manual/tutorial/facade.md:7
+msgid "Read the repository README and the facade API reference."
+msgstr ""
+
+#: manual/tutorial/facade.md:8
+msgid "Start from the constructors or entry points under `luna_thread`."
+msgstr ""

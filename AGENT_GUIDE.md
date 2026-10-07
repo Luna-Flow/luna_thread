@@ -17,6 +17,6 @@ This repository stores the MoonBit parallel FFI specification and its supporting
 
 ## Document Workflow
 
-- Treat `docs/moonbit-parallel-spec-en.typ` as the authoritative source.
-- Keep `docs/moonbit-parallel-spec-zh.typ` as a strict mirror of the English text.
+- Treat `doc/attachments/moonbit_parallel_spec/main.typ` as the authoritative source.
+- Keep `doc/attachments/moonbit_parallel_spec/main.zh_CN.typ` as a strict mirror of the English text.
 - Keep application/proposal drafts out of version control.

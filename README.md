@@ -10,9 +10,10 @@ MoonBit parallel FFI specification workspace.
 - `luna_thread/plan/`, `luna_thread/shared/`, `luna_thread/backend/`: package split for shared types and backend FFI
 - `native/`: C runtime and wrapper scaffold
 - `js/`: N-API addon scaffold
-- `docs/moonbit-parallel-spec-en.typ`: authoritative English specification
-- `docs/moonbit-parallel-spec-zh.typ`: Chinese mirror translation
-- `docs/template/`: Typst paper templates
+- `doc/manual/`: documentation sources, published at <https://luna-flow.github.io/en/luna_thread/>
+- `doc/attachments/moonbit_parallel_spec/main.typ`: authoritative English specification
+- `doc/attachments/moonbit_parallel_spec/main.zh_CN.typ`: Chinese mirror translation
+- `doc/attachments/moonbit_parallel_spec/template/`: Typst paper templates
 - `docs/spec-review-report-zh.md`: Chinese review notes
 
 ## Development Environment

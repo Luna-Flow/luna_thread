@@ -18,8 +18,8 @@
     字节级布局校验、安全算子准入与 fail-closed 验证场景。英文文本是权威版本，中文文本是严格镜像。
   ],
   keywords: [MoonBit, workflow runtime, FFI, OpenMP, pthread, separation safety, linear ownership, ABI, engineering specification],
-  text-font: "STFangsong",
-  title-font: "Helvetica",
+  text-font: ("STFangsong", "Noto Serif CJK SC"),
+  title-font: ("Helvetica", "Noto Sans CJK SC"),
   code-font: "Menlo",
   lang: "zh",
 )

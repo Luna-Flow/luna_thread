@@ -1,0 +1,316 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Luna-Flow documentation\n"
+"Report-Msgid-Bugs-To: https://github.com/Luna-Flow\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: conf.json:summary
+msgid "A MoonBit library for parallel execution through native and JavaScript FFI runtimes, defined by a normative specification."
+msgstr "一个通过原生与 JavaScript FFI 运行时实现并行执行的 MoonBit 库，由一份规范性规格定义。"
+
+#: manual/api/backend.md:1
+msgid "backend API"
+msgstr "backend API 参考"
+
+#: manual/api/backend.md:3
+msgid "backend is part of Luna-Flow/luna_thread. This page should describe the public types, constructors, functions, traits, and observable semantics that are implemented in the current branch."
+msgstr "backend 属于 Luna-Flow/luna_thread。本页描述当前分支已经实现的公开类型、构造器、函数、trait 以及可观察语义。"
+
+#: manual/api/backend.md:5
+#: manual/api/facade.md:5
+msgid "Scope"
+msgstr "范围"
+
+#: manual/api/backend.md:7
+msgid "Source boundary: `native and js`"
+msgstr "源码边界：`native and js`"
+
+#: manual/api/backend.md:8
+#: manual/api/facade.md:8
+msgid "Audience: package users, integrators, and maintainers who need the exported contract"
+msgstr "读者：需要依赖公开契约的使用者、集成方和维护者"
+
+#: manual/api/backend.md:9
+#: manual/api/facade.md:9
+msgid "Status: active"
+msgstr "状态：active"
+
+#: manual/api/backend.md:11
+#: manual/api/facade.md:11
+msgid "Public Contract"
+msgstr "公开契约"
+
+#: manual/api/backend.md:13
+#: manual/api/facade.md:13
+msgid "Describe only exported behavior that exists today."
+msgstr "只描述今天已经存在的导出行为。"
+
+#: manual/api/backend.md:14
+#: manual/api/facade.md:14
+msgid "Call out backend or subtype differences when they are observable."
+msgstr "如果后端、子类型或执行路径存在可观察差异，要明确写出。"
+
+#: manual/api/backend.md:15
+#: manual/api/facade.md:15
+msgid "Keep naming, argument ordering, and error semantics aligned with sibling modules when possible."
+msgstr "在可能的情况下，与同类模块保持命名、参数顺序和错误语义一致。"
+
+#: manual/api/facade.md:1
+msgid "facade API"
+msgstr "facade API 参考"
+
+#: manual/api/facade.md:3
+msgid "facade is part of Luna-Flow/luna_thread. This page should describe the public types, constructors, functions, traits, and observable semantics that are implemented in the current branch."
+msgstr "facade 属于 Luna-Flow/luna_thread。本页描述当前分支已经实现的公开类型、构造器、函数、trait 以及可观察语义。"
+
+#: manual/api/facade.md:7
+msgid "Source boundary: `luna_thread`"
+msgstr "源码边界：`luna_thread`"
+
+#: manual/design/backend.md:1
+msgid "backend Design"
+msgstr "backend 设计"
+
+#: manual/design/backend.md:3
+msgid "This subsystem covers the native C runtime scaffold and the Node.js addon scaffold used to realize the FFI design."
+msgstr "该子系统涵盖用于实现 FFI 设计的原生 C 运行时脚手架和 Node.js 插件脚手架。"
+
+#: manual/design/backend.md:5
+#: manual/design/facade.md:5
+msgid "Responsibilities"
+msgstr "职责"
+
+#: manual/design/backend.md:7
+msgid "Keep the code and docs aligned around `native and js`."
+msgstr "让代码和文档围绕 `native and js` 保持一致。"
+
+#: manual/design/backend.md:8
+#: manual/design/facade.md:8
+msgid "Preserve the real execution model instead of smoothing over important internal differences."
+msgstr "如实保留执行模型，不掩盖重要的内部差异。"
+
+#: manual/design/backend.md:9
+#: manual/design/facade.md:9
+msgid "Note extension points, invariants, and limitations that maintainers must keep stable."
+msgstr "记录维护者必须稳定保留的扩展点、不变量和限制。"
+
+#: manual/design/backend.md:11
+#: manual/design/facade.md:11
+msgid "Maintenance Notes"
+msgstr "维护说明"
+
+#: manual/design/backend.md:13
+#: manual/design/facade.md:13
+msgid "Update this page whenever the module boundary, core algorithm, or observable semantics change."
+msgstr "只要模块边界、核心算法或可观察语义变化，就更新本页。"
+
+#: manual/design/backend.md:14
+#: manual/design/facade.md:14
+msgid "If the module is intentionally incomplete, say so here instead of documenting speculative APIs."
+msgstr "如果模块仍然不完整，也要明确写出，不要伪造未来 API。"
+
+#: manual/design/facade.md:1
+msgid "facade Design"
+msgstr "facade 设计"
+
+#: manual/design/facade.md:3
+msgid "Use this page to explain the structural responsibilities and implementation constraints of this module. facade in Luna-Flow/luna_thread."
+msgstr "本页用于说明这个模块的结构职责和实现约束。 这里聚焦 Luna-Flow/luna_thread 中的 facade。"
+
+#: manual/design/facade.md:7
+msgid "Keep the code and docs aligned around `luna_thread`."
+msgstr "让代码和文档围绕 `luna_thread` 保持一致。"
+
+#: manual/index.md:1
+msgid "luna_thread"
+msgstr "luna_thread"
+
+#: manual/index.md:3
+msgid "luna_thread is a MoonBit library workspace for parallel execution through the foreign function interface. MoonBit code builds a workflow graph, and a native runtime executes it; a JavaScript compatibility path reaches the same runtime through an N-API addon."
+msgstr "luna_thread 是一个通过外部函数接口（FFI）进行并行执行的 MoonBit 库工作区。MoonBit 代码构造 workflow 图，由原生运行时执行；JavaScript 兼容路径则通过 N-API 插件访问同一个运行时。"
+
+#: manual/index.md:5
+msgid "Realization paths"
+msgstr "实现路径"
+
+#: manual/index.md:7
+msgid "MoonBit facade → MoonBit C FFI → C wrapper → C runtime"
+msgstr "MoonBit facade → MoonBit C FFI → C 包装层 → C 运行时"
+
+#: manual/index.md:8
+msgid "MoonBit facade → MoonBit JS FFI → JS wrapper → N-API addon → C runtime"
+msgstr "MoonBit facade → MoonBit JS FFI → JS 包装层 → N-API 插件 → C 运行时"
+
+#: manual/index.md:10
+msgid "Packages"
+msgstr "包"
+
+#: manual/index.md:12
+msgid "**`facade`** (`luna_thread/`): the root MoonBit package that applications import. See the [API reference](api/facade.md), the [design notes](design/facade.md) and the [tutorial](tutorial/facade.md)."
+msgstr "**`facade`**（`luna_thread/`）：应用程序导入的 MoonBit 根包。参见 [API 参考](api/facade.md)、[设计说明](design/facade.md)和[教程](tutorial/facade.md)。"
+
+#: manual/index.md:13
+msgid "**`backend`** (`native/`, `js/` and `luna_thread/backend/`): the native C runtime and the Node.js addon that realize the FFI design. See the [API reference](api/backend.md), the [design notes](design/backend.md) and the [tutorial](tutorial/backend.md)."
+msgstr "**`backend`**（`native/`、`js/` 与 `luna_thread/backend/`）：实现 FFI 设计的原生 C 运行时和 Node.js 插件。参见 [API 参考](api/backend.md)、[设计说明](design/backend.md)和[教程](tutorial/backend.md)。"
+
+#: manual/index.md:15
+msgid "Specification"
+msgstr "规格"
+
+#: manual/index.md:17
+msgid "The specification is the authoritative design narrative for the workspace: it defines the workflow graph, capabilities, ownership transfer and separation-safe execution that the facade and the backends must realize. The English text is normative; the Chinese text is a strict mirror of it."
+msgstr "该规格是本工作区的权威设计叙述：它定义了 facade 与各后端必须实现的 workflow 图、capability、所有权转移和分离安全执行。英文文本具有规范效力，中文文本是其严格镜像。"
+
+#: manual/index.md:19
+msgid "[A Normative Specification for a MoonBit Workflow and Parallel FFI Runtime](../attachments/moonbit_parallel_spec/main.typ)"
+msgstr "[MoonBit Workflow 与并行 FFI Runtime 的规范性规格](../attachments/moonbit_parallel_spec/main.typ)"
+
+#: manual/tutorial/backend.md:1
+msgid "backend Tutorial"
+msgstr "backend 教程"
+
+#: manual/tutorial/backend.md:3
+msgid "Use this page as the starting point for practical workflows around this module. backend in Luna-Flow/luna_thread."
+msgstr "本页用于说明这个模块的实际使用路径。 这里聚焦 Luna-Flow/luna_thread 中的 backend。"
+
+#: manual/tutorial/backend.md:5
+#: manual/tutorial/facade.md:5
+msgid "Suggested Flow"
+msgstr "建议阅读顺序"
+
+#: manual/tutorial/backend.md:7
+msgid "Read the repository README and the backend API reference."
+msgstr "先看仓库 README 和 backend 的 API 文档。"
+
+#: manual/tutorial/backend.md:8
+msgid "Start from the constructors or entry points under `native and js`."
+msgstr "从 `native and js` 中的构造入口或主入口开始。"
+
+#: manual/tutorial/backend.md:9
+#: manual/tutorial/facade.md:9
+msgid "Validate behavior with the existing tests or examples before depending on edge-case semantics."
+msgstr "在依赖边界行为之前，先结合已有测试或示例验证语义。"
+
+#: manual/tutorial/backend.md:11
+#: manual/tutorial/facade.md:11
+msgid "Practical Guidance"
+msgstr "实践建议"
+
+#: manual/tutorial/backend.md:13
+#: manual/tutorial/facade.md:13
+msgid "Prefer the documented entry points over internal helpers."
+msgstr "优先使用已文档化的入口，而不是内部辅助函数。"
+
+#: manual/tutorial/backend.md:14
+#: manual/tutorial/facade.md:14
+msgid "Record runtime, numeric, or proof-state assumptions explicitly in downstream code."
+msgstr "下游代码里显式记录运行时、数值或证明状态前提。"
+
+#: manual/tutorial/facade.md:1
+msgid "facade Tutorial"
+msgstr "facade 教程"
+
+#: manual/tutorial/facade.md:3
+msgid "Begin with `luna_thread/luna_thread.mbt` and the package tests to understand the exposed MoonBit facade."
+msgstr "从 `luna_thread/luna_thread.mbt` 和包测试入手，了解对外暴露的 MoonBit facade。"
+
+#: manual/tutorial/facade.md:7
+msgid "Read the repository README and the facade API reference."
+msgstr "先看仓库 README 和 facade 的 API 文档。"
+
+#: manual/tutorial/facade.md:8
+msgid "Start from the constructors or entry points under `luna_thread`."
+msgstr "从 `luna_thread` 中的构造入口或主入口开始。"
+
+#~ msgid "spec is part of Luna-Flow/luna_thread. This page should describe the public types, constructors, functions, traits, and observable semantics that are implemented in the current branch."
+#~ msgstr "spec 属于 Luna-Flow/luna_thread。本页描述当前分支已经实现的公开类型、构造器、函数、trait 以及可观察语义。"
+
+#~ msgid "Source boundary: `docs`"
+#~ msgstr "源码边界：`docs`"
+
+#~ msgid "Documentation Standard"
+#~ msgstr "文档标准"
+
+#~ msgid "This repository's documentation must describe the real implementation on the current branch for Luna-Flow/luna_thread. It should stay aligned with the exported surface, repository layout, and release narrative."
+#~ msgstr "Luna-Flow/luna_thread 的文档必须描述当前分支里的真实实现，并且持续与导出接口、仓库结构和版本叙事保持一致。"
+
+#~ msgid "Provide `README.md`, `doc_standard.md`, and structured module or subsystem documents for every supported locale."
+#~ msgstr "每个支持语言都提供 `README.md`、`doc_standard.md` 和按模块或子系统组织的文档。"
+
+#~ msgid "Document only APIs, workflows, and design decisions that exist in the current branch."
+#~ msgstr "只记录当前分支已经存在的 API、工作流和设计约束，不写计划中接口。"
+
+#~ msgid "Keep the directory layout aligned with real package or subsystem boundaries."
+#~ msgstr "目录结构必须与真实包边界或子系统边界对齐。"
+
+#~ msgid "Each module or subsystem directory must contain `api.md`, `tutorial.md`, and `design.md`."
+#~ msgstr "每个模块或子系统目录都包含 `api.md`、`tutorial.md`、`design.md`。"
+
+#~ msgid "Use cross-links between related mutable/immutable, runtime/frontend, or spec/implementation areas when semantics differ."
+#~ msgstr "当可观察语义存在差异时，要在相关文档之间建立交叉引用并明确说明。"
+
+#~ msgid "spec Design"
+#~ msgstr "spec 设计"
+
+#~ msgid "Keep the code and docs aligned around `docs`."
+#~ msgstr "让代码和文档围绕 `docs` 保持一致。"
+
+#~ msgid "This documentation tracks the current branch state."
+#~ msgstr "本文档跟踪当前分支状态。"
+
+#~ msgid "Repository Positioning"
+#~ msgstr "仓库定位"
+
+#~ msgid "MoonBit parallel FFI specification workspace with runtime backends and spec assets."
+#~ msgstr "带有运行时后端与规范资产的 MoonBit 并行 FFI 规范工作区。"
+
+#~ msgid "Documentation Layout"
+#~ msgstr "文档布局"
+
+#~ msgid "`README.md` for the repository narrative and release baseline."
+#~ msgstr "`README.md` 记录仓库叙事与版本基线。"
+
+#~ msgid "`doc_standard.md` for the documentation contract."
+#~ msgstr "`doc_standard.md` 记录文档契约。"
+
+#~ msgid "Module or subsystem folders with `api.md`, `tutorial.md`, and `design.md`."
+#~ msgstr "模块或子系统目录下放 `api.md`、`tutorial.md`、`design.md`。"
+
+#~ msgid "Module Overview"
+#~ msgstr "模块概览"
+
+#~ msgid "**`facade`**: Implemented around `luna_thread`."
+#~ msgstr "**`facade`**: 主要实现位于 `luna_thread`。"
+
+#~ msgid "**`backend`**: Implemented around `native and js`."
+#~ msgstr "**`backend`**: 主要实现位于 `native and js`。"
+
+#~ msgid "**`spec`**: Implemented around `docs`."
+#~ msgstr "**`spec`**: 主要实现位于 `docs`。"
+
+#~ msgid "Documentation Entry Points"
+#~ msgstr "文档入口"
+
+#~ msgid "API Reference: [facade](./api/facade.md)"
+#~ msgstr "API 参考: [facade](./api/facade.md)"
+
+#~ msgid "API Reference: [backend](./api/backend.md)"
+#~ msgstr "API 参考: [backend](./api/backend.md)"
+
+#~ msgid "API Reference: [spec](./api/spec.md)"
+#~ msgstr "API 参考: [spec](./api/spec.md)"
+
+#~ msgid "spec Tutorial"
+#~ msgstr "spec 教程"
+
+#~ msgid "Use this page as the starting point for practical workflows around this module. spec in Luna-Flow/luna_thread."
+#~ msgstr "本页用于说明这个模块的实际使用路径。 这里聚焦 Luna-Flow/luna_thread 中的 spec。"
+
+#~ msgid "Read the repository README and the spec API reference."
+#~ msgstr "先看仓库 README 和 spec 的 API 文档。"
+
+#~ msgid "Start from the constructors or entry points under `docs`."
+#~ msgstr "从 `docs` 中的构造入口或主入口开始。"

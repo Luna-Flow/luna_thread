@@ -23,7 +23,9 @@ js-build:
 docs: docs-en docs-zh
 
 docs-en:
-	$(TYPST) compile docs/moonbit-parallel-spec-en.typ docs/moonbit-parallel-spec-en.pdf
+	mkdir -p build/docs
+	$(TYPST) compile --root doc/attachments doc/attachments/moonbit_parallel_spec/main.typ build/docs/moonbit_parallel_spec.pdf
 
 docs-zh:
-	$(TYPST) compile docs/moonbit-parallel-spec-zh.typ docs/moonbit-parallel-spec-zh.pdf
+	mkdir -p build/docs
+	$(TYPST) compile --root doc/attachments doc/attachments/moonbit_parallel_spec/main.zh_CN.typ build/docs/moonbit_parallel_spec.zh_CN.pdf

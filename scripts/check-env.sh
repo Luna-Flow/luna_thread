@@ -27,7 +27,7 @@ check_typst_build() {
   local src="$1"
   local out
   out="$(mktemp /tmp/luna-thread-typst-XXXXXX.pdf)"
-  if typst compile "$src" "$out" >/dev/null 2>&1; then
+  if typst compile --root doc/attachments "$src" "$out" >/dev/null 2>&1; then
     status_ok "typst compile: $(basename "$src")"
     rm -f "$out"
   else
@@ -38,8 +38,8 @@ check_typst_build() {
 
 check_docs_if_requested() {
   if [[ "${CHECK_DOCS:-0}" == "1" ]]; then
-    check_typst_build "docs/moonbit-parallel-spec-en.typ"
-    check_typst_build "docs/moonbit-parallel-spec-zh.typ"
+    check_typst_build "doc/attachments/moonbit_parallel_spec/main.typ"
+    check_typst_build "doc/attachments/moonbit_parallel_spec/main.zh_CN.typ"
   else
     status_ok "typst compile: skipped (set CHECK_DOCS=1 to enable)"
   fi
