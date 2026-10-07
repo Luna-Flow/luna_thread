@@ -2,7 +2,7 @@
   "name": "luna-thread-js",
   "version": "0.1.0",
   "private": true,
-  "description": "N-API addon scaffold for luna_thread",
+  "description": "JavaScript addon layer for luna_thread, bridging MoonBit parallel runtime support to Node.js via N-API.",
   "gypfile": true,
   "scripts": {
     "build": "node-gyp rebuild",
