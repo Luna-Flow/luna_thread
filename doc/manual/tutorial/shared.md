@@ -1,14 +1,27 @@
 # shared tutorial
 
-This tutorial shows you how to build and check execution policies, ask what a
-backend declares it can do, and convert native status codes. These are the
-values every other package of `luna_thread` takes as input.
+This tutorial gets you building and checking execution policies, asking what a
+backend declares it can do, and converting native status codes. These are the
+values every other package of `luna_thread` takes as input, so the tasks here
+come up whenever you build a plan or a workflow.
+
+| I want to | Use |
+| --- | --- |
+| build a policy from arguments I do not control | `@shared.make_execution_policy(...)`, a `Result` |
+| get the default native policy | `@shared.native_policy()` |
+| know whether a policy asks for parallelism | `@shared.is_parallel(policy)` |
+| see what a backend declares | `@shared.RuntimeCapabilities::for_backend(target)` |
+| turn a C status code into a constructor | `@shared.native_status_from_code(code)` |
 
 ## Quick start
 
-Import the package:
+Add the module and import the package; it builds on every target:
 
-```text
+```bash
+moon add Luna-Flow/luna_thread@0.1.0
+```
+
+```moonbit nocheck
 import {
   "Luna-Flow/luna_thread/shared",
 }
@@ -55,7 +68,8 @@ test "rejected policies" {
 ### Re-check a stored policy
 
 `validate_policy` lists every issue of a policy you already have, for example
-one read back from a workflow:
+one read back from a workflow. Policies can only be built through the checked
+constructors, so for any policy you can get hold of the list is empty:
 
 ```moonbit
 test "validate a stored policy" {
@@ -99,7 +113,8 @@ lists the codes.
   `javascript_policy` always aborts in v1. Use `make_execution_policy` when the
   arguments come from outside.
 - `RuntimeCapabilities::for_backend` is a fixed table. The JavaScript row does
-  not mean the JavaScript backend runs anything.
+  not mean the JavaScript backend runs anything, and the native row declares
+  parallelism that the `moon` build of the kernels does not use.
 - `native_status_from_code` maps every unknown code, including the workflow
   statuses 8 to 14, to `InvalidArgument`. Keep the raw code when you need it.
 

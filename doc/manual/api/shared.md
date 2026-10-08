@@ -1,14 +1,30 @@
 # shared API
 
-The package `Luna-Flow/luna_thread/shared`, imported as `@shared`, holds the
-vocabulary that every other package of the module uses: backend targets,
-execution modes, ordering guarantees, execution policies and their
-validation, the declared capabilities of each backend, native status codes,
-and integer-coded records that mirror the C request structs. It builds on
-every target.
+## Purpose
 
-The enumerations of this package are read-only outside it: match on their
-constructors, but build values with the functions below.
+The package `Luna-Flow/luna_thread/shared` holds the vocabulary that every
+other package of the module uses: backend targets, execution modes, ordering
+guarantees, execution policies and their validation, the declared capabilities
+of each backend, native status codes, and integer-coded records that mirror
+the C request structs. It has no dependencies besides the core library and
+builds on every target.
+
+The enumerations and records of this package are read-only outside it: match
+on their constructors and read their fields, but build values with the
+functions below. The reasons behind the policy rules and the status-code
+mapping are in the [shared design](../design/shared.md).
+
+## Importing
+
+Add the package to your `moon.pkg`:
+
+```moonbit nocheck
+import {
+  "Luna-Flow/luna_thread/shared",
+}
+```
+
+The examples on this page call it as `@shared`.
 
 ## Targets, modes and orderings
 
@@ -124,7 +140,8 @@ The checks run in the order `worker_count > 0`, `chunk_size > 0`,
 ### `ExecutionPolicy::new`
 
 Builds a policy like `make_execution_policy` and aborts when it would return an
-error.
+error, for example for `worker_count=0` or `backend=JavaScript`. Use
+`make_execution_policy` when the arguments come from outside the program.
 
 ```mbti
 pub fn ExecutionPolicy::new(backend? : BackendTarget, mode? : ExecutionMode, worker_count? : Int, chunk_size? : Int, ordering? : OrderingGuarantee) -> Self
@@ -141,8 +158,12 @@ pub fn javascript_policy() -> ExecutionPolicy
 ```
 
 `native_policy()` is `make_execution_policy().unwrap()`. `javascript_policy()`
-is `make_execution_policy(backend=JavaScript).unwrap()`, which aborts in v1
-because the JavaScript backend is rejected.
+is `make_execution_policy(backend=JavaScript).unwrap()`.
+
+> [!WARNING]
+> `javascript_policy()` aborts on every call in v1, because
+> `make_execution_policy` rejects the JavaScript backend. It exists so that code
+> written for the planned backend compiles; do not call it.
 
 ### `validate_policy`
 
@@ -152,8 +173,12 @@ Returns every issue of an existing policy, in the order of the checks above.
 pub fn validate_policy(ExecutionPolicy) -> Array[PolicyIssue]
 ```
 
-Policies built with the functions above always pass; `validate_policy` matters
-for a policy stored in a workflow, which `@workflow.validate` re-checks.
+`ExecutionPolicy` is read-only outside this package, so the functions above
+are the only way to obtain one, and each of them either returns a policy that
+passes every check or aborts. Outside `shared`, `validate_policy` therefore
+always returns `[]`. It exists as a defensive re-check: `@workflow.validate`
+calls it on the policy stored in a workflow, and the
+[shared design](../design/shared.md) derives why the result is empty.
 
 ### `is_parallel`
 
@@ -206,8 +231,10 @@ pub fn RuntimeCapabilities::for_backend(BackendTarget) -> Self
 | `JavaScript` | `true` | `true` | `true` |
 
 The table is a fixed declaration, not a probe of the running system. The
-JavaScript entries describe the backend the specification plans; the
-JavaScript backend executes nothing yet.
+native row declares parallelism, but the `moon` build compiles the C runtime
+without OpenMP, so the kernels run on one thread there; only the workflow
+scheduler starts threads. The JavaScript entries describe the backend the
+specification plans; the JavaScript backend executes nothing yet.
 
 ## Native status codes
 
