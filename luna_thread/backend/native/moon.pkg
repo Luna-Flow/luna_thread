@@ -1,4 +1,5 @@
 import {
+  "moonbitlang/core/debug",
   "Luna-Flow/luna_thread/plan",
   "Luna-Flow/luna_thread/shared",
   "Luna-Flow/luna_thread/workflow",
