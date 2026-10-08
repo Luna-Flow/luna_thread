@@ -33,7 +33,7 @@ test {
 ///|
 test {
   match @shared.make_execution_policy(backend=@shared.javascript_target()) {
-    Err({ issue: @shared.UnsupportedBackendForV1(@shared.JavaScript) }) => ()
+    Err({ issue: @shared.UnsupportedBackendForV1(@shared.JavaScript), }) => ()
     _ => panic()
   }
 }
@@ -41,18 +41,15 @@ test {
 ///|
 test {
   match @shared.make_execution_policy(mode=@shared.asynchronous_mode()) {
-    Err({ issue: @shared.UnsupportedModeForV1(@shared.Asynchronous) }) => ()
+    Err({ issue: @shared.UnsupportedModeForV1(@shared.Asynchronous), }) => ()
     _ => panic()
   }
 }
 
 ///|
 test {
-  let policy = @shared.make_execution_policy(
-    worker_count=4,
-    chunk_size=2,
-  ).unwrap()
-  let plan = @plan.scan("prefix-sum", @plan.i32_type(), 8, policy=policy)
+  let policy = @shared.make_execution_policy(worker_count=4, chunk_size=2).unwrap()
+  let plan = @plan.scan("prefix-sum", @plan.i32_type(), 8, policy~)
   match @native.scan_request_from_plan(plan) {
     Ok(req) => {
       assert_eq(@native.scan_request_is_valid(req), true)

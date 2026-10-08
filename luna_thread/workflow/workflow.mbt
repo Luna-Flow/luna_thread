@@ -216,7 +216,7 @@ pub fn Capability::new(
   kind : CapabilityKind,
   access : AccessMode,
 ) -> Capability {
-  { id, label, kind, access }
+  { id, label, kind, access, }
 }
 
 ///|
@@ -226,12 +226,12 @@ pub fn Node::new(
   kind : NodeKind,
   capability? : Int,
 ) -> Node {
-  { id, label, kind, capability }
+  { id, label, kind, capability, }
 }
 
 ///|
 pub fn Edge::new(from : Int, to : Int, kind : EdgeKind) -> Edge {
-  { from, to, kind }
+  { from, to, kind, }
 }
 
 ///|
@@ -239,71 +239,67 @@ pub fn Workflow::new(
   label : String,
   policy? : @shared.ExecutionPolicy = @shared.native_policy(),
 ) -> Workflow {
-  { label, policy, capabilities: [], nodes: [], edges: [] }
+  { label, policy, capabilities: [], nodes: [], edges: [], }
 }
 
 ///|
-pub fn compute_node(
-  id : Int,
-  label : String,
-  plan : @plan.Plan,
-) -> Node {
+pub fn compute_node(id : Int, label : String, plan : @plan.Plan) -> Node {
   Node::new(id, label, Compute(plan))
 }
 
 ///|
 pub fn spawn_node(id : Int, label : String, capability? : Int) -> Node {
-  { id, label, kind: Spawn, capability }
+  { id, label, kind: Spawn, capability, }
 }
 
 ///|
 pub fn join_node(id : Int, label : String, capability? : Int) -> Node {
-  { id, label, kind: Join, capability }
+  { id, label, kind: Join, capability, }
 }
 
 ///|
 pub fn send_node(id : Int, label : String, capability? : Int) -> Node {
-  { id, label, kind: Send, capability }
+  { id, label, kind: Send, capability, }
 }
 
 ///|
 pub fn recv_node(id : Int, label : String, capability? : Int) -> Node {
-  { id, label, kind: Recv, capability }
+  { id, label, kind: Recv, capability, }
 }
 
 ///|
 pub fn lock_node(id : Int, label : String, capability? : Int) -> Node {
-  { id, label, kind: Lock, capability }
+  { id, label, kind: Lock, capability, }
 }
 
 ///|
 pub fn unlock_node(id : Int, label : String, capability? : Int) -> Node {
-  { id, label, kind: Unlock, capability }
+  { id, label, kind: Unlock, capability, }
 }
 
 ///|
 pub fn wait_node(id : Int, label : String, capability? : Int) -> Node {
-  { id, label, kind: Wait, capability }
+  { id, label, kind: Wait, capability, }
 }
 
 ///|
 pub fn signal_node(id : Int, label : String, capability? : Int) -> Node {
-  { id, label, kind: Signal, capability }
+  { id, label, kind: Signal, capability, }
 }
 
 ///|
 pub fn barrier_node(id : Int, label : String, capability? : Int) -> Node {
-  { id, label, kind: Barrier, capability }
+  { id, label, kind: Barrier, capability, }
 }
 
 ///|
 pub fn read_shared_node(id : Int, label : String, capability? : Int) -> Node {
-  { id, label, kind: ReadShared, capability }
+  { id, label, kind: ReadShared, capability, }
 }
 
 ///|
 pub fn write_shared_node(id : Int, label : String, capability? : Int) -> Node {
-  { id, label, kind: WriteShared, capability }
+  { id, label, kind: WriteShared, capability, }
 }
 
 ///|
@@ -316,19 +312,13 @@ pub fn Workflow::add_capability(
 }
 
 ///|
-pub fn Workflow::add_node(
-  self : Workflow,
-  node : Node,
-) -> Workflow {
+pub fn Workflow::add_node(self : Workflow, node : Node) -> Workflow {
   self.nodes.push(node)
   self
 }
 
 ///|
-pub fn Workflow::add_edge(
-  self : Workflow,
-  edge : Edge,
-) -> Workflow {
+pub fn Workflow::add_edge(self : Workflow, edge : Edge) -> Workflow {
   self.edges.push(edge)
   self
 }
@@ -365,7 +355,8 @@ fn capability_access_is_valid(
   access : AccessMode,
 ) -> Bool {
   match kind {
-    OwnedBuffer => access == ReadOnly || access == WriteOnly || access == ReadWrite
+    OwnedBuffer =>
+      access == ReadOnly || access == WriteOnly || access == ReadWrite
     SharedReadView => access == ReadOnly
     AtomicCell => access == ReadWrite
     Mutex => access == SynchronizeOnly
@@ -422,8 +413,10 @@ fn node_matches_capability(
     Wait => capability_kind == Condvar
     Signal => capability_kind == Condvar
     Barrier => capability_kind == Barrier
-    ReadShared => capability_kind == SharedReadView || capability_kind == AtomicCell
-    WriteShared => capability_kind == AtomicCell || capability_kind == OwnedBuffer
+    ReadShared =>
+      capability_kind == SharedReadView || capability_kind == AtomicCell
+    WriteShared =>
+      capability_kind == AtomicCell || capability_kind == OwnedBuffer
     _ => true
   }
 }
@@ -431,10 +424,10 @@ fn node_matches_capability(
 ///|
 fn invalid_node_issue(kind : NodeKind, node_id : Int) -> WorkflowIssue {
   match kind {
-    Send | Recv => InvalidChannelNode(node_id=node_id)
-    Lock | Unlock => InvalidMutexNode(node_id=node_id)
-    Wait | Signal => InvalidCondvarNode(node_id=node_id)
-    Barrier => InvalidBarrierNode(node_id=node_id)
+    Send | Recv => InvalidChannelNode(node_id~)
+    Lock | Unlock => InvalidMutexNode(node_id~)
+    Wait | Signal => InvalidCondvarNode(node_id~)
+    Barrier => InvalidBarrierNode(node_id~)
     _ => InvalidDependency(from_id=node_id, to_id=node_id)
   }
 }
@@ -446,9 +439,9 @@ fn indegree_of(workflow : Workflow, node_id : Int) -> Int {
 
 ///|
 fn has_dependency_cycle(workflow : Workflow) -> Bool {
-  let zero_indegree = workflow.nodes.filter(fn(node) {
-    indegree_of(workflow, node.id) == 0
-  }).length()
+  let zero_indegree = workflow.nodes
+    .filter(fn(node) { indegree_of(workflow, node.id) == 0 })
+    .length()
   if workflow.nodes.length() > 0 && zero_indegree == 0 {
     return true
   }
@@ -467,7 +460,7 @@ pub fn validate(workflow : Workflow) -> Array[WorkflowIssue] {
     issues.push(EmptyWorkflow)
   }
   for issue in policy_issues {
-    issues.push(InvalidPolicy(issue=issue))
+    issues.push(InvalidPolicy(issue~))
   }
   for capability in workflow.capabilities {
     if !capability_kind_supported_in_v1(capability.kind) {
@@ -476,13 +469,17 @@ pub fn validate(workflow : Workflow) -> Array[WorkflowIssue] {
     if !capability_access_is_valid(capability.kind, capability.access) {
       issues.push(InvalidCapabilityAccess(capability_id=capability.id))
     }
-    let duplicates = workflow.capabilities.filter(fn(other) { other.id == capability.id }).length()
+    let duplicates = workflow.capabilities
+      .filter(fn(other) { other.id == capability.id })
+      .length()
     if duplicates > 1 {
       issues.push(DuplicateCapabilityId(capability_id=capability.id))
     }
   }
   for node in workflow.nodes {
-    let duplicates = workflow.nodes.filter(fn(other) { other.id == node.id }).length()
+    let duplicates = workflow.nodes
+      .filter(fn(other) { other.id == node.id })
+      .length()
     if duplicates > 1 {
       issues.push(DuplicateNodeId(node_id=node.id))
     }
@@ -492,7 +489,7 @@ pub fn validate(workflow : Workflow) -> Array[WorkflowIssue] {
     match node.capability {
       Some(capability_id) =>
         if !workflow_has_capability_id(workflow, capability_id) {
-          issues.push(MissingCapability(capability_id=capability_id))
+          issues.push(MissingCapability(capability_id~))
         } else {
           match capability_kind_by_id(workflow, capability_id) {
             Some(kind) =>
@@ -512,7 +509,7 @@ pub fn validate(workflow : Workflow) -> Array[WorkflowIssue] {
     match node.kind {
       Compute(plan) =>
         for issue in @plan.validate(plan) {
-          issues.push(InvalidComputePlan(node_id=node.id, issue=issue))
+          issues.push(InvalidComputePlan(node_id=node.id, issue~))
         }
       _ => ()
     }
@@ -550,13 +547,7 @@ pub fn submit(
 ) -> Submission {
   let issues = validate(workflow)
   let accepted = issues.length() == 0 && backend == @shared.native_target()
-  {
-    workflow,
-    backend,
-    accepted,
-    completed: false,
-    issues,
-  }
+  { workflow, backend, accepted, completed: false, issues, }
 }
 
 ///|

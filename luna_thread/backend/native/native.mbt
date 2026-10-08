@@ -97,17 +97,13 @@ pub fn supports_openmp() -> Bool {
 }
 
 ///|
-pub fn workflow_is_supported(
-  workflow : @workflow.Workflow,
-) -> Bool {
+pub fn workflow_is_supported(workflow : @workflow.Workflow) -> Bool {
   @workflow.validate(workflow).length() == 0 &&
   workflow.policy().backend == @shared.native_target()
 }
 
 ///|
-pub fn submit_workflow(
-  workflow : @workflow.Workflow,
-) -> @workflow.Submission {
+pub fn submit_workflow(workflow : @workflow.Workflow) -> @workflow.Submission {
   @workflow.submit(workflow, backend=@shared.native_target())
 }
 
@@ -202,7 +198,7 @@ pub fn submit_workflow_async(
     edge_kinds,
     edges.length(),
   )
-  Ok(WorkflowHandle::{ raw })
+  Ok(WorkflowHandle::{ raw, })
 }
 
 ///|

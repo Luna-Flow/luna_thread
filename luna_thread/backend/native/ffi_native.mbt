@@ -126,9 +126,7 @@ pub extern "C" fn ffi_submit_workflow_async(
 
 ///|
 #cfg(target="native")
-pub extern "C" fn ffi_workflow_poll_state(
-  handle : NativeWorkflowHandle,
-) -> Int = "luna_mbt_workflow_poll_state"
+pub extern "C" fn ffi_workflow_poll_state(handle : NativeWorkflowHandle) -> Int = "luna_mbt_workflow_poll_state"
 
 ///|
 #cfg(target="native")
@@ -156,6 +154,4 @@ pub extern "C" fn ffi_workflow_wait_status(
 
 ///|
 #cfg(target="native")
-pub extern "C" fn ffi_workflow_destroy(
-  handle : NativeWorkflowHandle,
-) -> Unit = "luna_mbt_workflow_destroy"
+pub extern "C" fn ffi_workflow_destroy(handle : NativeWorkflowHandle) -> Unit = "luna_mbt_workflow_destroy"

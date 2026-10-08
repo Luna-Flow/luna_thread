@@ -160,7 +160,7 @@ pub fn DataDomain::new(
   element_type : ValueType,
   input_length : Int,
 ) -> DataDomain {
-  { element_type, input_length }
+  { element_type, input_length, }
 }
 
 ///|
@@ -172,7 +172,7 @@ pub fn Plan::new(
   reduction? : ReductionKernel,
   ordering? : @shared.OrderingGuarantee = @shared.preserve_input_order(),
 ) -> Plan {
-  { label, kind, domain, policy, reduction, ordering }
+  { label, kind, domain, policy, reduction, ordering, }
 }
 
 ///|

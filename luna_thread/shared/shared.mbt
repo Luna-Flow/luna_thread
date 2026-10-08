@@ -197,18 +197,18 @@ pub fn make_execution_policy(
   ordering? : OrderingGuarantee = PreserveInputOrder,
 ) -> Result[ExecutionPolicy, PolicyError] {
   if worker_count <= 0 {
-    return Err({ issue: WorkerCountMustBePositive(worker_count) })
+    return Err({ issue: WorkerCountMustBePositive(worker_count), })
   }
   if chunk_size <= 0 {
-    return Err({ issue: ChunkSizeMustBePositive(chunk_size) })
+    return Err({ issue: ChunkSizeMustBePositive(chunk_size), })
   }
   if backend != Native {
-    return Err({ issue: UnsupportedBackendForV1(backend) })
+    return Err({ issue: UnsupportedBackendForV1(backend), })
   }
   if mode != Synchronous {
-    return Err({ issue: UnsupportedModeForV1(mode) })
+    return Err({ issue: UnsupportedModeForV1(mode), })
   }
-  Ok({ backend, mode, worker_count, chunk_size, ordering })
+  Ok({ backend, mode, worker_count, chunk_size, ordering, })
 }
 
 ///|
@@ -260,7 +260,7 @@ pub fn native_status_from_code(code : Int) -> NativeStatus {
 
 ///|
 pub fn NativeBuffer::new(ptr : Int, length : Int) -> NativeBuffer {
-  { ptr, length }
+  { ptr, length, }
 }
 
 ///|
@@ -282,7 +282,7 @@ pub fn NativeMapRequest::new(
   worker_count : Int,
   chunk_size : Int,
 ) -> NativeMapRequest {
-  { input, output, element_count, value_type, worker_count, chunk_size }
+  { input, output, element_count, value_type, worker_count, chunk_size, }
 }
 
 ///|

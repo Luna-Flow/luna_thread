@@ -66,7 +66,7 @@ test {
 ///|
 test {
   match @luna_thread.make_policy(worker_count=-3, chunk_size=0) {
-    Err({ issue: @shared.WorkerCountMustBePositive(-3) }) => ()
+    Err({ issue: @shared.WorkerCountMustBePositive(-3), }) => ()
     _ => panic()
   }
 }
@@ -94,7 +94,7 @@ test {
     4,
     policy~,
   )
-  let workflow = @luna_thread.workflow("pipeline", policy=policy)
+  let workflow = @luna_thread.workflow("pipeline", policy~)
     .add_capability(@luna_thread.channel_capability(1, "jobs"))
     .add_node(@luna_thread.spawn_task(1, "spawn"))
     .add_node(@luna_thread.compute_task(2, "compute", compute))
@@ -110,21 +110,25 @@ test {
 ///|
 test {
   let policy = @luna_thread.make_policy(worker_count=2, chunk_size=2).unwrap()
-  let workflow = @luna_thread.workflow("async-pipeline", policy=policy)
+  let workflow = @luna_thread.workflow("async-pipeline", policy~)
     .add_capability(@luna_thread.channel_capability(1, "jobs"))
     .add_capability(@luna_thread.mutex_capability(2, "guard"))
-    .add_capability(@workflow.Capability::new(
-      3,
-      "signal",
-      @workflow.condvar_capability(),
-      @workflow.synchronize_only_access(),
-    ))
-    .add_capability(@workflow.Capability::new(
-      4,
-      "barrier",
-      @workflow.barrier_capability(),
-      @workflow.synchronize_only_access(),
-    ))
+    .add_capability(
+      @workflow.Capability::new(
+        3,
+        "signal",
+        @workflow.condvar_capability(),
+        @workflow.synchronize_only_access(),
+      ),
+    )
+    .add_capability(
+      @workflow.Capability::new(
+        4,
+        "barrier",
+        @workflow.barrier_capability(),
+        @workflow.synchronize_only_access(),
+      ),
+    )
     .add_node(@luna_thread.spawn_task(1, "spawn"))
     .add_node(@workflow.send_node(2, "send", capability=1))
     .add_node(@workflow.lock_node(3, "lock", capability=2))
@@ -156,21 +160,25 @@ test {
 ///|
 test {
   let policy = @luna_thread.make_policy(worker_count=2, chunk_size=2).unwrap()
-  let workflow = @luna_thread.workflow("broken-barrier", policy=policy)
+  let workflow = @luna_thread.workflow("broken-barrier", policy~)
     .add_capability(@luna_thread.channel_capability(1, "jobs"))
     .add_capability(@luna_thread.mutex_capability(2, "guard"))
-    .add_capability(@workflow.Capability::new(
-      3,
-      "signal",
-      @workflow.condvar_capability(),
-      @workflow.synchronize_only_access(),
-    ))
-    .add_capability(@workflow.Capability::new(
-      4,
-      "barrier",
-      @workflow.barrier_capability(),
-      @workflow.synchronize_only_access(),
-    ))
+    .add_capability(
+      @workflow.Capability::new(
+        3,
+        "signal",
+        @workflow.condvar_capability(),
+        @workflow.synchronize_only_access(),
+      ),
+    )
+    .add_capability(
+      @workflow.Capability::new(
+        4,
+        "barrier",
+        @workflow.barrier_capability(),
+        @workflow.synchronize_only_access(),
+      ),
+    )
     .add_node(@luna_thread.spawn_task(1, "spawn"))
     .add_node(@workflow.send_node(2, "send", capability=1))
     .add_node(@workflow.lock_node(3, "lock", capability=2))

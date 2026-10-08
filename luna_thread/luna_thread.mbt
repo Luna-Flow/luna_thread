@@ -138,10 +138,7 @@ pub fn join_task(id : Int, label : String) -> @workflow.Node {
 }
 
 ///|
-pub fn channel_capability(
-  id : Int,
-  label : String,
-) -> @workflow.Capability {
+pub fn channel_capability(id : Int, label : String) -> @workflow.Capability {
   @workflow.Capability::new(
     id,
     label,
@@ -151,10 +148,7 @@ pub fn channel_capability(
 }
 
 ///|
-pub fn mutex_capability(
-  id : Int,
-  label : String,
-) -> @workflow.Capability {
+pub fn mutex_capability(id : Int, label : String) -> @workflow.Capability {
   @workflow.Capability::new(
     id,
     label,
@@ -164,10 +158,7 @@ pub fn mutex_capability(
 }
 
 ///|
-pub fn shared_read_capability(
-  id : Int,
-  label : String,
-) -> @workflow.Capability {
+pub fn shared_read_capability(id : Int, label : String) -> @workflow.Capability {
   @workflow.Capability::new(
     id,
     label,
@@ -234,16 +225,12 @@ pub fn submit_workflow_async(
 }
 
 ///|
-pub fn poll_workflow(
-  handle : @native.WorkflowHandle,
-) -> @native.WorkflowResult {
+pub fn poll_workflow(handle : @native.WorkflowHandle) -> @native.WorkflowResult {
   @native.poll_workflow(handle)
 }
 
 ///|
-pub fn wait_workflow(
-  handle : @native.WorkflowHandle,
-) -> @native.WorkflowResult {
+pub fn wait_workflow(handle : @native.WorkflowHandle) -> @native.WorkflowResult {
   @native.wait_workflow(handle)
 }
 
