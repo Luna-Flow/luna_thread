@@ -1,23 +1,33 @@
 # core tutorial
 
-This tutorial shows you how to run parallel integer kernels from MoonBit with
-the `luna_thread` facade, how to describe the same work as a plan that the
-library validates, and how to build and check a workflow graph. Everything
-runs on the native target.
+This tutorial gets you running parallel integer kernels from MoonBit with the
+`luna_thread` facade, describing the same work as a plan that the library
+validates, and building and checking a workflow graph. Everything runs on the
+native target.
+
+| I want to | Use |
+| --- | --- |
+| sum, double or prefix-sum an `Int` array | `@luna_thread.execute_reduce_sum_i32`, `execute_map_i32`, `execute_scan_sum_i32` with `worker_count~` and `chunk_size~` |
+| choose the worker count for a chunk size | $w = \lceil n / c \rceil$, see below |
+| describe work without running it | `@luna_thread.map`, `reduce`, `scan`, `map_reduce`, then `is_ready` |
+| build a task graph | `@luna_thread.workflow`, `spawn_task`, `compute_task`, `join_task` |
+| check and record a graph | `@luna_thread.workflow_is_ready`, `submit_workflow` |
 
 ## Quick start
 
 Add the module:
 
-```text
+```bash
 moon add Luna-Flow/luna_thread@0.1.0
 ```
 
-Import the facade from a package that builds for the native target:
+Import the facade, and `workflow` for edges, from a package that builds for
+the native target:
 
-```text
+```moonbit nocheck
 import {
   "Luna-Flow/luna_thread",
+  "Luna-Flow/luna_thread/workflow",
 }
 
 supported_targets = "native"
@@ -147,9 +157,8 @@ test "workflow" {
 }
 ```
 
-This needs `"Luna-Flow/luna_thread/workflow"` in the imports as well, for
-`Edge`. `submit_workflow` validates and records the submission; it does not run
-the graph.
+`Edge` comes from the `workflow` package imported above. `submit_workflow`
+validates and records the submission; it does not run the graph.
 
 ## Going further
 

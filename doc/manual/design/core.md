@@ -8,31 +8,16 @@ one import, with sensible defaults, while the real definitions stay in the
 packages that own them. It is also where the backend is chosen, so it is the
 only package besides `backend/native` that depends on the C runtime.
 
-## Mathematical background
+## Constraints
 
-The facade adds no new concepts; it is a set of equations between its functions
-and those of the underlying packages. With $\mathbf{d}$ the default policy
-$(\mathrm{Native}, \mathrm{Synchronous}, 1, 1, \mathrm{PreserveInputOrder})$:
+- The facade imports `backend/native`, whose foreign functions exist only on
+  the native target, so the facade cannot build anywhere else.
+- MoonBit methods can only be defined in the package that owns the type, so the
+  facade cannot add methods to `Plan`, `Workflow` or `ExecutionPolicy`.
+- Every facade function must mean exactly what the function it wraps means, so
+  that moving from the facade to a package import changes no behaviour.
 
-$$
-\begin{aligned}
-\texttt{@luna\_thread.map}(\ell, t, n) &= \texttt{@plan.map}(\ell, t, n, \mathbf{d}, \mathrm{PreserveInputOrder}), \\
-\texttt{@luna\_thread.submit\_workflow}(w, \mathrm{Native}) &= \texttt{@workflow.submit}(w, \mathrm{Native}), \\
-\texttt{@luna\_thread.execute\_map\_i32}(x, w, c) &= \texttt{@native.execute\_map\_i32}(x, w, c),
-\end{aligned}
-$$
-
-and likewise for every other function. The only facts specific to the facade
-are its defaults. For the kernels the defaults are $w = c = 1$, and the native
-cover condition $w \ge \lceil n / c \rceil$ becomes
-
-$$
-1 \ge \left\lceil \frac{n}{1} \right\rceil = n ,
-$$
-
-so with default arguments the kernels accept only inputs of length one.
-
-## Design decisions
+## Main design decisions
 
 ### Free functions with defaults
 
@@ -64,9 +49,33 @@ provide everything except execution.
 ### Kernel defaults kept from the original interface
 
 The kernel defaults $w = c = 1$ are the smallest valid policy values, matching
-`make_policy`, but as derived above they satisfy the cover condition only for
+`make_policy`, but as derived below they satisfy the cover condition only for
 one element. Changing them would change the meaning of existing calls; the
 API and tutorial pages tell users to pass both arguments.
+
+## Mathematical background
+
+The facade adds no new concepts; it is a set of equations between its functions
+and those of the underlying packages. With $\mathbf{d}$ the default policy
+$(\mathrm{Native}, \mathrm{Synchronous}, 1, 1, \mathrm{PreserveInputOrder})$:
+
+$$
+\begin{aligned}
+\texttt{@luna\_thread.map}(\ell, t, n) &= \texttt{@plan.map}(\ell, t, n, \mathbf{d}, \mathrm{PreserveInputOrder}), \\
+\texttt{@luna\_thread.submit\_workflow}(w, \mathrm{Native}) &= \texttt{@workflow.submit}(w, \mathrm{Native}), \\
+\texttt{@luna\_thread.execute\_map\_i32}(x, w, c) &= \texttt{@native.execute\_map\_i32}(x, w, c),
+\end{aligned}
+$$
+
+and likewise for every other function. The only facts specific to the facade
+are its defaults. For the kernels the defaults are $w = c = 1$, and the native
+cover condition $w \ge \lceil n / c \rceil$ becomes
+
+$$
+1 \ge \left\lceil \frac{n}{1} \right\rceil = n ,
+$$
+
+so with default arguments the kernels accept only inputs of length one.
 
 ## Correctness / invariants
 

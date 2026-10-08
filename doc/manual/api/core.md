@@ -1,11 +1,31 @@
 # core API
 
-The root package `Luna-Flow/luna_thread`, imported as `@luna_thread`, is the
-facade of the module. It re-exports the common constructors of `plan`,
-`shared` and `workflow` with defaults filled in, executes integer kernels on
-the native backend, and submits workflows. It builds only for the `native`
-target. Every function here is a thin wrapper; the linked package pages give
-the full semantics of the types it returns.
+## Purpose
+
+The root package `Luna-Flow/luna_thread` is the facade of the module. It
+re-exports the common constructors of `plan`, `shared` and `workflow` with
+defaults filled in, executes integer kernels on the native backend, and submits
+workflows. It builds only for the `native` target. Every function here is a
+thin wrapper; the linked package pages give the full semantics of the types it
+returns, and the [core design](../design/core.md) explains the defaults.
+
+## Importing
+
+Add the module and import the facade in the `moon.pkg` of a package that builds
+for the native target:
+
+```moonbit nocheck
+import {
+  "Luna-Flow/luna_thread",
+  "Luna-Flow/luna_thread/workflow",
+}
+
+supported_targets = "native"
+```
+
+The examples on this page call the facade as `@luna_thread`. The `workflow`
+import is needed only for `@workflow.Edge`, which the facade does not
+re-export.
 
 ## Module information
 
@@ -58,9 +78,13 @@ pub fn default_policy() -> @shared.ExecutionPolicy
 
 ### `javascript_policy`
 
-Builds a policy for the JavaScript backend. In v1 the policy constructor
-rejects every backend other than `Native`, so this function aborts; it is kept
-for the JavaScript backend that the specification describes.
+Builds a policy for the JavaScript backend. It is kept for the JavaScript
+backend that the specification describes.
+
+> [!WARNING]
+> In v1 the policy constructor rejects every backend other than `Native`, so
+> `javascript_policy()` aborts on every call. Use `make_policy` and handle the
+> `Err` instead.
 
 ```mbti
 pub fn javascript_policy() -> @shared.ExecutionPolicy
@@ -260,11 +284,26 @@ Returns the sum of the elements.
 pub fn execute_reduce_sum_i32(FixedArray[Int], worker_count? : Int, chunk_size? : Int) -> Int
 ```
 
-The sum is exact when it is returned. On any failure, an invalid argument or
-an overflow of a partial sum, the function returns `0`, which cannot be told
-apart from a true sum of zero. Whether a partial sum overflows depends on the
-chunking: `[-1, 0, 2147483647, 1]` sums to `2147483647` with $w = 1, c = 4$
-but returns `0` with $w = 2, c = 2$.
+The sum is exact when it is returned.
+
+> [!WARNING]
+> On any failure, an invalid argument or an overflow of a partial sum, the
+> function returns `0`, which cannot be told apart from a true sum of zero.
+> With the defaults $w = c = 1$ every input longer than one element fails.
+> Whether a partial sum overflows also depends on the chunking:
+> `[-1, 0, 2147483647, 1]` sums to `2147483647` with $w = 1, c = 4$ but
+> returns `0` with $w = 2, c = 2$.
+
+```moonbit
+test "reduce failures look like zero" {
+  let input : FixedArray[Int] = [4, 5, 6]
+  assert_eq(@luna_thread.execute_reduce_sum_i32(input), 0)
+  assert_eq(@luna_thread.execute_reduce_sum_i32(input, worker_count=3, chunk_size=1), 15)
+  let edge : FixedArray[Int] = [-1, 0, 2147483647, 1]
+  assert_eq(@luna_thread.execute_reduce_sum_i32(edge, worker_count=1, chunk_size=4), 2147483647)
+  assert_eq(@luna_thread.execute_reduce_sum_i32(edge, worker_count=2, chunk_size=2), 0)
+}
+```
 
 ### `execute_scan_sum_i32`
 
@@ -384,10 +423,14 @@ Starts a workflow on the native runtime and returns a handle at once.
 pub fn submit_workflow_async(@workflow.Workflow) -> Result[@native.WorkflowHandle, @native.NativeRequestError]
 ```
 
-The workflow is not validated in MoonBit first; the C runtime checks it. The
-current implementation always returns `Ok`. When the C runtime rejects the
-graph, the handle is empty and `wait_workflow` reports state `Submitted` with
-status `7` (`NullPointer`).
+The workflow is not validated in MoonBit first; the C runtime checks it. Call
+`workflow_validate` yourself before submitting.
+
+> [!WARNING]
+> `submit_workflow_async` always returns `Ok`, even when the C runtime rejects
+> the graph. A rejected graph gives an empty handle: `wait_workflow` returns at
+> once with state `Submitted` and status `7` (`NullPointer`), and the real
+> reason is lost.
 
 > [!WARNING]
 > The C bridge frees the node, edge and capability arrays, and the request that
