@@ -1,13 +1,37 @@
 # backend/native API
 
-The package `Luna-Flow/luna_thread/backend/native`, imported as `@native`,
-is the C foreign function interface backend. It runs the integer kernels of the
-C runtime on MoonBit arrays, submits workflows to the C scheduler, and turns
-plans into typed native requests. It builds only for the `native` target and
-links the C runtime from its native stubs.
+## Purpose
 
-The enumerations of this package are read-only outside it: match on their
-constructors. The request records are built by the `*_from_plan` functions.
+The package `Luna-Flow/luna_thread/backend/native` is the C foreign function
+interface backend. It runs the integer kernels of the C runtime on MoonBit
+arrays, submits workflows to the C scheduler, and turns plans into typed native
+requests. It builds only for the `native` target and links the C runtime from
+its native stubs.
+
+The enumerations and records of this package are read-only outside it: match
+on their constructors and read their fields. The request records are built by
+the `*_from_plan` functions. The threading model, the memory model and the
+derivations behind the kernels are in the
+[native backend design](../../design/backend/native.md).
+
+## Importing
+
+Add the package, and `plan`, `shared` and `workflow` for its arguments, to the
+`moon.pkg` of a package that builds for the native target:
+
+```moonbit nocheck
+import {
+  "Luna-Flow/luna_thread/backend/native",
+  "Luna-Flow/luna_thread/plan",
+  "Luna-Flow/luna_thread/shared",
+  "Luna-Flow/luna_thread/workflow",
+}
+
+supported_targets = "native"
+```
+
+The examples on this page call them as `@native`, `@plan`, `@shared` and
+`@workflow`.
 
 ## Backend information
 
@@ -43,9 +67,12 @@ Returns `true`.
 pub fn supports_openmp() -> Bool
 ```
 
-The value is a constant. The `moon` build compiles the C stubs without OpenMP,
-so in that build the kernels run on the calling thread; see the
-[native backend design](../../design/backend/native.md).
+> [!WARNING]
+> The value is a constant and does not describe the build. The `moon` build
+> compiles the C stubs without OpenMP, so in that build `supports_openmp()`
+> returns `true` while the kernels run on the calling thread; see the
+> [native backend design](../../design/backend/native.md). The C function
+> `luna_thread_runtime_has_openmp` reports the truth but is not bound.
 
 ## Kernels
 
@@ -78,8 +105,13 @@ pub fn execute_reduce_sum_i32(FixedArray[Int], Int, Int) -> Int
 ```
 
 The kernel adds each chunk from the left and then adds the chunk sums from the
-left, failing when any of these partial sums overflows. A returned non-zero
-value is the exact sum; `0` is either the sum or a failure.
+left, failing when any of these partial sums overflows.
+
+> [!WARNING]
+> Every failure, an invalid argument or an overflow, is returned as `0`. A
+> returned non-zero value is the exact sum; `0` is either the sum or a failure.
+> With $w = c = 1$ every input longer than one element fails. When you need to
+> tell the cases apart, use `execute_scan_sum_i32` and take its last element.
 
 ### `execute_scan_sum_i32`
 
@@ -307,7 +339,9 @@ the remaining issues map to `InvalidArgument`.
 ### `reduce_request_from_plan`
 
 Turns a `Reduce` or `MapReduce` plan into a `NativeReduceRequest`, with the same
-error rules.
+error rules. The request of a `MapReduce` plan describes only the reduction:
+there is no field for the map step, so it is the same request as for a
+`Reduce` plan with the same kernel.
 
 ```mbti
 pub fn reduce_request_from_plan(@plan.Plan) -> Result[NativeReduceRequest, NativeRequestError]
@@ -367,9 +401,14 @@ test "requests from plans" {
 These `extern "C"` declarations are public so that callers can reach kernels
 the typed functions do not wrap, such as the `Int64` kernels and minimum and
 maximum reductions. Arrays are borrowed for the duration of the call. Map and
-scan return a status code and write into `output`, which must have at least
-`length` elements; reductions return the result, or `0` on failure. The
-arguments are the input, its length, the worker count and the chunk size.
+scan return a status code and write into `output`; reductions return the
+result, or `0` on failure. The arguments are the input, its length, the worker
+count and the chunk size.
+
+> [!WARNING]
+> Nothing checks `length` against the arrays. A `length` larger than the input
+> or, for map and scan, the output reads or writes past the end of the array.
+> Pass `input.length()` and an output at least as long.
 
 ### `ffi_execute_map_i32` and `ffi_execute_map_i64`
 
@@ -409,7 +448,8 @@ pub fn ffi_execute_scan_sum_i64(FixedArray[Int64], Int, Int, Int, FixedArray[Int
 Starts a workflow from flat arrays: worker count; capability ids, kind codes
 and count; node ids, kind codes, capability ids (`-1` for none) and count; edge
 sources, targets, kind codes and count. Returns a null handle when the runtime
-rejects the graph.
+rejects the graph; the C status that explains the rejection is discarded. It
+has the request-lifetime defect described under `submit_workflow_async`.
 
 ```mbti
 pub fn ffi_submit_workflow_async(Int, FixedArray[Int], FixedArray[Int], Int, FixedArray[Int], FixedArray[Int], FixedArray[Int], Int, FixedArray[Int], FixedArray[Int], FixedArray[Int], Int) -> NativeWorkflowHandle

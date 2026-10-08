@@ -8,22 +8,14 @@ the same C runtime as the native backend. `backend/js` reserves the package for
 that path and fixes its identity, so that the rest of the module can already
 name the JavaScript target in policies, capability tables and submissions.
 
-## Mathematical background
+## Constraints
 
-The package computes nothing. The only structure it takes part in is the
-backend sum type
+- The package must build on every target, including `js`, and must not
+  declare foreign functions that have no implementation behind them.
+- It must name the JavaScript target with the same `BackendTarget` value the
+  rest of the module uses, so that policies and submissions can refer to it.
 
-$$
-B = \{\, \mathrm{Native}, \mathrm{JavaScript} \,\},
-$$
-
-with each backend package providing the constant
-$\texttt{backend\_target} \in B$ that names it. For the JavaScript package this
-constant is $\mathrm{JavaScript}$, and the v1 policy subset $P_1$ described on
-the [shared design](../shared.md) page excludes it, so every policy or
-submission that names this backend is rejected before reaching any runtime.
-
-## Design decisions
+## Main design decisions
 
 ### A package before a backend
 
@@ -38,6 +30,21 @@ new import path.
 The addon in `js/` exports only `runtimeName` and does not link the C runtime,
 so there is nothing to declare. Declaring functions with no implementation
 would compile but fail at run time, which is worse than not offering them.
+
+## Mathematical background
+
+The package computes nothing. The only structure it takes part in is the
+backend sum type
+
+$$
+B = \{\, \mathrm{Native}, \mathrm{JavaScript} \,\},
+$$
+
+with each backend package providing the constant
+$\texttt{backend\_target} \in B$ that names it. For the JavaScript package this
+constant is $\mathrm{JavaScript}$, and the v1 policy subset $P_1$ described on
+the [shared design](../shared.md) page excludes it, so every policy or
+submission that names this backend is rejected before reaching any runtime.
 
 ## Correctness / invariants
 

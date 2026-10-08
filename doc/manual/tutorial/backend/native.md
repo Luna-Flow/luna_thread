@@ -1,17 +1,32 @@
 # backend/native tutorial
 
-This tutorial shows you how to call the native backend directly: run the typed
-kernels, reach the `Int64` and minimum and maximum kernels through the raw
-foreign functions, turn plans into native requests, and run a workflow on the
-C scheduler.
+This tutorial gets you calling the native backend directly: you run the typed
+kernels, reach the `Int64`, minimum and maximum kernels through the raw foreign
+functions, turn plans into native requests, and run a workflow on the C
+scheduler.
+
+| I want to | Use |
+| --- | --- |
+| double, sum or prefix-sum an `Int` array | `@native.execute_map_i32`, `execute_reduce_sum_i32`, `execute_scan_sum_i32` |
+| work on `Int64`, or take a minimum or maximum | the `@native.ffi_execute_*` functions |
+| check a plan against what the C runtime implements | `@native.map_request_from_plan` and its siblings |
+| run a workflow on threads | `@native.submit_workflow_async`, `wait_workflow`, `drop_workflow` |
 
 ## Quick start
 
-Import the backend from a package that builds for the native target:
+Add the module, then import the backend from a package that builds for the
+native target, with `plan`, `shared` and `workflow` for the later tasks:
 
-```text
+```bash
+moon add Luna-Flow/luna_thread@0.1.0
+```
+
+```moonbit nocheck
 import {
   "Luna-Flow/luna_thread/backend/native",
+  "Luna-Flow/luna_thread/plan",
+  "Luna-Flow/luna_thread/shared",
+  "Luna-Flow/luna_thread/workflow",
 }
 
 supported_targets = "native"
@@ -115,7 +130,8 @@ build `native/` with CMake as described in the
   thread even though `supports_openmp()` returns `true`.
 - Requests built from plans have empty buffers; nothing executes them yet.
 - A workflow whose nodes block without being woken never finishes, and
-  `wait_workflow` does not return.
+  `wait_workflow` does not return. A second `Lock` on a held mutex, a `Recv`
+  before its `Send`, and two barrier groups on one capability all do this.
 
 ## Next steps
 

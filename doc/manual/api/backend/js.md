@@ -1,11 +1,31 @@
 # backend/js API
 
-The package `Luna-Flow/luna_thread/backend/js`, imported as `@js`, is the
-placeholder for the JavaScript backend. It names its target and nothing more:
-it declares no foreign functions and executes nothing. It builds on every
-target.
+## Purpose
 
-## `backend_target`
+The package `Luna-Flow/luna_thread/backend/js` is the placeholder for the
+JavaScript backend. It names its target and nothing more: it declares no
+foreign functions and executes nothing. It builds on every target. The
+[backend/js design](../../design/backend/js.md) explains why it exists before
+the backend does.
+
+## Importing
+
+Add the package, and `shared` and `plan` for the types it returns, to your
+`moon.pkg`:
+
+```moonbit nocheck
+import {
+  "Luna-Flow/luna_thread/backend/js",
+  "Luna-Flow/luna_thread/plan",
+  "Luna-Flow/luna_thread/shared",
+}
+```
+
+The example on this page calls them as `@js`, `@plan` and `@shared`.
+
+## Backend information
+
+### `backend_target`
 
 Returns `JavaScript`.
 
@@ -13,7 +33,7 @@ Returns `JavaScript`.
 pub fn backend_target() -> @shared.BackendTarget
 ```
 
-## `default_plan_kind`
+### `default_plan_kind`
 
 Returns `Map`, the plan kind the backend would run first.
 
@@ -21,7 +41,7 @@ Returns `Map`, the plan kind the backend would run first.
 pub fn default_plan_kind() -> @plan.PlanKind
 ```
 
-## `package_name`
+### `package_name`
 
 Returns `"backend/js"`.
 

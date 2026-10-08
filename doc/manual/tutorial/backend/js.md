@@ -1,17 +1,30 @@
 # backend/js tutorial
 
 This short tutorial shows what the JavaScript backend package offers today and
-how to write code that is ready for it: the package names the JavaScript
+gets you writing code that is ready for it: the package names the JavaScript
 target, and the rest of the module already describes JavaScript policies and
 capabilities, but nothing executes on JavaScript yet.
 
+| I want to | Use |
+| --- | --- |
+| name the JavaScript backend | `@js.backend_target()` |
+| check whether v1 accepts it | `@shared.make_execution_policy(backend=@js.backend_target())`, an `Err` in v1 |
+| run something on JavaScript | not possible yet; use `backend/native` |
+
 ## Quick start
 
-Import the package; it builds on every target:
+Add the module and import the package, with `shared` for its result type; it
+builds on every target:
 
-```text
+```bash
+moon add Luna-Flow/luna_thread@0.1.0
+```
+
+```moonbit nocheck
 import {
   "Luna-Flow/luna_thread/backend/js",
+  "Luna-Flow/luna_thread/shared",
+  "Luna-Flow/luna_thread/workflow",
 }
 ```
 
