@@ -1,6 +1,6 @@
 {
   "title": "luna_thread",
-  "summary": "A MoonBit library for parallel execution through native and JavaScript FFI runtimes, defined by a normative specification.",
+  "summary": "Parallel plans and workflow graphs for MoonBit, validated in MoonBit and executed by a native C runtime through the FFI.",
   "locales": [
     "zh_CN",
     "ja_JP"
