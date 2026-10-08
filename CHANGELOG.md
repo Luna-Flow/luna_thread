@@ -31,6 +31,11 @@ All notable changes to this repository are recorded here. Versions follow
   (`core`, `plan`, `workflow`, `shared`, `backend/native`, `backend/js`)
   replacing the `facade` and `backend` pages, a new architecture guide, and
   zh_CN and ja_JP translations.
+- Manual brought to the Luna-Flow documentation standard: the index has
+  Install, Pages, reading paths and Validation; every API page has Purpose
+  and Importing; every tutorial has an "I want to" table; every design page
+  has Constraints and derivations for chunked reduction, the balanced chunk
+  partition, the scan, Kahn's algorithm and the MoonBit cycle check.
 
 ### Known issues
 
@@ -39,3 +44,11 @@ All notable changes to this repository are recorded here. Versions follow
 - Blocked `Send`, `Recv` and `Lock` workflow nodes are never retried.
 - `javascript_policy()` aborts, and `execute_reduce_sum_i32` reports failures
   as `0`.
+- `submit_workflow_async` returns `Ok` even when the C runtime rejects the
+  graph.
+- `@workflow.validate` misses every cycle of three or more nodes as soon as
+  some node has no incoming edge.
+- Barrier groups at different depths that share a capability share one
+  arrival counter, which can leave a node blocked forever.
+- `supports_openmp()` always returns `true`, although the `moon` build has no
+  OpenMP.

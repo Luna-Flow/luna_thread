@@ -53,7 +53,9 @@ test, and `js/` a Node.js addon scaffold.
   `Int` and `Int64` arrays with overflow checking.
 - Workflow graphs run on a pthread scheduler; compute nodes do not yet execute
   their plans, and the asynchronous path has a known memory-lifetime defect
-  that makes it crash intermittently.
+  that makes it crash intermittently. The
+  [native backend design](doc/manual/design/backend/native.md) lists the known
+  defects.
 - The JavaScript backend and addon are scaffolds.
 
 ## Requirements
@@ -70,8 +72,11 @@ test, and `js/` a Node.js addon scaffold.
 
 The manual is published at <https://lunaflow.cn/en/luna_thread/> and its
 source starts at [`doc/manual/index.md`](doc/manual/index.md), with an API,
-tutorial and design page for every package, an architecture guide, and Chinese
-and Japanese translations. The specification is
+tutorial and design page for every package, an
+[architecture guide](doc/manual/architecture.md), and Chinese and Japanese
+translations. Start with the [core tutorial](doc/manual/tutorial/core.md).
+`docs/spec-review-report-zh.md` is an earlier review of the specification,
+kept as a historical record. The specification is
 `doc/attachments/moonbit_parallel_spec/main.typ`, with a Chinese mirror in
 `main.zh_CN.typ`.
 
