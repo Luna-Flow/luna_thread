@@ -1,13 +1,30 @@
 # plan API
 
-The package `Luna-Flow/luna_thread/plan`, imported as `@plan`, describes one
-data-parallel operation as a value: its kind, the element type and length of
-its input, the execution policy, an optional reduction kernel and an ordering
-guarantee. It validates plans against the v1 subset. It executes nothing and
-builds on every target.
+## Purpose
 
-The enumerations of this package are read-only outside it: match on their
-constructors, but build values with the functions below.
+The package `Luna-Flow/luna_thread/plan` describes one data-parallel operation
+as a value: its kind, the element type and length of its input, the execution
+policy, an optional reduction kernel and an ordering guarantee. It validates
+plans against the v1 subset. It executes nothing and builds on every target;
+`backend/native` turns valid plans into native requests.
+
+The enumerations and records of this package are read-only outside it: match
+on their constructors and read their fields, but build values with the
+functions below. The meaning of each plan kind and the reasons for the
+validation rules are in the [plan design](../design/plan.md).
+
+## Importing
+
+Add the package, and `shared` for policies, to your `moon.pkg`:
+
+```moonbit nocheck
+import {
+  "Luna-Flow/luna_thread/plan",
+  "Luna-Flow/luna_thread/shared",
+}
+```
+
+The examples on this page call them as `@plan` and `@shared`.
 
 ## Types
 
@@ -264,8 +281,18 @@ policy, the checks are:
 | `UnsupportedReductionKernel` | the kernel of a `Reduce` or `MapReduce` plan is `Custom` |
 | `UnsupportedOrdering` and `ScanRequiresStableOrdering` | a `Scan` plan has `RelaxedOrder`; both are reported |
 
-`validate` does not check the cover condition $w \ge \lceil n / c \rceil$ that
-the native kernels also require.
+The kernel of a `Map` or `Scan` plan is not checked: a plan built with
+`Plan::new` that carries `Custom(name)` on a scan passes, and the native scan
+request ignores the kernel and uses `Sum`. Because policies can only be built
+through the checked constructors of `shared`, `UnsupportedBackend` and
+`UnsupportedMode` cannot occur for plans built outside these packages; see the
+[shared design](../design/shared.md).
+
+> [!NOTE]
+> `validate` does not check the cover condition $w \ge \lceil n / c \rceil$
+> that the native kernels also require: the worker count and chunk size of a
+> plan with `is_runnable` true can still make a kernel fail with
+> `InvalidArgument`.
 
 ### `is_runnable`
 

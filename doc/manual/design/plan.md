@@ -8,31 +8,16 @@ comparable data lets `luna_thread` validate work before it reaches a runtime,
 embed it in workflows, and translate it for different backends. The package
 must stay backend-independent and build on every target.
 
-## Mathematical background
+## Constraints
 
-Let the input be a sequence $x = (x_0, \dots, x_{n-1}) \in A^n$ with $n > 0$.
-The four plan kinds denote these functions:
+- The package must build on every target and may not depend on a backend, so a
+  plan cannot hold anything executable or any pointer to data.
+- A plan must be comparable and printable, so that workflows can embed it and
+  tests can state expectations about it.
+- The C runtime implements a fixed set of kernels on `Int` and `Int64`; a plan
+  must be checkable against that set without calling C.
 
-$$
-\begin{aligned}
-\operatorname{map}_f(x) &= (f(x_0), \dots, f(x_{n-1})) , \\
-\operatorname{reduce}_\oplus(x) &= x_0 \oplus x_1 \oplus \dots \oplus x_{n-1} , \\
-\operatorname{scan}_\oplus(x) &= (y_0, \dots, y_{n-1}), \quad y_i = x_0 \oplus \dots \oplus x_i , \\
-\operatorname{mapreduce}_{f,\oplus}(x) &= \operatorname{reduce}_\oplus(\operatorname{map}_f(x)) .
-\end{aligned}
-$$
-
-A reduction kernel must be **associative**, $(a \oplus b) \oplus c = a \oplus (b
-\oplus c)$, so that the bracketing a parallel runtime chooses does not matter.
-The three kernels of v1 are commutative and associative on the integers:
-
-| Kernel | $a \oplus b$ | Identity |
-| --- | --- | --- |
-| `Sum` | $a + b$ | $0$ |
-| `Min` | $\min(a, b)$ | none in $\mathbb{Z}$; the largest value of a fixed-width type |
-| `Max` | $\max(a, b)$ | none in $\mathbb{Z}$; the smallest value of a fixed-width type |
-
-## Design decisions
+## Main design decisions
 
 ### Plans are data, not closures
 
@@ -99,11 +84,82 @@ $$
 
 ### Size checks stop short of the cover condition
 
-`validate` rejects $c > n$ and $w > n$ because no runtime can use more chunks
-than elements. It does not check the native cover condition
+`validate` rejects $c > n$ and $w > n$: a chunk longer than the input and a
+worker without an element are both wasted, so no backend needs them. It does not check the native cover condition
 $w \ge \lceil n / c \rceil$, which belongs to one backend's chunking strategy
 (see the [native backend design](backend/native.md)). Backends check their own
 conditions when they build requests or run kernels.
+
+## Mathematical background
+
+Let the input be a sequence $x = (x_0, \dots, x_{n-1}) \in A^n$ with $n > 0$.
+The four plan kinds denote these functions:
+
+$$
+\begin{aligned}
+\operatorname{map}_f(x) &= (f(x_0), \dots, f(x_{n-1})) , \\
+\operatorname{reduce}_\oplus(x) &= x_0 \oplus x_1 \oplus \dots \oplus x_{n-1} , \\
+\operatorname{scan}_\oplus(x) &= (y_0, \dots, y_{n-1}), \quad y_i = x_0 \oplus \dots \oplus x_i , \\
+\operatorname{mapreduce}_{f,\oplus}(x) &= \operatorname{reduce}_\oplus(\operatorname{map}_f(x)) .
+\end{aligned}
+$$
+
+A reduction kernel must be **associative**, $(a \oplus b) \oplus c = a \oplus (b
+\oplus c)$, so that the bracketing a parallel runtime chooses does not matter.
+The three kernels of v1 are commutative and associative on the integers:
+
+| Kernel | $a \oplus b$ | Identity |
+| --- | --- | --- |
+| `Sum` | $a + b$ | $0$ |
+| `Min` | $\min(a, b)$ | none in $\mathbb{Z}$; the largest value of a fixed-width type |
+| `Max` | $\max(a, b)$ | none in $\mathbb{Z}$; the smallest value of a fixed-width type |
+
+Associativity of `Min` follows from the order: both $\min(\min(a, b), c)$ and
+$\min(a, \min(b, c))$ are the smallest of $a, b, c$, because each is a lower
+bound of the three values and equal to one of them. `Max` is dual.
+
+### Why associativity is enough for chunking
+
+A runtime splits $x$ into consecutive chunks and combines chunk results. That
+this gives $\operatorname{reduce}_\oplus(x)$ is the generalised associative
+law: every bracketing of $x_0 \oplus \dots \oplus x_{n-1}$ equals the
+left-nested fold
+
+$$
+L_n = (\cdots((x_0 \oplus x_1) \oplus x_2) \cdots) \oplus x_{n-1} .
+$$
+
+By induction on $n$: a bracketing of $n \ge 2$ terms has an outermost split
+$B_1 \oplus B_2$ with $B_1$ the first $m$ terms and $B_2$ the remaining
+$n - m$. By the induction hypothesis $B_1 = L_m$ and
+$B_2 = (\cdots(x_m \oplus x_{m+1}) \cdots) \oplus x_{n-1}$. If $n - m = 1$ the
+whole is $L_m \oplus x_{n-1} = L_n$. Otherwise $B_2 = B_2' \oplus x_{n-1}$ and
+
+$$
+B_1 \oplus (B_2' \oplus x_{n-1}) = (B_1 \oplus B_2') \oplus x_{n-1} = L_{n-1} \oplus x_{n-1} = L_n ,
+$$
+
+using associativity once and the induction hypothesis on the $n - 1$ terms of
+$B_1 \oplus B_2'$. Chunked evaluation is the bracketing
+$(x_{s_0} \oplus \dots) \oplus (x_{s_1} \oplus \dots) \oplus \dots$, so its
+result does not depend on where the chunks start.
+
+`Min` and `Max` have no identity in $\mathbb{Z}$, so on the integers they form
+semigroups, not monoids: there is no value to return for an empty input. This
+is one reason $n > 0$ is required. In a fixed-width type the extreme values
+would serve as identities, but the runtime does not rely on them: it seeds
+each chunk with its first element.
+
+### Plans speak about integers, kernels check them
+
+The plan denotes the functions above over $\mathbb{Z}$. The machine types are
+$\mathbb{Z}/2^{32}$ and $\mathbb{Z}/2^{64}$, where `+` wraps around and is
+still associative. The native kernels take neither view completely: they add
+with an overflow check and fail instead of wrapping, so a successful result is
+the integer result, but whether an input is accepted can depend on the
+chunking. The [native backend design](backend/native.md) derives both facts.
+A plan does not record the chunking a kernel will choose, so `validate` cannot
+predict overflow.
 
 ## Correctness / invariants
 
@@ -115,7 +171,12 @@ conditions when they build requests or run kernels.
 - **Supported plans name implemented kernels.** If
   $\operatorname{validate}(p) = [\,]$ and $p$ reduces, its kernel is `Sum`,
   `Min` or `Max` and its element type is `I32` or `I64`, the combinations the C
-  runtime implements.
+  runtime implements. The kernel field of a `Map` or `Scan` plan is not
+  checked; a scan always means the prefix sum.
+- **Some issues are guards.** A policy reachable outside `shared` always has
+  the native backend and synchronous mode (see the
+  [shared design](shared.md)), so `UnsupportedBackend` and `UnsupportedMode`
+  never occur for plans built by users; they protect the invariant.
 - **Equality is structural.** Two plans are equal exactly when all fields are
   equal, so plans can serve as keys and test expectations.
 

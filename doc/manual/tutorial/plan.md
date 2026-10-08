@@ -1,14 +1,26 @@
 # plan tutorial
 
-This tutorial shows you how to describe a data-parallel operation as a `Plan`,
-check it against the v1 subset, and read the reasons when a plan is rejected.
-Plans are plain data, so this package works on every target.
+This tutorial gets you describing a data-parallel operation as a `Plan`,
+checking it against the v1 subset, and reading the reasons when a plan is
+rejected. Plans are plain data, so everything here works on every target.
+
+| I want to | Use |
+| --- | --- |
+| describe doubling, a reduction, a prefix sum or both | `@plan.map`, `@plan.reduce`, `@plan.scan`, `@plan.map_reduce` |
+| run the plan with several workers | a policy from `@shared.make_execution_policy`, passed as `policy~` |
+| know whether v1 supports a plan | `@plan.is_runnable(plan)` |
+| show every problem of a plan | `@plan.validate(plan)` and the `is_*` issue predicates |
+| build a combination the builders refuse | `@plan.Plan::new` |
 
 ## Quick start
 
-Import the package, and `shared` for policies:
+Add the module, then import the package, and `shared` for policies:
 
-```text
+```bash
+moon add Luna-Flow/luna_thread@0.1.0
+```
+
+```moonbit nocheck
 import {
   "Luna-Flow/luna_thread/plan",
   "Luna-Flow/luna_thread/shared",
@@ -110,7 +122,9 @@ facade, so it builds for every target.
   ($w \ge \lceil n / c \rceil$), which the native kernels require.
 - `reduce` and `scan` always preserve input order; to try other orderings use
   `Plan::new`.
-- A scan plan has no kernel; the native scan is always a prefix sum.
+- A scan plan has no kernel; the native scan is always a prefix sum, and a
+  kernel stored in a scan or map plan with `Plan::new` is neither checked nor
+  used.
 - The enumerations are read-only outside the package: write
   `@plan.i32_type()`, not `@plan.I32`, when you build a value. Matching on
   `@plan.I32` works.
