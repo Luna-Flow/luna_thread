@@ -20,4 +20,3 @@ pub fn package_name() -> String
 // Type aliases
 
 // Traits
-

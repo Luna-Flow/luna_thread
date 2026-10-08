@@ -43,11 +43,13 @@ pub enum BackendTarget {
   Native
   JavaScript
 } derive(Eq, @debug.Debug)
+pub fn BackendTarget::equal(Self, Self) -> Bool
 
 pub enum ExecutionMode {
   Synchronous
   Asynchronous
 } derive(Eq, @debug.Debug)
+pub fn ExecutionMode::equal(Self, Self) -> Bool
 
 pub struct ExecutionPolicy {
   backend : BackendTarget
@@ -56,12 +58,14 @@ pub struct ExecutionPolicy {
   chunk_size : Int
   ordering : OrderingGuarantee
 } derive(Eq, @debug.Debug)
+pub fn ExecutionPolicy::equal(Self, Self) -> Bool
 pub fn ExecutionPolicy::new(backend? : BackendTarget, mode? : ExecutionMode, worker_count? : Int, chunk_size? : Int, ordering? : OrderingGuarantee) -> Self
 
 pub struct NativeBuffer {
   ptr : Int
   length : Int
 } derive(Eq, @debug.Debug)
+pub fn NativeBuffer::equal(Self, Self) -> Bool
 pub fn NativeBuffer::length(Self) -> Int
 pub fn NativeBuffer::new(Int, Int) -> Self
 pub fn NativeBuffer::ptr(Self) -> Int
@@ -76,6 +80,7 @@ pub struct NativeMapRequest {
 } derive(Eq, @debug.Debug)
 pub fn NativeMapRequest::chunk_size(Self) -> Int
 pub fn NativeMapRequest::element_count(Self) -> Int
+pub fn NativeMapRequest::equal(Self, Self) -> Bool
 pub fn NativeMapRequest::input(Self) -> NativeBuffer
 pub fn NativeMapRequest::new(NativeBuffer, NativeBuffer, Int, Int, Int, Int) -> Self
 pub fn NativeMapRequest::output(Self) -> NativeBuffer
@@ -93,6 +98,7 @@ pub struct NativeReduceRequest {
 } derive(Eq, @debug.Debug)
 pub fn NativeReduceRequest::chunk_size(Self) -> Int
 pub fn NativeReduceRequest::element_count(Self) -> Int
+pub fn NativeReduceRequest::equal(Self, Self) -> Bool
 pub fn NativeReduceRequest::input(Self) -> NativeBuffer
 pub fn NativeReduceRequest::new(NativeBuffer, NativeBuffer, Int, Int, Int, Int, Int) -> Self
 pub fn NativeReduceRequest::output(Self) -> NativeBuffer
@@ -111,6 +117,7 @@ pub struct NativeScanRequest {
 } derive(Eq, @debug.Debug)
 pub fn NativeScanRequest::chunk_size(Self) -> Int
 pub fn NativeScanRequest::element_count(Self) -> Int
+pub fn NativeScanRequest::equal(Self, Self) -> Bool
 pub fn NativeScanRequest::input(Self) -> NativeBuffer
 pub fn NativeScanRequest::new(NativeBuffer, NativeBuffer, Int, Int, Int, Int, Int) -> Self
 pub fn NativeScanRequest::output(Self) -> NativeBuffer
@@ -128,15 +135,18 @@ pub enum NativeStatus {
   Overflow
   NullPointer
 } derive(Eq, @debug.Debug)
+pub fn NativeStatus::equal(Self, Self) -> Bool
 
 pub enum OrderingGuarantee {
   PreserveInputOrder
   RelaxedOrder
 } derive(Eq, @debug.Debug)
+pub fn OrderingGuarantee::equal(Self, Self) -> Bool
 
 pub struct PolicyError {
   issue : PolicyIssue
 } derive(Eq, @debug.Debug)
+pub fn PolicyError::equal(Self, Self) -> Bool
 
 pub enum PolicyIssue {
   WorkerCountMustBePositive(Int)
@@ -144,6 +154,7 @@ pub enum PolicyIssue {
   UnsupportedBackendForV1(BackendTarget)
   UnsupportedModeForV1(ExecutionMode)
 } derive(Eq, @debug.Debug)
+pub fn PolicyIssue::equal(Self, Self) -> Bool
 
 pub struct RuntimeCapabilities {
   backend : BackendTarget
@@ -151,6 +162,7 @@ pub struct RuntimeCapabilities {
   supports_async : Bool
   supports_zero_copy_buffers : Bool
 } derive(Eq, @debug.Debug)
+pub fn RuntimeCapabilities::equal(Self, Self) -> Bool
 pub fn RuntimeCapabilities::for_backend(BackendTarget) -> Self
 
 // Type aliases

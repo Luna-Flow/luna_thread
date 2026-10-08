@@ -2,6 +2,7 @@
 package "Luna-Flow/luna_thread"
 
 import {
+  "Luna-Flow/luna_thread/backend/native",
   "Luna-Flow/luna_thread/plan",
   "Luna-Flow/luna_thread/shared",
   "Luna-Flow/luna_thread/workflow",
@@ -10,9 +11,21 @@ import {
 // Values
 pub fn bytes_type() -> @plan.ValueType
 
+pub fn channel_capability(Int, String) -> @workflow.Capability
+
+pub fn compute_task(Int, String, @plan.Plan) -> @workflow.Node
+
 pub fn default_backend() -> @shared.BackendTarget
 
 pub fn default_policy() -> @shared.ExecutionPolicy
+
+pub fn drop_workflow(@native.WorkflowHandle) -> Unit
+
+pub fn execute_map_i32(FixedArray[Int], worker_count? : Int, chunk_size? : Int) -> Result[FixedArray[Int], @native.NativeRequestError]
+
+pub fn execute_reduce_sum_i32(FixedArray[Int], worker_count? : Int, chunk_size? : Int) -> Int
+
+pub fn execute_scan_sum_i32(FixedArray[Int], worker_count? : Int, chunk_size? : Int) -> Result[FixedArray[Int], @native.NativeRequestError]
 
 pub fn f32_type() -> @plan.ValueType
 
@@ -26,6 +39,8 @@ pub fn is_ready(@plan.Plan) -> Bool
 
 pub fn javascript_policy() -> @shared.ExecutionPolicy
 
+pub fn join_task(Int, String) -> @workflow.Node
+
 pub fn make_policy(backend? : @shared.BackendTarget, mode? : @shared.ExecutionMode, worker_count? : Int, chunk_size? : Int, ordering? : @shared.OrderingGuarantee) -> Result[@shared.ExecutionPolicy, @shared.PolicyError]
 
 pub fn map(String, @plan.ValueType, Int, policy? : @shared.ExecutionPolicy, ordering? : @shared.OrderingGuarantee) -> @plan.Plan
@@ -36,7 +51,11 @@ pub fn max_reduction() -> @plan.ReductionKernel
 
 pub fn min_reduction() -> @plan.ReductionKernel
 
+pub fn mutex_capability(Int, String) -> @workflow.Capability
+
 pub fn opaque_type(String) -> @plan.ValueType
+
+pub fn poll_workflow(@native.WorkflowHandle) -> @native.WorkflowResult
 
 pub fn reduce(String, @plan.ValueType, Int, @plan.ReductionKernel, policy? : @shared.ExecutionPolicy) -> @plan.Plan
 
@@ -48,31 +67,27 @@ pub fn runtime_capabilities(@shared.BackendTarget) -> @shared.RuntimeCapabilitie
 
 pub fn scaffold_status() -> String
 
+pub fn scan(String, @plan.ValueType, Int, policy? : @shared.ExecutionPolicy) -> @plan.Plan
+
 pub fn shared_read_capability(Int, String) -> @workflow.Capability
 
 pub fn spawn_task(Int, String) -> @workflow.Node
 
 pub fn submit_workflow(@workflow.Workflow, backend? : @shared.BackendTarget) -> @workflow.Submission
 
-pub fn scan(String, @plan.ValueType, Int, policy? : @shared.ExecutionPolicy) -> @plan.Plan
+pub fn submit_workflow_async(@workflow.Workflow) -> Result[@native.WorkflowHandle, @native.NativeRequestError]
 
 pub fn sum_reduction() -> @plan.ReductionKernel
+
+pub fn validate(@plan.Plan) -> Array[@plan.ValidationIssue]
+
+pub fn wait_workflow(@native.WorkflowHandle) -> @native.WorkflowResult
 
 pub fn workflow(String, policy? : @shared.ExecutionPolicy) -> @workflow.Workflow
 
 pub fn workflow_is_ready(@workflow.Workflow) -> Bool
 
 pub fn workflow_validate(@workflow.Workflow) -> Array[@workflow.WorkflowIssue]
-
-pub fn compute_task(Int, String, @plan.Plan) -> @workflow.Node
-
-pub fn join_task(Int, String) -> @workflow.Node
-
-pub fn channel_capability(Int, String) -> @workflow.Capability
-
-pub fn mutex_capability(Int, String) -> @workflow.Capability
-
-pub fn validate(@plan.Plan) -> Array[@plan.ValidationIssue]
 
 // Errors
 

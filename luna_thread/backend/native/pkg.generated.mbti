@@ -13,6 +13,48 @@ pub fn backend_target() -> @shared.BackendTarget
 
 pub fn default_plan_kind() -> @plan.PlanKind
 
+pub fn drop_workflow(WorkflowHandle) -> Unit
+
+pub fn execute_map_i32(FixedArray[Int], Int, Int) -> Result[FixedArray[Int], NativeRequestError]
+
+pub fn execute_reduce_sum_i32(FixedArray[Int], Int, Int) -> Int
+
+pub fn execute_scan_sum_i32(FixedArray[Int], Int, Int) -> Result[FixedArray[Int], NativeRequestError]
+
+pub fn ffi_execute_map_i32(FixedArray[Int], Int, Int, Int, FixedArray[Int]) -> Int
+
+pub fn ffi_execute_map_i64(FixedArray[Int64], Int, Int, Int, FixedArray[Int64]) -> Int
+
+pub fn ffi_execute_reduce_max_i32(FixedArray[Int], Int, Int, Int) -> Int
+
+pub fn ffi_execute_reduce_max_i64(FixedArray[Int64], Int, Int, Int) -> Int64
+
+pub fn ffi_execute_reduce_min_i32(FixedArray[Int], Int, Int, Int) -> Int
+
+pub fn ffi_execute_reduce_min_i64(FixedArray[Int64], Int, Int, Int) -> Int64
+
+pub fn ffi_execute_reduce_sum_i32(FixedArray[Int], Int, Int, Int) -> Int
+
+pub fn ffi_execute_reduce_sum_i64(FixedArray[Int64], Int, Int, Int) -> Int64
+
+pub fn ffi_execute_scan_sum_i32(FixedArray[Int], Int, Int, Int, FixedArray[Int]) -> Int
+
+pub fn ffi_execute_scan_sum_i64(FixedArray[Int64], Int, Int, Int, FixedArray[Int64]) -> Int
+
+pub fn ffi_submit_workflow_async(Int, FixedArray[Int], FixedArray[Int], Int, FixedArray[Int], FixedArray[Int], FixedArray[Int], Int, FixedArray[Int], FixedArray[Int], FixedArray[Int], Int) -> NativeWorkflowHandle
+
+pub fn ffi_workflow_destroy(NativeWorkflowHandle) -> Unit
+
+pub fn ffi_workflow_poll_completed_nodes(NativeWorkflowHandle) -> Int
+
+pub fn ffi_workflow_poll_failed_node_id(NativeWorkflowHandle) -> Int
+
+pub fn ffi_workflow_poll_state(NativeWorkflowHandle) -> Int
+
+pub fn ffi_workflow_poll_status(NativeWorkflowHandle) -> Int
+
+pub fn ffi_workflow_wait_status(NativeWorkflowHandle) -> Int
+
 pub fn map_request_from_plan(@plan.Plan) -> Result[NativeMapRequest, NativeRequestError]
 
 pub fn map_request_is_valid(NativeMapRequest) -> Bool
@@ -20,6 +62,8 @@ pub fn map_request_is_valid(NativeMapRequest) -> Bool
 pub fn map_request_value_type(NativeMapRequest) -> Int
 
 pub fn package_name() -> String
+
+pub fn poll_workflow(WorkflowHandle) -> WorkflowResult
 
 pub fn reduce_request_from_plan(@plan.Plan) -> Result[NativeReduceRequest, NativeRequestError]
 
@@ -39,7 +83,11 @@ pub fn scan_request_value_type(NativeScanRequest) -> Int
 
 pub fn submit_workflow(@workflow.Workflow) -> @workflow.Submission
 
+pub fn submit_workflow_async(@workflow.Workflow) -> Result[WorkflowHandle, NativeRequestError]
+
 pub fn supports_openmp() -> Bool
+
+pub fn wait_workflow(WorkflowHandle) -> WorkflowResult
 
 pub fn workflow_is_supported(@workflow.Workflow) -> Bool
 
@@ -54,6 +102,7 @@ pub struct NativeMapRequest {
   worker_count : Int
   chunk_size : Int
 } derive(Eq, @debug.Debug)
+pub fn NativeMapRequest::equal(Self, Self) -> Bool
 
 pub struct NativeReduceRequest {
   input : @shared.NativeBuffer
@@ -64,6 +113,24 @@ pub struct NativeReduceRequest {
   worker_count : Int
   chunk_size : Int
 } derive(Eq, @debug.Debug)
+pub fn NativeReduceRequest::equal(Self, Self) -> Bool
+
+pub enum NativeReductionKernel {
+  Sum
+  Min
+  Max
+} derive(Eq, @debug.Debug)
+pub fn NativeReductionKernel::equal(Self, Self) -> Bool
+
+pub enum NativeRequestError {
+  UnsupportedBackend
+  UnsupportedMode
+  UnsupportedValueType
+  UnsupportedReductionKernel
+  InvalidArgument
+  Overflow
+} derive(Eq, @debug.Debug)
+pub fn NativeRequestError::equal(Self, Self) -> Bool
 
 pub struct NativeScanRequest {
   input : @shared.NativeBuffer
@@ -74,26 +141,37 @@ pub struct NativeScanRequest {
   worker_count : Int
   chunk_size : Int
 } derive(Eq, @debug.Debug)
-
-pub enum NativeReductionKernel {
-  Sum
-  Min
-  Max
-} derive(Eq, @debug.Debug)
-
-pub enum NativeRequestError {
-  UnsupportedBackend
-  UnsupportedMode
-  UnsupportedValueType
-  UnsupportedReductionKernel
-  InvalidArgument
-  Overflow
-} derive(Eq, @debug.Debug)
+pub fn NativeScanRequest::equal(Self, Self) -> Bool
 
 pub enum NativeValueType {
   I32
   I64
 } derive(Eq, @debug.Debug)
+pub fn NativeValueType::equal(Self, Self) -> Bool
+
+#external
+pub type NativeWorkflowHandle
+
+pub struct WorkflowHandle {
+  raw : NativeWorkflowHandle
+}
+
+pub struct WorkflowResult {
+  state : WorkflowRuntimeState
+  status : Int
+  completed_nodes : Int
+  failed_node_id : Int
+} derive(Eq, @debug.Debug)
+pub fn WorkflowResult::equal(Self, Self) -> Bool
+
+pub enum WorkflowRuntimeState {
+  Submitted
+  Running
+  Completed
+  Failed
+  Rejected
+} derive(Eq, @debug.Debug)
+pub fn WorkflowRuntimeState::equal(Self, Self) -> Bool
 
 // Type aliases
 
