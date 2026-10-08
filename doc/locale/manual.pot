@@ -8,120 +8,2255 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: conf.json:summary
-msgid "A MoonBit library for parallel execution through native and JavaScript FFI runtimes, defined by a normative specification."
+msgid "Parallel plans and workflow graphs for MoonBit, validated in MoonBit and executed by a native C runtime through the FFI."
 msgstr ""
 
-#: manual/api/backend.md:1
-msgid "backend API"
+#: manual/api/backend/js.md:1
+msgid "backend/js API"
 msgstr ""
 
-#: manual/api/backend.md:3
-msgid "backend is part of Luna-Flow/luna_thread. This page should describe the public types, constructors, functions, traits, and observable semantics that are implemented in the current branch."
+#: manual/api/backend/js.md:3
+msgid "The package `Luna-Flow/luna_thread/backend/js`, imported as `@js`, is the placeholder for the JavaScript backend. It names its target and nothing more: it declares no foreign functions and executes nothing. It builds on every target."
 msgstr ""
 
-#: manual/api/backend.md:5
-#: manual/api/facade.md:5
-msgid "Scope"
+#: manual/api/backend/js.md:10
+msgid "Returns `JavaScript`."
 msgstr ""
 
-#: manual/api/backend.md:7
-msgid "Source boundary: `native and js`"
+#: manual/api/backend/js.md:18
+msgid "Returns `Map`, the plan kind the backend would run first."
 msgstr ""
 
-#: manual/api/backend.md:8
-#: manual/api/facade.md:8
-msgid "Audience: package users, integrators, and maintainers who need the exported contract"
+#: manual/api/backend/js.md:26
+msgid "Returns `\"backend/js\"`."
 msgstr ""
 
-#: manual/api/backend.md:9
-#: manual/api/facade.md:9
-msgid "Status: active"
+#: manual/api/backend/native.md:1
+msgid "backend/native API"
 msgstr ""
 
-#: manual/api/backend.md:11
-#: manual/api/facade.md:11
-msgid "Public Contract"
+#: manual/api/backend/native.md:3
+msgid "The package `Luna-Flow/luna_thread/backend/native`, imported as `@native`, is the C foreign function interface backend. It runs the integer kernels of the C runtime on MoonBit arrays, submits workflows to the C scheduler, and turns plans into typed native requests. It builds only for the `native` target and links the C runtime from its native stubs."
 msgstr ""
 
-#: manual/api/backend.md:13
-#: manual/api/facade.md:13
-msgid "Describe only exported behavior that exists today."
+#: manual/api/backend/native.md:9
+msgid "The enumerations of this package are read-only outside it: match on their constructors. The request records are built by the `*_from_plan` functions."
 msgstr ""
 
-#: manual/api/backend.md:14
-#: manual/api/facade.md:14
-msgid "Call out backend or subtype differences when they are observable."
+#: manual/api/backend/native.md:12
+msgid "Backend information"
 msgstr ""
 
-#: manual/api/backend.md:15
-#: manual/api/facade.md:15
-msgid "Keep naming, argument ordering, and error semantics aligned with sibling modules when possible."
+#: manual/api/backend/native.md:16
+msgid "Returns `Native`."
 msgstr ""
 
-#: manual/api/facade.md:1
-msgid "facade API"
+#: manual/api/backend/native.md:24
+msgid "Returns `Map`."
 msgstr ""
 
-#: manual/api/facade.md:3
-msgid "facade is part of Luna-Flow/luna_thread. This page should describe the public types, constructors, functions, traits, and observable semantics that are implemented in the current branch."
+#: manual/api/backend/native.md:32
+msgid "Returns `\"backend/native\"`."
 msgstr ""
 
-#: manual/api/facade.md:7
-msgid "Source boundary: `luna_thread`"
+#: manual/api/backend/native.md:40
+msgid "Returns `true`."
 msgstr ""
 
-#: manual/design/backend.md:1
-msgid "backend Design"
+#: manual/api/backend/native.md:46
+msgid "The value is a constant. The `moon` build compiles the C stubs without OpenMP, so in that build the kernels run on the calling thread; see the [native backend design](../../design/backend/native.md)."
 msgstr ""
 
-#: manual/design/backend.md:3
-msgid "This subsystem covers the native C runtime scaffold and the Node.js addon scaffold used to realize the FFI design."
+#: manual/api/backend/native.md:50
+#: manual/design/backend/native.md:168
+msgid "Kernels"
 msgstr ""
 
-#: manual/design/backend.md:5
-#: manual/design/facade.md:5
-msgid "Responsibilities"
+#: manual/api/backend/native.md:52
+msgid "All kernels take a `FixedArray[Int]` of length $n$, a worker count $w$ and a chunk size $c$, block until they finish, and leave the input unchanged. They require"
 msgstr ""
 
-#: manual/design/backend.md:7
-msgid "Keep the code and docs aligned around `native and js`."
+#: manual/api/backend/native.md:60
+msgid "and fail with `InvalidArgument` otherwise. The facade functions of the same names in the [core API](../core.md) wrap these with optional arguments."
 msgstr ""
 
-#: manual/design/backend.md:8
-#: manual/design/facade.md:8
-msgid "Preserve the real execution model instead of smoothing over important internal differences."
+#: manual/api/backend/native.md:65
+msgid "Returns a new array with every element doubled, or `Overflow` when some $2 x_i$ does not fit in 32 bits."
 msgstr ""
 
-#: manual/design/backend.md:9
-#: manual/design/facade.md:9
-msgid "Note extension points, invariants, and limitations that maintainers must keep stable."
+#: manual/api/backend/native.md:74
+msgid "Returns the sum of the elements, or `0` on any failure."
 msgstr ""
 
-#: manual/design/backend.md:11
-#: manual/design/facade.md:11
-msgid "Maintenance Notes"
+#: manual/api/backend/native.md:80
+msgid "The kernel adds each chunk from the left and then adds the chunk sums from the left, failing when any of these partial sums overflows. A returned non-zero value is the exact sum; `0` is either the sum or a failure."
 msgstr ""
 
-#: manual/design/backend.md:13
-#: manual/design/facade.md:13
-msgid "Update this page whenever the module boundary, core algorithm, or observable semantics change."
+#: manual/api/backend/native.md:86
+msgid "Returns the inclusive prefix sums."
 msgstr ""
 
-#: manual/design/backend.md:14
-#: manual/design/facade.md:14
-msgid "If the module is intentionally incomplete, say so here instead of documenting speculative APIs."
+#: manual/api/backend/native.md:92
+msgid "It fails with `Overflow` when a partial sum overflows."
 msgstr ""
 
-#: manual/design/facade.md:1
-msgid "facade Design"
+#: manual/api/backend/native.md:106
+#: manual/api/core.md:298
+#: manual/api/workflow.md:248
+#: manual/design/backend/native.md:179
+msgid "Workflows"
 msgstr ""
 
-#: manual/design/facade.md:3
-msgid "Use this page to explain the structural responsibilities and implementation constraints of this module. facade in Luna-Flow/luna_thread."
+#: manual/api/backend/native.md:110
+msgid "Returns `true` when `@workflow.validate` finds no issue and the workflow's policy names the native backend."
 msgstr ""
 
-#: manual/design/facade.md:7
-msgid "Keep the code and docs aligned around `luna_thread`."
+#: manual/api/backend/native.md:119
+msgid "Returns `@workflow.submit(workflow, backend=Native)`: a validated submission record. It does not run the workflow."
+msgstr ""
+
+#: manual/api/backend/native.md:128
+msgid "The state of a workflow in the C runtime."
+msgstr ""
+
+#: manual/api/backend/native.md:140
+msgid "`Submitted` holds until a worker takes the first node. The runtime never sets `Rejected`; a rejected submission yields an empty handle instead."
+msgstr ""
+
+#: manual/api/backend/native.md:145
+msgid "A snapshot of a workflow: its state, the runtime status code, the number of completed nodes and the id of the failed node (`-1` when none failed)."
+msgstr ""
+
+#: manual/api/backend/native.md:157
+msgid "`status` is one of the codes in the [architecture guide](../../architecture.md)."
+msgstr ""
+
+#: manual/api/backend/native.md:159
+msgid "`NativeWorkflowHandle` and `WorkflowHandle`"
+msgstr ""
+
+#: manual/api/backend/native.md:161
+msgid "An opaque pointer to a running workflow in the C runtime, and its MoonBit wrapper."
+msgstr ""
+
+#: manual/api/backend/native.md:175
+msgid "Copies a workflow into flat integer arrays and starts it on the C scheduler with `worker_count` threads from its policy."
+msgstr ""
+
+#: manual/api/backend/native.md:182
+msgid "The workflow is not validated in MoonBit; the C runtime checks it and, when it rejects the graph, returns an empty handle. The function always returns `Ok`. Compute nodes are scheduled, but their plans are not executed."
+msgstr ""
+
+#: manual/api/backend/native.md:186
+msgid "[!WARNING] The C bridge frees the request arrays after the runtime has started, while the worker threads still read them. This is a known defect that makes programs crash intermittently. Treat this function as experimental."
+msgstr ""
+
+#: manual/api/backend/native.md:193
+msgid "Returns a snapshot without waiting."
+msgstr ""
+
+#: manual/api/backend/native.md:201
+msgid "Waits until the workflow is `Completed` or `Failed` and returns the snapshot."
+msgstr ""
+
+#: manual/api/backend/native.md:207
+msgid "On an empty handle it returns at once with state `Submitted` and status `7`. It does not return if the workflow deadlocks."
+msgstr ""
+
+#: manual/api/backend/native.md:212
+msgid "Stops and joins the runtime threads and frees the workflow. Call it once per handle; it does nothing for an empty handle."
+msgstr ""
+
+#: manual/api/backend/native.md:219
+msgid "Typed native requests"
+msgstr ""
+
+#: manual/api/backend/native.md:221
+msgid "`NativeValueType` and `NativeReductionKernel`"
+msgstr ""
+
+#: manual/api/backend/native.md:223
+msgid "The value types and reduction kernels the C runtime implements."
+msgstr ""
+
+#: manual/api/backend/native.md:240
+msgid "Why a plan could not become a native request, or why a kernel failed."
+msgstr ""
+
+#: manual/api/backend/native.md:253
+msgid "`NativeMapRequest`, `NativeReduceRequest` and `NativeScanRequest`"
+msgstr ""
+
+#: manual/api/backend/native.md:255
+msgid "Typed counterparts of the C request structs."
+msgstr ""
+
+#: manual/api/backend/native.md:288
+msgid "The `input` and `output` buffers of requests built from plans are `NativeBuffer::new(0, 0)`: a plan describes the shape of the data, not the data. No function of the module sends these records to C; they are the validated description that a future executor will fill with buffers."
+msgstr ""
+
+#: manual/api/backend/native.md:295
+msgid "Turns a `Map` plan into a `NativeMapRequest`."
+msgstr ""
+
+#: manual/api/backend/native.md:301
+msgid "It fails with `UnsupportedMode` when the plan is not a `Map` plan, and otherwise with the error mapped from the first issue of `@plan.validate`: value type, reduction kernel, backend and mode issues map to the error of the same name, `MissingReductionKernel` maps to `UnsupportedReductionKernel`, and the remaining issues map to `InvalidArgument`."
+msgstr ""
+
+#: manual/api/backend/native.md:309
+msgid "Turns a `Reduce` or `MapReduce` plan into a `NativeReduceRequest`, with the same error rules."
+msgstr ""
+
+#: manual/api/backend/native.md:318
+msgid "Turns a `Scan` plan into a `NativeScanRequest` whose kernel is `Sum`, with the same error rules."
+msgstr ""
+
+#: manual/api/backend/native.md:325
+msgid "`map_request_is_valid`, `reduce_request_is_valid` and `scan_request_is_valid`"
+msgstr ""
+
+#: manual/api/backend/native.md:327
+msgid "Check the request fields the C validator also checks: positive element count, worker count and chunk size, a supported value type, and for scans the `Sum` kernel."
+msgstr ""
+
+#: manual/api/backend/native.md:337
+msgid "`map_request_value_type`, `reduce_request_value_type`, `scan_request_value_type`, `reduce_request_kernel` and `scan_request_kernel`"
+msgstr ""
+
+#: manual/api/backend/native.md:339
+msgid "Return the C codes of a request's value type (`0` for `I32`, `1` for `I64`) and kernel (`0` for `Sum`, `1` for `Min`, `2` for `Max`)."
+msgstr ""
+
+#: manual/api/backend/native.md:365
+msgid "Raw foreign functions"
+msgstr ""
+
+#: manual/api/backend/native.md:367
+msgid "These `extern \"C\"` declarations are public so that callers can reach kernels the typed functions do not wrap, such as the `Int64` kernels and minimum and maximum reductions. Arrays are borrowed for the duration of the call. Map and scan return a status code and write into `output`, which must have at least `length` elements; reductions return the result, or `0` on failure. The arguments are the input, its length, the worker count and the chunk size."
+msgstr ""
+
+#: manual/api/backend/native.md:374
+msgid "`ffi_execute_map_i32` and `ffi_execute_map_i64`"
+msgstr ""
+
+#: manual/api/backend/native.md:376
+msgid "Double every element into `output`."
+msgstr ""
+
+#: manual/api/backend/native.md:383
+msgid "`ffi_execute_reduce_sum_i32`, `ffi_execute_reduce_sum_i64`, `ffi_execute_reduce_min_i32`, `ffi_execute_reduce_min_i64`, `ffi_execute_reduce_max_i32` and `ffi_execute_reduce_max_i64`"
+msgstr ""
+
+#: manual/api/backend/native.md:385
+msgid "Return the sum, minimum or maximum of the input."
+msgstr ""
+
+#: manual/api/backend/native.md:396
+msgid "Minimum and maximum never overflow."
+msgstr ""
+
+#: manual/api/backend/native.md:398
+msgid "`ffi_execute_scan_sum_i32` and `ffi_execute_scan_sum_i64`"
+msgstr ""
+
+#: manual/api/backend/native.md:400
+msgid "Write the inclusive prefix sums into `output`."
+msgstr ""
+
+#: manual/api/backend/native.md:409
+msgid "Starts a workflow from flat arrays: worker count; capability ids, kind codes and count; node ids, kind codes, capability ids (`-1` for none) and count; edge sources, targets, kind codes and count. Returns a null handle when the runtime rejects the graph."
+msgstr ""
+
+#: manual/api/backend/native.md:418
+msgid "`ffi_workflow_poll_state`, `ffi_workflow_poll_status`, `ffi_workflow_poll_completed_nodes`, `ffi_workflow_poll_failed_node_id`, `ffi_workflow_wait_status` and `ffi_workflow_destroy`"
+msgstr ""
+
+#: manual/api/backend/native.md:420
+msgid "Read one field of a workflow snapshot, wait and return the final status, or destroy the workflow."
+msgstr ""
+
+#: manual/api/backend/native.md:432
+msgid "On a null handle the poll functions return `0`, `ffi_workflow_wait_status` returns `7` and `ffi_workflow_destroy` does nothing."
+msgstr ""
+
+#: manual/api/backend/native.md:446
+msgid "Equality"
+msgstr ""
+
+#: manual/api/backend/native.md:450
+msgid "Structural equality, promoted on `NativeMapRequest`, `NativeReduceRequest`, `NativeScanRequest`, `NativeReductionKernel`, `NativeRequestError`, `NativeValueType`, `WorkflowResult` and `WorkflowRuntimeState`. Use `==` and `!=`. `WorkflowHandle` has no equality."
+msgstr ""
+
+#: manual/api/core.md:1
+msgid "core API"
+msgstr ""
+
+#: manual/api/core.md:3
+msgid "The root package `Luna-Flow/luna_thread`, imported as `@luna_thread`, is the facade of the module. It re-exports the common constructors of `plan`, `shared` and `workflow` with defaults filled in, executes integer kernels on the native backend, and submits workflows. It builds only for the `native` target. Every function here is a thin wrapper; the linked package pages give the full semantics of the types it returns."
+msgstr ""
+
+#: manual/api/core.md:10
+msgid "Module information"
+msgstr ""
+
+#: manual/api/core.md:14
+msgid "Returns the fixed description `\"luna_thread MoonBit facade\"`."
+msgstr ""
+
+#: manual/api/core.md:20
+msgid "`root_plan_package` and `root_workflow_package`"
+msgstr ""
+
+#: manual/api/core.md:22
+msgid "Return the names that the `plan` and `workflow` packages report for themselves, `\"plan\"` and `\"workflow\"`."
+msgstr ""
+
+#: manual/api/core.md:38
+msgid "Policies and capabilities"
+msgstr ""
+
+#: manual/api/core.md:42
+msgid "Returns `Native`, the backend that plans, workflows and submissions use when none is given."
+msgstr ""
+
+#: manual/api/core.md:51
+msgid "Returns the default execution policy: native backend, synchronous mode, one worker, chunk size one, input order preserved. It is the same value as `@shared.native_policy()`."
+msgstr ""
+
+#: manual/api/core.md:61
+msgid "Builds a policy for the JavaScript backend. In v1 the policy constructor rejects every backend other than `Native`, so this function aborts; it is kept for the JavaScript backend that the specification describes."
+msgstr ""
+
+#: manual/api/core.md:71
+msgid "Builds an execution policy and checks it, returning the first problem as a `PolicyError`."
+msgstr ""
+
+#: manual/api/core.md:78
+msgid "The defaults are `Native`, `Synchronous`, `1`, `1` and `PreserveInputOrder`. The checks run in this order and the first failure is returned: `worker_count > 0`, `chunk_size > 0`, `backend == Native`, `mode == Synchronous`. The result is the same as `@shared.make_execution_policy`."
+msgstr ""
+
+#: manual/api/core.md:97
+msgid "Returns the declared capability table of a backend; see `RuntimeCapabilities::for_backend` in the [shared API](shared.md)."
+msgstr ""
+
+#: manual/api/core.md:112
+msgid "Value types and reduction kernels"
+msgstr ""
+
+#: manual/api/core.md:114
+#: manual/api/plan.md:159
+msgid "`i32_type`, `i64_type`, `f32_type`, `f64_type`, `bytes_type` and `opaque_type`"
+msgstr ""
+
+#: manual/api/core.md:116
+msgid "Return the element types `I32`, `I64`, `F32`, `F64`, `Bytes` and `Opaque(name)` of a plan's input domain. Only `I32` and `I64` pass validation in v1."
+msgstr ""
+
+#: manual/api/core.md:129
+msgid "`sum_reduction`, `min_reduction` and `max_reduction`"
+msgstr ""
+
+#: manual/api/core.md:131
+msgid "Return the reduction kernels `Sum`, `Min` and `Max`, the three kernels that pass validation in v1."
+msgstr ""
+
+#: manual/api/core.md:148
+msgid "Plans"
+msgstr ""
+
+#: manual/api/core.md:152
+msgid "Builds a map plan over `input_length` elements of one type."
+msgstr ""
+
+#: manual/api/core.md:158
+msgid "The arguments are the label, the element type and the input length. The policy defaults to `default_policy()` and the ordering to `PreserveInputOrder`. The plan is not checked; call `validate` or `is_ready`."
+msgstr ""
+
+#: manual/api/core.md:164
+msgid "Builds a reduce plan that combines the input with a reduction kernel."
+msgstr ""
+
+#: manual/api/core.md:170
+msgid "The ordering of a reduce plan is always `PreserveInputOrder`."
+msgstr ""
+
+#: manual/api/core.md:174
+msgid "Builds a scan (prefix) plan."
+msgstr ""
+
+#: manual/api/core.md:180
+msgid "A scan has no reduction kernel in the plan and always preserves input order."
+msgstr ""
+
+#: manual/api/core.md:184
+msgid "Builds a plan that maps every element and then reduces the results."
+msgstr ""
+
+#: manual/api/core.md:192
+msgid "Returns every reason why a plan is outside the v1 subset, or an empty array."
+msgstr ""
+
+#: manual/api/core.md:198
+msgid "This is `@plan.validate`; the [plan API](plan.md) lists the checks."
+msgstr ""
+
+#: manual/api/core.md:202
+msgid "Returns `true` when `validate` finds no issue."
+msgstr ""
+
+#: manual/api/core.md:208
+msgid "A ready plan satisfies the v1 rules, but the native kernels have one more requirement, the cover condition $w \\ge \\lceil n / c \\rceil$ described under `execute_map_i32`."
+msgstr ""
+
+#: manual/api/core.md:228
+msgid "Direct execution"
+msgstr ""
+
+#: manual/api/core.md:230
+msgid "These functions run a kernel of the native C runtime on a `FixedArray[Int]` and block until it finishes. They do not use plans. Let $n$ be the input length, $w$ the worker count and $c$ the chunk size. Every kernel requires"
+msgstr ""
+
+#: manual/api/core.md:238
+msgid "and otherwise fails with `InvalidArgument`. With the defaults $w = c = 1$ only an input of length one is accepted, so pass both arguments. The input is split into $\\lceil n / c \\rceil$ contiguous chunks whose sizes differ by at most one; the [native backend design](../design/backend/native.md) derives this and the results below."
+msgstr ""
+
+#: manual/api/core.md:246
+msgid "Doubles every element, returning a new array, or `Overflow` when some $2 x_i$ does not fit in 32 bits."
+msgstr ""
+
+#: manual/api/core.md:253
+msgid "The input is not modified. The map is fixed to $x \\mapsto 2x$ in v1."
+msgstr ""
+
+#: manual/api/core.md:257
+msgid "Returns the sum of the elements."
+msgstr ""
+
+#: manual/api/core.md:263
+msgid "The sum is exact when it is returned. On any failure, an invalid argument or an overflow of a partial sum, the function returns `0`, which cannot be told apart from a true sum of zero. Whether a partial sum overflows depends on the chunking: `[-1, 0, 2147483647, 1]` sums to `2147483647` with $w = 1, c = 4$ but returns `0` with $w = 2, c = 2$."
+msgstr ""
+
+#: manual/api/core.md:271
+msgid "Returns the inclusive prefix sums $y_i = x_0 + \\dots + x_i$."
+msgstr ""
+
+#: manual/api/core.md:277
+msgid "It fails with `InvalidArgument` when the arguments break the conditions above and with `Overflow` when a partial sum overflows."
+msgstr ""
+
+#: manual/api/core.md:302
+msgid "Creates an empty workflow with a label and a policy (default `default_policy()`)."
+msgstr ""
+
+#: manual/api/core.md:309
+msgid "Add capabilities, nodes and edges with `Workflow::add_capability`, `Workflow::add_node` and `Workflow::add_edge` from the [workflow API](workflow.md). These methods change the workflow in place."
+msgstr ""
+
+#: manual/api/core.md:313
+msgid "`compute_task`, `spawn_task` and `join_task`"
+msgstr ""
+
+#: manual/api/core.md:315
+msgid "Create a compute node that carries a plan, a spawn node and a join node."
+msgstr ""
+
+#: manual/api/core.md:323
+msgid "The first two arguments are the node id and label. None of these nodes needs a capability."
+msgstr ""
+
+#: manual/api/core.md:326
+msgid "`channel_capability`, `mutex_capability` and `shared_read_capability`"
+msgstr ""
+
+#: manual/api/core.md:328
+msgid "Create capabilities with the only access mode that is valid for their kind: a channel with `MoveOnly`, a mutex with `SynchronizeOnly` and a shared read view with `ReadOnly`."
+msgstr ""
+
+#: manual/api/core.md:338
+msgid "`workflow_validate` and `workflow_is_ready`"
+msgstr ""
+
+#: manual/api/core.md:340
+msgid "Return the issues found by `@workflow.validate`, and whether there are none."
+msgstr ""
+
+#: manual/api/core.md:349
+msgid "Validates a workflow for a backend and records the outcome as a `Submission`."
+msgstr ""
+
+#: manual/api/core.md:355
+msgid "The submission is accepted when the workflow has no issues and the backend is `Native`. Nothing is executed: `completed` is always `false`. Use `submit_workflow_async` to run a workflow."
+msgstr ""
+
+#: manual/api/core.md:377
+msgid "Asynchronous workflows"
+msgstr ""
+
+#: manual/api/core.md:381
+msgid "Starts a workflow on the native runtime and returns a handle at once."
+msgstr ""
+
+#: manual/api/core.md:387
+msgid "The workflow is not validated in MoonBit first; the C runtime checks it. The current implementation always returns `Ok`. When the C runtime rejects the graph, the handle is empty and `wait_workflow` reports state `Submitted` with status `7` (`NullPointer`)."
+msgstr ""
+
+#: manual/api/core.md:392
+msgid "[!WARNING] The C bridge frees the node, edge and capability arrays, and the request that points to them, as soon as the runtime has started, while the worker threads still read them. Tests that run workflows crash intermittently because of this. Treat asynchronous workflows as experimental until it is fixed."
+msgstr ""
+
+#: manual/api/core.md:400
+msgid "Returns a snapshot of a running workflow without waiting."
+msgstr ""
+
+#: manual/api/core.md:408
+msgid "Blocks until the workflow completes or fails, then returns its result."
+msgstr ""
+
+#: manual/api/core.md:414
+msgid "`status` is `0` on success or a runtime status code such as `14` (`BARRIER_BROKEN`); `completed_nodes` counts finished nodes and `failed_node_id` names the failing node, or is `-1`. A workflow whose nodes block without being woken never finishes, and `wait_workflow` does not return; see the [native backend design](../design/backend/native.md)."
+msgstr ""
+
+#: manual/api/core.md:422
+msgid "Stops the worker threads of a workflow and frees its runtime."
+msgstr ""
+
+#: manual/api/core.md:428
+msgid "Call it exactly once per handle, after the last `poll_workflow` or `wait_workflow`."
+msgstr ""
+
+#: manual/api/core.md:443
+msgid "The last example is not compiled into the documentation tests because of the defect described under `submit_workflow_async`."
+msgstr ""
+
+#: manual/api/plan.md:1
+msgid "plan API"
+msgstr ""
+
+#: manual/api/plan.md:3
+msgid "The package `Luna-Flow/luna_thread/plan`, imported as `@plan`, describes one data-parallel operation as a value: its kind, the element type and length of its input, the execution policy, an optional reduction kernel and an ordering guarantee. It validates plans against the v1 subset. It executes nothing and builds on every target."
+msgstr ""
+
+#: manual/api/plan.md:9
+#: manual/api/shared.md:10
+#: manual/api/workflow.md:9
+msgid "The enumerations of this package are read-only outside it: match on their constructors, but build values with the functions below."
+msgstr ""
+
+#: manual/api/plan.md:12
+msgid "Types"
+msgstr ""
+
+#: manual/api/plan.md:16
+msgid "The four operations a plan can describe."
+msgstr ""
+
+#: manual/api/plan.md:27
+msgid "`Map` applies a function to every element, `Reduce` combines all elements with a kernel, `Scan` produces the running combination (prefix), and `MapReduce` maps and then reduces."
+msgstr ""
+
+#: manual/api/plan.md:33
+msgid "The element type of a plan's input."
+msgstr ""
+
+#: manual/api/plan.md:46
+msgid "Only `I32` and `I64` are supported in v1."
+msgstr ""
+
+#: manual/api/plan.md:50
+msgid "The binary operation of a reduce, map-reduce or scan."
+msgstr ""
+
+#: manual/api/plan.md:61
+msgid "`Custom(name)` names a kernel that the runtime does not know; it never passes validation in v1."
+msgstr ""
+
+#: manual/api/plan.md:66
+msgid "The element type and length of a plan's input."
+msgstr ""
+
+#: manual/api/plan.md:78
+msgid "`DataDomain::new(t, n)` stores its arguments unchecked; `validate` rejects $n \\le 0$."
+msgstr ""
+
+#: manual/api/plan.md:83
+msgid "A complete plan."
+msgstr ""
+
+#: manual/api/plan.md:97
+msgid "`Plan::new` stores its arguments unchecked. `policy` defaults to `@shared.native_policy()`, `reduction` to `None` and `ordering` to `PreserveInputOrder`. Use it for combinations the builders below do not make, such as a scan with relaxed ordering."
+msgstr ""
+
+#: manual/api/plan.md:102
+msgid "`Plan::label`, `Plan::kind`, `Plan::domain`, `Plan::policy`, `Plan::reduction` and `Plan::ordering`"
+msgstr ""
+
+#: manual/api/plan.md:104
+msgid "Return the fields of a plan."
+msgstr ""
+
+#: manual/api/plan.md:117
+msgid "One reason why a plan is outside the v1 subset."
+msgstr ""
+
+#: manual/api/plan.md:134
+msgid "`validate` describes when each one is reported."
+msgstr ""
+
+#: manual/api/plan.md:138
+msgid "Structural equality, promoted as a method on every type of the package: `DataDomain`, `Plan`, `PlanKind`, `ReductionKernel`, `ValidationIssue` and `ValueType`. Use `==` and `!=`."
+msgstr ""
+
+#: manual/api/plan.md:146
+msgid "Constructors for enumerations"
+msgstr ""
+
+#: manual/api/plan.md:148
+msgid "`map_plan_kind`, `reduce_plan_kind`, `scan_plan_kind` and `map_reduce_plan_kind`"
+msgstr ""
+
+#: manual/api/plan.md:150
+msgid "Return `Map`, `Reduce`, `Scan` and `MapReduce`."
+msgstr ""
+
+#: manual/api/plan.md:161
+msgid "Return `I32`, `I64`, `F32`, `F64`, `Bytes` and `Opaque(name)`."
+msgstr ""
+
+#: manual/api/plan.md:172
+msgid "`sum_reduction`, `min_reduction`, `max_reduction` and `custom_reduction`"
+msgstr ""
+
+#: manual/api/plan.md:174
+msgid "Return `Sum`, `Min`, `Max` and `Custom(name)`."
+msgstr ""
+
+#: manual/api/plan.md:191
+msgid "Building plans"
+msgstr ""
+
+#: manual/api/plan.md:195
+msgid "Builds a `Map` plan."
+msgstr ""
+
+#: manual/api/plan.md:201
+msgid "The arguments are the label, the element type and the input length; `policy` defaults to `@shared.native_policy()` and `ordering` to `PreserveInputOrder`. The reduction is `None`."
+msgstr ""
+
+#: manual/api/plan.md:207
+msgid "Builds a `Reduce` plan with a reduction kernel and `PreserveInputOrder`."
+msgstr ""
+
+#: manual/api/plan.md:215
+msgid "Builds a `Scan` plan with `PreserveInputOrder` and no reduction kernel."
+msgstr ""
+
+#: manual/api/plan.md:221
+msgid "The native scan kernel is a prefix sum, so a scan plan does not name its kernel."
+msgstr ""
+
+#: manual/api/plan.md:226
+msgid "Builds a `MapReduce` plan."
+msgstr ""
+
+#: manual/api/plan.md:242
+#: manual/api/workflow.md:306
+msgid "Validation"
+msgstr ""
+
+#: manual/api/plan.md:246
+msgid "Returns every issue of a plan, in a fixed order, or an empty array."
+msgstr ""
+
+#: manual/api/plan.md:252
+msgid "With $n$ the input length, $w$ the worker count and $c$ the chunk size of the policy, the checks are:"
+msgstr ""
+
+#: manual/api/plan.md:255
+msgid "Issue"
+msgstr ""
+
+#: manual/api/plan.md:255
+msgid "Reported when"
+msgstr ""
+
+#: manual/api/plan.md:258
+msgid "the element type is not `I32` or `I64`"
+msgstr ""
+
+#: manual/api/plan.md:261
+msgid "the policy's backend is not `Native`"
+msgstr ""
+
+#: manual/api/plan.md:262
+msgid "the policy's mode is not `Synchronous`"
+msgstr ""
+
+#: manual/api/plan.md:263
+msgid "a `Reduce` or `MapReduce` plan has no kernel"
+msgstr ""
+
+#: manual/api/plan.md:264
+msgid "the kernel of a `Reduce` or `MapReduce` plan is `Custom`"
+msgstr ""
+
+#: manual/api/plan.md:265
+msgid "`UnsupportedOrdering` and `ScanRequiresStableOrdering`"
+msgstr ""
+
+#: manual/api/plan.md:265
+msgid "a `Scan` plan has `RelaxedOrder`; both are reported"
+msgstr ""
+
+#: manual/api/plan.md:267
+msgid "`validate` does not check the cover condition $w \\ge \\lceil n / c \\rceil$ that the native kernels also require."
+msgstr ""
+
+#: manual/api/plan.md:272
+#: manual/api/workflow.md:372
+msgid "Returns `true` when `validate` returns no issue."
+msgstr ""
+
+#: manual/api/plan.md:278
+msgid "`value_type_is_supported_in_v1`, `reduction_kernel_is_supported_in_v1` and `ordering_is_valid_for_kind`"
+msgstr ""
+
+#: manual/api/plan.md:280
+msgid "The individual v1 rules used by `validate`."
+msgstr ""
+
+#: manual/api/plan.md:288
+msgid "The first accepts `I32` and `I64`, the second `Sum`, `Min` and `Max`. The third accepts every ordering except `RelaxedOrder` for `Scan`."
+msgstr ""
+
+#: manual/api/plan.md:308
+msgid "Predicates"
+msgstr ""
+
+#: manual/api/plan.md:310
+msgid "`is_map`, `is_reduce`, `is_scan` and `is_map_reduce`"
+msgstr ""
+
+#: manual/api/plan.md:312
+msgid "Test the kind of a plan."
+msgstr ""
+
+#: manual/api/plan.md:323
+msgid "Returns `true` when the plan's kernel is `Some(Sum)`."
+msgstr ""
+
+#: manual/api/plan.md:329
+msgid "`is_chunk_size_too_large`, `is_scan_requires_stable_ordering`, `is_unsupported_value_type`, `is_unsupported_reduction_kernel`, `is_unsupported_backend`, `is_unsupported_mode` and `is_unsupported_ordering`"
+msgstr ""
+
+#: manual/api/plan.md:331
+msgid "Test which issue a `ValidationIssue` is, for use with `Array::any`."
+msgstr ""
+
+#: manual/api/plan.md:343
+msgid "`is_chunk_size_too_large` matches `ChunkSizeDoesNotFitInput`; the others match the issue of the same name."
+msgstr ""
+
+#: manual/api/plan.md:356
+msgid "Package information"
+msgstr ""
+
+#: manual/api/plan.md:358
+msgid "`package_name` and `default_backend_label`"
+msgstr ""
+
+#: manual/api/plan.md:360
+msgid "Return `\"plan\"` and the label of the default backend, `\"native\"`."
+msgstr ""
+
+#: manual/api/shared.md:1
+msgid "shared API"
+msgstr ""
+
+#: manual/api/shared.md:3
+msgid "The package `Luna-Flow/luna_thread/shared`, imported as `@shared`, holds the vocabulary that every other package of the module uses: backend targets, execution modes, ordering guarantees, execution policies and their validation, the declared capabilities of each backend, native status codes, and integer-coded records that mirror the C request structs. It builds on every target."
+msgstr ""
+
+#: manual/api/shared.md:13
+msgid "Targets, modes and orderings"
+msgstr ""
+
+#: manual/api/shared.md:17
+msgid "The runtime that executes a plan or workflow."
+msgstr ""
+
+#: manual/api/shared.md:28
+msgid "Whether a submission blocks until it finishes."
+msgstr ""
+
+#: manual/api/shared.md:39
+msgid "Whether results must keep the order of the input."
+msgstr ""
+
+#: manual/api/shared.md:48
+msgid "`native_target`, `javascript_target`, `synchronous_mode`, `asynchronous_mode`, `preserve_input_order` and `relaxed_order`"
+msgstr ""
+
+#: manual/api/shared.md:50
+msgid "Return `Native`, `JavaScript`, `Synchronous`, `Asynchronous`, `PreserveInputOrder` and `RelaxedOrder`."
+msgstr ""
+
+#: manual/api/shared.md:64
+msgid "Returns `\"native\"` or `\"javascript\"`."
+msgstr ""
+
+#: manual/api/shared.md:77
+msgid "Execution policies"
+msgstr ""
+
+#: manual/api/shared.md:81
+msgid "How a plan or workflow should run: backend, mode, number of workers, chunk size and ordering."
+msgstr ""
+
+#: manual/api/shared.md:94
+msgid "`PolicyIssue` and `PolicyError`"
+msgstr ""
+
+#: manual/api/shared.md:96
+msgid "A reason why a policy is outside the v1 subset, and the error that carries the first such reason."
+msgstr ""
+
+#: manual/api/shared.md:114
+msgid "Builds a policy and returns the first problem as a `PolicyError`."
+msgstr ""
+
+#: manual/api/shared.md:120
+msgid "The defaults are `Native`, `Synchronous`, `1`, `1` and `PreserveInputOrder`. The checks run in the order `worker_count > 0`, `chunk_size > 0`, `backend == Native`, `mode == Synchronous`; the ordering is not checked."
+msgstr ""
+
+#: manual/api/shared.md:126
+msgid "Builds a policy like `make_execution_policy` and aborts when it would return an error."
+msgstr ""
+
+#: manual/api/shared.md:133
+msgid "`native_policy` and `javascript_policy`"
+msgstr ""
+
+#: manual/api/shared.md:135
+msgid "Return the default native policy, and attempt the same for the JavaScript backend."
+msgstr ""
+
+#: manual/api/shared.md:143
+msgid "`native_policy()` is `make_execution_policy().unwrap()`. `javascript_policy()` is `make_execution_policy(backend=JavaScript).unwrap()`, which aborts in v1 because the JavaScript backend is rejected."
+msgstr ""
+
+#: manual/api/shared.md:149
+msgid "Returns every issue of an existing policy, in the order of the checks above."
+msgstr ""
+
+#: manual/api/shared.md:155
+msgid "Policies built with the functions above always pass; `validate_policy` matters for a policy stored in a workflow, which `@workflow.validate` re-checks."
+msgstr ""
+
+#: manual/api/shared.md:160
+msgid "Returns `true` when the policy asks for more than one worker."
+msgstr ""
+
+#: manual/api/shared.md:180
+msgid "Runtime capabilities"
+msgstr ""
+
+#: manual/api/shared.md:184
+msgid "The features a backend declares."
+msgstr ""
+
+#: manual/api/shared.md:197
+msgid "Returns the declared table of a backend."
+msgstr ""
+
+#: manual/api/shared.md:203
+msgid "Backend"
+msgstr ""
+
+#: manual/api/shared.md:203
+msgid "Parallelism"
+msgstr ""
+
+#: manual/api/shared.md:203
+msgid "Async"
+msgstr ""
+
+#: manual/api/shared.md:203
+msgid "Zero-copy buffers"
+msgstr ""
+
+#: manual/api/shared.md:208
+msgid "The table is a fixed declaration, not a probe of the running system. The JavaScript entries describe the backend the specification plans; the JavaScript backend executes nothing yet."
+msgstr ""
+
+#: manual/api/shared.md:212
+msgid "Native status codes"
+msgstr ""
+
+#: manual/api/shared.md:216
+msgid "The status codes 0 to 7 of the C runtime."
+msgstr ""
+
+#: manual/api/shared.md:231
+msgid "`native_status_code` and `native_status_from_code`"
+msgstr ""
+
+#: manual/api/shared.md:233
+msgid "Convert between `NativeStatus` and its C code."
+msgstr ""
+
+#: manual/api/shared.md:240
+msgid "`native_status_code` numbers the constructors 0 to 7 in declaration order. `native_status_from_code` inverts it on 0 to 7 and maps every other code, including the workflow statuses 8 to 14, to `InvalidArgument`."
+msgstr ""
+
+#: manual/api/shared.md:255
+msgid "Integer-coded native records"
+msgstr ""
+
+#: manual/api/shared.md:257
+msgid "These records mirror the C structs `luna_thread_buffer`, `luna_thread_map_request`, `luna_thread_reduce_request` and `luna_thread_scan_request` field by field, with enumerations as `Int` codes. No package of the module consumes them; `backend/native` uses its own typed records. They store their arguments unchecked."
+msgstr ""
+
+#: manual/api/shared.md:265
+msgid "A pointer, as an `Int`, and a length."
+msgstr ""
+
+#: manual/api/shared.md:279
+msgid "Input and output buffers, element count, value type code, worker count and chunk size."
+msgstr ""
+
+#: manual/api/shared.md:300
+msgid "The constructor takes the fields in declaration order."
+msgstr ""
+
+#: manual/api/shared.md:302
+msgid "`NativeReduceRequest` and `NativeScanRequest`"
+msgstr ""
+
+#: manual/api/shared.md:304
+msgid "The same fields as `NativeMapRequest` plus a reduction kernel code, placed after the value type."
+msgstr ""
+
+#: manual/api/shared.md:354
+#: manual/api/workflow.md:450
+msgid "Equality and package information"
+msgstr ""
+
+#: manual/api/shared.md:358
+msgid "Structural equality, promoted on every type of the package: `BackendTarget`, `ExecutionMode`, `ExecutionPolicy`, `NativeBuffer`, `NativeMapRequest`, `NativeReduceRequest`, `NativeScanRequest`, `NativeStatus`, `OrderingGuarantee`, `PolicyError`, `PolicyIssue` and `RuntimeCapabilities`. Use `==` and `!=`."
+msgstr ""
+
+#: manual/api/shared.md:370
+msgid "Returns `\"shared\"`."
+msgstr ""
+
+#: manual/api/workflow.md:1
+msgid "workflow API"
+msgstr ""
+
+#: manual/api/workflow.md:3
+msgid "The package `Luna-Flow/luna_thread/workflow`, imported as `@workflow`, describes a task graph: a set of capabilities (channels, locks, barriers and shared data), a set of nodes that compute or synchronise, and dependency edges between nodes. It validates the graph and records submissions. It executes nothing itself and builds on every target; `backend/native` runs workflows."
+msgstr ""
+
+#: manual/api/workflow.md:12
+msgid "Capabilities"
+msgstr ""
+
+#: manual/api/workflow.md:16
+msgid "The kind of resource a capability stands for."
+msgstr ""
+
+#: manual/api/workflow.md:33
+msgid "`Opaque(name)` is never supported. The native runtime additionally rejects `RwLock` and `Semaphore`."
+msgstr ""
+
+#: manual/api/workflow.md:38
+msgid "How nodes may use a capability."
+msgstr ""
+
+#: manual/api/workflow.md:50
+msgid "Each capability kind admits only some access modes:"
+msgstr ""
+
+#: manual/api/workflow.md:52
+msgid "Kind"
+msgstr ""
+
+#: manual/api/workflow.md:52
+msgid "Valid access modes"
+msgstr ""
+
+#: manual/api/workflow.md:59
+#: manual/architecture.md:84
+#: manual/architecture.md:85
+#: manual/architecture.md:86
+#: manual/architecture.md:87
+#: manual/architecture.md:88
+#: manual/architecture.md:89
+#: manual/architecture.md:90
+msgid "none"
+msgstr ""
+
+#: manual/api/workflow.md:63
+msgid "A capability with an id, a label, a kind and an access mode."
+msgstr ""
+
+#: manual/api/workflow.md:75
+msgid "`Capability::new` does not check the access mode; `validate` does."
+msgstr ""
+
+#: manual/api/workflow.md:77
+msgid "`owned_buffer_capability`, `shared_read_view_capability`, `atomic_cell_capability`, `mutex_capability`, `condvar_capability`, `rwlock_capability`, `semaphore_capability`, `barrier_capability`, `channel_capability` and `opaque_capability`"
+msgstr ""
+
+#: manual/api/workflow.md:79
+msgid "Return the capability kinds of the same names."
+msgstr ""
+
+#: manual/api/workflow.md:94
+msgid "`read_only_access`, `write_only_access`, `read_write_access`, `synchronize_only_access` and `move_only_access`"
+msgstr ""
+
+#: manual/api/workflow.md:96
+msgid "Return the access modes of the same names."
+msgstr ""
+
+#: manual/api/workflow.md:119
+msgid "Nodes"
+msgstr ""
+
+#: manual/api/workflow.md:123
+msgid "What a node does."
+msgstr ""
+
+#: manual/api/workflow.md:142
+msgid "`Compute`, `Spawn` and `Join` need no capability. The other kinds must name a capability of a matching kind:"
+msgstr ""
+
+#: manual/api/workflow.md:145
+#: manual/architecture.md:97
+msgid "Node kind"
+msgstr ""
+
+#: manual/api/workflow.md:145
+msgid "Capability kinds"
+msgstr ""
+
+#: manual/api/workflow.md:152
+msgid "`AtomicCell`, `OwnedBuffer` (not with `ReadOnly` access)"
+msgstr ""
+
+#: manual/api/workflow.md:156
+msgid "A node with an id, a label, a kind and an optional capability id."
+msgstr ""
+
+#: manual/api/workflow.md:170
+msgid "Creates a `Compute(plan)` node without a capability."
+msgstr ""
+
+#: manual/api/workflow.md:176
+msgid "`spawn_node`, `join_node`, `send_node`, `recv_node`, `lock_node`, `unlock_node`, `wait_node`, `signal_node`, `barrier_node`, `read_shared_node` and `write_shared_node`"
+msgstr ""
+
+#: manual/api/workflow.md:178
+msgid "Create a node of the kind of the same name, with an id, a label and an optional capability id."
+msgstr ""
+
+#: manual/api/workflow.md:204
+msgid "Edges"
+msgstr ""
+
+#: manual/api/workflow.md:208
+msgid "Why one node must run before another."
+msgstr ""
+
+#: manual/api/workflow.md:219
+msgid "All four kinds order their endpoints in the same way; the kind documents the reason and is passed to the runtime unchanged."
+msgstr ""
+
+#: manual/api/workflow.md:224
+msgid "A dependency from node `from` to node `to`: `to` may start only after `from` has completed."
+msgstr ""
+
+#: manual/api/workflow.md:236
+msgid "`data_dependency`, `control_dependency`, `ownership_transfer_dependency` and `synchronization_dependency`"
+msgstr ""
+
+#: manual/api/workflow.md:238
+msgid "Return `DataDependency`, `ControlDependency`, `OwnershipTransfer` and `SynchronizationDependency`."
+msgstr ""
+
+#: manual/api/workflow.md:252
+msgid "A labelled task graph with an execution policy."
+msgstr ""
+
+#: manual/api/workflow.md:265
+msgid "`Workflow::new` creates an empty graph; `policy` defaults to `@shared.native_policy()`."
+msgstr ""
+
+#: manual/api/workflow.md:268
+msgid "`Workflow::add_capability`, `Workflow::add_node` and `Workflow::add_edge`"
+msgstr ""
+
+#: manual/api/workflow.md:270
+msgid "Append a capability, node or edge and return the same workflow."
+msgstr ""
+
+#: manual/api/workflow.md:278
+msgid "These methods push onto the workflow's arrays in place: the receiver and the result are the same value, and every other reference to the workflow sees the addition. They do not check anything."
+msgstr ""
+
+#: manual/api/workflow.md:282
+msgid "`Workflow::label`, `Workflow::policy`, `Workflow::capabilities`, `Workflow::nodes` and `Workflow::edges`"
+msgstr ""
+
+#: manual/api/workflow.md:284
+msgid "Return the fields of a workflow. The arrays are the workflow's own arrays, not copies."
+msgstr ""
+
+#: manual/api/workflow.md:310
+msgid "One problem found in a workflow."
+msgstr ""
+
+#: manual/api/workflow.md:337
+msgid "Returns every issue of a workflow, or an empty array."
+msgstr ""
+
+#: manual/api/workflow.md:343
+msgid "The checks, in the order their issues appear:"
+msgstr ""
+
+#: manual/api/workflow.md:345
+msgid "`EmptyWorkflow` when there are no nodes, then one `InvalidPolicy` per issue of `@shared.validate_policy` on the workflow's policy."
+msgstr ""
+
+#: manual/api/workflow.md:347
+msgid "For each capability: `UnsupportedCapability` for `Opaque`, `InvalidCapabilityAccess` when the access mode is not valid for the kind, and `DuplicateCapabilityId` when its id occurs more than once (reported once per occurrence)."
+msgstr ""
+
+#: manual/api/workflow.md:351
+msgid "For each node: `DuplicateNodeId` (once per occurrence), `MissingNodeCapability` when the kind needs a capability and has none, `MissingCapability` when the named capability does not exist, an `InvalidChannelNode`, `InvalidMutexNode`, `InvalidCondvarNode` or `InvalidBarrierNode` when the capability has the wrong kind (an `InvalidDependency` with equal endpoints for the other node kinds), `UnsupportedSharedWrite` when a `WriteShared` node names a `ReadOnly` capability, and one `InvalidComputePlan` per issue of `@plan.validate` on a compute node's plan."
+msgstr ""
+
+#: manual/api/workflow.md:360
+msgid "For each edge: `SelfEdge` when `from == to`, `InvalidNodeReference` for each endpoint that is not a node, and `InvalidDependency` when either is not."
+msgstr ""
+
+#: manual/api/workflow.md:362
+msgid "`CyclicDependency` when the graph has no node without incoming edges, or when two edges point in opposite directions between the same nodes."
+msgstr ""
+
+#: manual/api/workflow.md:365
+msgid "The cycle check in step 5 does not find every cycle: a cycle of three or more nodes that is reachable from a source passes. The native runtime checks for cycles completely and rejects such a graph when it is submitted. The [workflow design](../design/workflow.md) discusses both checks."
+msgstr ""
+
+#: manual/api/workflow.md:378
+msgid "`is_invalid_compute_plan`, `is_cyclic_dependency`, `is_missing_capability` and `is_unsupported_shared_write`"
+msgstr ""
+
+#: manual/api/workflow.md:380
+msgid "Test which issue a `WorkflowIssue` is."
+msgstr ""
+
+#: manual/api/workflow.md:389
+msgid "`is_missing_capability` matches both `MissingCapability` and `MissingNodeCapability`."
+msgstr ""
+
+#: manual/api/workflow.md:404
+msgid "Submission"
+msgstr ""
+
+#: manual/api/workflow.md:408
+msgid "The record of a submission: the workflow, the target backend, whether it was accepted and completed, and the issues found."
+msgstr ""
+
+#: manual/api/workflow.md:427
+msgid "Validates a workflow and records whether the backend accepts it."
+msgstr ""
+
+#: manual/api/workflow.md:433
+msgid "The submission is accepted exactly when `validate` returns no issue and the backend (default `Native`) is `Native`. `completed` is always `false`: `submit` does not run the workflow."
+msgstr ""
+
+#: manual/api/workflow.md:454
+msgid "Structural equality, promoted on every type of the package: `AccessMode`, `Capability`, `CapabilityKind`, `Edge`, `EdgeKind`, `Node`, `NodeKind`, `Submission`, `Workflow` and `WorkflowIssue`. Use `==` and `!=`."
+msgstr ""
+
+#: manual/api/workflow.md:464
+msgid "Returns `\"workflow\"`."
+msgstr ""
+
+#: manual/architecture.md:1
+msgid "Architecture"
+msgstr ""
+
+#: manual/architecture.md:3
+msgid "This guide shows how the MoonBit packages, the C runtime and the JavaScript addon of `luna_thread` fit together, and which integer codes cross the foreign function interface. The package pages describe each MoonBit package in detail."
+msgstr ""
+
+#: manual/architecture.md:7
+msgid "Layers"
+msgstr ""
+
+#: manual/architecture.md:9
+msgid "The specification names two realization paths:"
+msgstr ""
+
+#: manual/architecture.md:16
+msgid "The first path exists. The second stops at the MoonBit side: `backend/js` names the JavaScript target, and the addon in `js/` exports only a `runtimeName` function."
+msgstr ""
+
+#: manual/architecture.md:20
+msgid "The MoonBit packages depend on each other without cycles:"
+msgstr ""
+
+#: manual/architecture.md:22
+#: manual/index.md:38
+msgid "Package"
+msgstr ""
+
+#: manual/architecture.md:22
+msgid "Imports"
+msgstr ""
+
+#: manual/architecture.md:24
+msgid "nothing but the core library"
+msgstr ""
+
+#: manual/architecture.md:31
+msgid "`shared` holds the vocabulary every other package uses: backend targets, execution modes, ordering guarantees, execution policies and their validation, runtime capability tables, and integer-coded mirrors of the C request structs."
+msgstr ""
+
+#: manual/architecture.md:35
+msgid "`plan` describes one data-parallel operation over a typed input domain and checks it against the v1 subset."
+msgstr ""
+
+#: manual/architecture.md:37
+msgid "`workflow` describes a task graph whose nodes may be compute plans or synchronisation steps bound to capabilities, and checks its structure."
+msgstr ""
+
+#: manual/architecture.md:39
+msgid "`backend/native` translates plans into typed native requests, calls the C kernels, and marshals workflows to the C scheduler."
+msgstr ""
+
+#: manual/architecture.md:41
+msgid "`core`, the root package, re-exports the common entry points with defaults and routes submissions to the native backend."
+msgstr ""
+
+#: manual/architecture.md:44
+msgid "The C runtime"
+msgstr ""
+
+#: manual/architecture.md:46
+msgid "The runtime is one C file with one header:"
+msgstr ""
+
+#: manual/architecture.md:48
+msgid "File"
+msgstr ""
+
+#: manual/architecture.md:48
+msgid "Role"
+msgstr ""
+
+#: manual/architecture.md:50
+msgid "Public C API: status codes, request structs, workflow types."
+msgstr ""
+
+#: manual/architecture.md:51
+msgid "Kernels, validation and the workflow scheduler."
+msgstr ""
+
+#: manual/architecture.md:52
+msgid "The same source, compiled as a MoonBit native stub; it differs only in its `#include` path."
+msgstr ""
+
+#: manual/architecture.md:53
+msgid "`luna_mbt_*` wrappers that turn MoonBit arguments into request structs."
+msgstr ""
+
+#: manual/architecture.md:54
+msgid "Declarations of the `luna_mbt_*` wrappers."
+msgstr ""
+
+#: manual/architecture.md:55
+msgid "A C smoke test of the kernels and of their failure statuses."
+msgstr ""
+
+#: manual/architecture.md:57
+msgid "The two copies of the runtime must be kept identical by hand."
+msgstr ""
+
+#: manual/architecture.md:59
+msgid "There are two builds. `moon` compiles the stubs with the system C compiler and no OpenMP flags, so the `#pragma omp` loops run on the calling thread, while the workflow scheduler still starts POSIX threads. CMake (`make native-configure`, `make native-build`) builds `native/` as a static library with OpenMP when `LUNA_THREAD_ENABLE_OPENMP` is on, together with the smoke test. The [native backend design](design/backend/native.md) explains both execution models."
+msgstr ""
+
+#: manual/architecture.md:67
+msgid "Codes across the interface"
+msgstr ""
+
+#: manual/architecture.md:69
+msgid "All enumerations cross the C interface as `Int`. The MoonBit side maps them in `backend/native` (and `shared` for statuses)."
+msgstr ""
+
+#: manual/architecture.md:72
+msgid "Status codes"
+msgstr ""
+
+#: manual/architecture.md:74
+#: manual/architecture.md:97
+msgid "Code"
+msgstr ""
+
+#: manual/architecture.md:74
+msgid "C name"
+msgstr ""
+
+#: manual/architecture.md:74
+msgid "MoonBit `NativeStatus`"
+msgstr ""
+
+#: manual/architecture.md:92
+msgid "Codes 8 to 14 come only from the workflow runtime; `WorkflowResult::status` carries them as raw integers."
+msgstr ""
+
+#: manual/architecture.md:95
+msgid "Workflow codes"
+msgstr ""
+
+#: manual/architecture.md:97
+msgid "Capability kind"
+msgstr ""
+
+#: manual/architecture.md:97
+msgid "Edge kind"
+msgstr ""
+
+#: manual/architecture.md:97
+msgid "Runtime state"
+msgstr ""
+
+#: manual/architecture.md:112
+msgid "Value types are `0` for `I32` and `1` for `I64`; reduction kernels are `0` for `Sum`, `1` for `Min` and `2` for `Max`."
+msgstr ""
+
+#: manual/architecture.md:115
+msgid "The JavaScript addon"
+msgstr ""
+
+#: manual/architecture.md:117
+msgid "`js/` is a `node-gyp` project (`make js-install`, `make js-build`) whose C source registers one function, `runtimeName`, returning `\"luna_thread_addon\"`. It does not link the C runtime yet."
+msgstr ""
+
+#: manual/architecture.md:121
+msgid "The specification"
+msgstr ""
+
+#: manual/architecture.md:123
+msgid "`doc/attachments/moonbit_parallel_spec/main.typ` is the normative English specification and `main.zh_CN.typ` its Chinese mirror; `make docs` compiles both. The specification defines the workflow calculus, ownership transfer, the ABI layouts and the conformance obligations. The implementation covers the data model and validation of Part I and the native realization of a subset of it; the package design pages state which parts. `docs/spec-review-report-zh.md` records review findings in Chinese."
+msgstr ""
+
+#: manual/architecture.md:131
+msgid "Repository layout"
+msgstr ""
+
+#: manual/architecture.md:133
+msgid "Path"
+msgstr ""
+
+#: manual/architecture.md:133
+#: manual/index.md:38
+msgid "Contents"
+msgstr ""
+
+#: manual/architecture.md:135
+msgid "The MoonBit module (`moon.mod`) and its packages."
+msgstr ""
+
+#: manual/architecture.md:136
+msgid "The C runtime, its header, CMake build and smoke test."
+msgstr ""
+
+#: manual/architecture.md:137
+msgid "The Node.js addon scaffold."
+msgstr ""
+
+#: manual/architecture.md:138
+msgid "This manual, its translations and the specification."
+msgstr ""
+
+#: manual/architecture.md:139
+msgid "Checks the MoonBit, C, Node.js and Typst toolchains."
+msgstr ""
+
+#: manual/architecture.md:140
+msgid "Shortcuts for checking, building the native runtime and the addon, and compiling the specification."
+msgstr ""
+
+#: manual/design/backend/js.md:1
+msgid "backend/js design"
+msgstr ""
+
+#: manual/design/backend/js.md:3
+#: manual/design/backend/native.md:3
+#: manual/design/core.md:3
+#: manual/design/plan.md:3
+#: manual/design/shared.md:3
+#: manual/design/workflow.md:3
+msgid "Design goal"
+msgstr ""
+
+#: manual/design/backend/js.md:5
+msgid "The specification describes a second realization path: MoonBit code compiled to JavaScript that passes typed array buffers to a Node.js addon, which calls the same C runtime as the native backend. `backend/js` reserves the package for that path and fixes its identity, so that the rest of the module can already name the JavaScript target in policies, capability tables and submissions."
+msgstr ""
+
+#: manual/design/backend/js.md:11
+#: manual/design/backend/native.md:15
+#: manual/design/core.md:11
+#: manual/design/plan.md:11
+#: manual/design/shared.md:11
+#: manual/design/workflow.md:12
+msgid "Mathematical background"
+msgstr ""
+
+#: manual/design/backend/js.md:13
+msgid "The package computes nothing. The only structure it takes part in is the backend sum type"
+msgstr ""
+
+#: manual/design/backend/js.md:20
+msgid "with each backend package providing the constant $\\texttt{backend\\_target} \\in B$ that names it. For the JavaScript package this constant is $\\mathrm{JavaScript}$, and the v1 policy subset $P_1$ described on the [shared design](../shared.md) page excludes it, so every policy or submission that names this backend is rejected before reaching any runtime."
+msgstr ""
+
+#: manual/design/backend/js.md:26
+#: manual/design/backend/native.md:103
+#: manual/design/core.md:35
+#: manual/design/plan.md:35
+#: manual/design/shared.md:62
+#: manual/design/workflow.md:43
+msgid "Design decisions"
+msgstr ""
+
+#: manual/design/backend/js.md:28
+msgid "A package before a backend"
+msgstr ""
+
+#: manual/design/backend/js.md:30
+msgid "Declaring the package now keeps the module layout of the specification (`backend/native` and `backend/js` side by side) and lets code depend on `@js.backend_target()` rather than on a constructor of `shared`. When the backend is implemented, its foreign declarations and wrappers go here without a new import path."
+msgstr ""
+
+#: manual/design/backend/js.md:36
+msgid "No foreign declarations yet"
+msgstr ""
+
+#: manual/design/backend/js.md:38
+msgid "The addon in `js/` exports only `runtimeName` and does not link the C runtime, so there is nothing to declare. Declaring functions with no implementation would compile but fail at run time, which is worse than not offering them."
+msgstr ""
+
+#: manual/design/backend/js.md:42
+#: manual/design/backend/native.md:245
+#: manual/design/core.md:71
+#: manual/design/plan.md:108
+#: manual/design/shared.md:97
+#: manual/design/workflow.md:110
+msgid "Correctness / invariants"
+msgstr ""
+
+#: manual/design/backend/js.md:44
+msgid "`backend_target()` returns `JavaScript`, `default_plan_kind()` returns `Map` and `package_name()` returns `\"backend/js\"`; the package has no state."
+msgstr ""
+
+#: manual/design/backend/js.md:46
+msgid "The package builds on every target, including `js`."
+msgstr ""
+
+#: manual/design/backend/js.md:48
+#: manual/design/backend/native.md:282
+#: manual/design/core.md:81
+#: manual/design/plan.md:122
+#: manual/design/shared.md:106
+#: manual/design/workflow.md:125
+msgid "Alternatives rejected"
+msgstr ""
+
+#: manual/design/backend/js.md:50
+msgid "**Omitting the package until the backend exists.** Downstream code would then have no stable place to refer to the JavaScript backend."
+msgstr ""
+
+#: manual/design/backend/js.md:52
+msgid "**A stub that runs kernels in MoonBit on the JavaScript target.** It would bypass the C runtime and the ownership rules of the specification, giving results that the real backend might not reproduce."
+msgstr ""
+
+#: manual/design/backend/js.md:56
+#: manual/design/backend/native.md:297
+#: manual/design/core.md:90
+#: manual/design/plan.md:134
+#: manual/design/shared.md:116
+#: manual/design/workflow.md:138
+msgid "Boundaries"
+msgstr ""
+
+#: manual/design/backend/js.md:58
+msgid "The package does not execute plans or workflows, declare foreign functions, load the Node.js addon, or move data across the JavaScript boundary."
+msgstr ""
+
+#: manual/design/backend/native.md:1
+msgid "backend/native design"
+msgstr ""
+
+#: manual/design/backend/native.md:5
+msgid "`backend/native` is where `luna_thread` actually runs code in parallel. It has two jobs: run data-parallel integer kernels on MoonBit arrays without copying them, and run a workflow graph's synchronisation protocol on real threads. Both are implemented in C, behind a narrow interface of integers and borrowed arrays, so that the same runtime can later serve the JavaScript addon."
+msgstr ""
+
+#: manual/design/backend/native.md:11
+msgid "This page describes the threading model, the memory model and the mathematics of the kernels as they are implemented in `native/src/runtime.c` and the bridge `ffi_runtime_bridge.c`."
+msgstr ""
+
+#: manual/design/backend/native.md:17
+msgid "Chunked evaluation"
+msgstr ""
+
+#: manual/design/backend/native.md:19
+msgid "Let $x = (x_0, \\dots, x_{n-1})$ be the input, $w$ the worker count and $c$ the chunk size, with $0 < w \\le n$ and $0 < c \\le n$. The runtime requires the **cover condition**"
+msgstr ""
+
+#: manual/design/backend/native.md:27
+msgid "so that one worker can take each chunk, and splits $[0, n)$ into $k$ contiguous chunks $[s_j, s_{j+1})$ with"
+msgstr ""
+
+#: manual/design/backend/native.md:34
+msgid "**Chunk sizes.** Every chunk has $\\lfloor n/k \\rfloor$ or $\\lceil n/k \\rceil$ elements, and therefore at most $c$:"
+msgstr ""
+
+#: manual/design/backend/native.md:46
+msgid "The first claim is the usual balanced-partition argument: if the remaining $r = n - s_j$ elements and $m = k - j$ chunks satisfy $m \\lfloor n/k \\rfloor \\le r \\le m \\lceil n/k \\rceil$, then $\\lceil r/m \\rceil$ lies between $\\lfloor n/k \\rfloor$ and $\\lceil n/k \\rceil$, and the inequality holds again for $r - \\lceil r/m \\rceil$ and $m - 1$. At $j = 0$ it holds with $r = n$, $m = k$.[^cover]"
+msgstr ""
+
+#: manual/design/backend/native.md:53
+msgid "The code computes the chunk count as $\\min(k, w)$, which equals $k$ under the cover condition. Without the condition the chunks would be larger than $c$, so the runtime rejects it instead."
+msgstr ""
+
+#: manual/design/backend/native.md:57
+msgid "Reductions as monoid folds"
+msgstr ""
+
+#: manual/design/backend/native.md:59
+msgid "A reduction combines the elements with an associative operation $\\oplus$:"
+msgstr ""
+
+#: manual/design/backend/native.md:65
+msgid "Sum, minimum and maximum on the integers are associative and commutative. Associativity is what makes chunking correct: with chunk results $P_j = x_{s_j} \\oplus \\dots \\oplus x_{s_{j+1}-1}$,"
+msgstr ""
+
+#: manual/design/backend/native.md:74
+msgid "by the generalised associative law, whatever $w$ and $c$ are. Minimum and maximum seed each chunk with its first element, so they only need a semigroup; this is one reason the runtime requires $n > 0$."
+msgstr ""
+
+#: manual/design/backend/native.md:78
+msgid "Prefix sums by blocks"
+msgstr ""
+
+#: manual/design/backend/native.md:80
+msgid "The scan computes the inclusive prefix sums $y_i = \\sum_{t=0}^{i} x_t$ in three phases. With $S_j$ the sum of chunk $j$:"
+msgstr ""
+
+#: manual/design/backend/native.md:83
+msgid "In parallel, each chunk computes its local prefix sums $L_j(i) = \\sum_{t=s_j}^{i} x_t$ for $s_j \\le i < s_{j+1}$, writing them to the output, and its total $S_j = L_j(s_{j+1} - 1)$."
+msgstr ""
+
+#: manual/design/backend/native.md:86
+msgid "Sequentially, the carries $C_0 = 0$ and $C_j = C_{j-1} + S_{j-1}$."
+msgstr ""
+
+#: manual/design/backend/native.md:87
+msgid "In parallel, each chunk adds its carry: $y_i = C_j + L_j(i)$."
+msgstr ""
+
+#: manual/design/backend/native.md:89
+msgid "Phase 3 is correct because, by induction on $j$, $C_j = \\sum_{t=0}^{s_j - 1} x_t$:"
+msgstr ""
+
+#: manual/design/backend/native.md:100
+msgid "The scan does $2n + k$ additions; with $k$ workers its critical path is $O(n/k + k)$, against $O(n)$ for the sequential loop."
+msgstr ""
+
+#: manual/design/backend/native.md:105
+msgid "Checked integer arithmetic"
+msgstr ""
+
+#: manual/design/backend/native.md:107
+msgid "The kernels work on $\\mathbb{Z}/2^{32}$ and $\\mathbb{Z}/2^{64}$, where `+` wraps around. The runtime instead treats them as the integers and refuses to return a wrapped value: every addition $a + b$ is checked before it is made,"
+msgstr ""
+
+#: manual/design/backend/native.md:116
+msgid "and these tests do not overflow themselves. The map kernel ($x \\mapsto 2x$) first checks every element in one parallel pass and writes only if none overflows, so on failure the output is untouched."
+msgstr ""
+
+#: manual/design/backend/native.md:120
+msgid "The consequence is that a successful result is exact: each machine addition that was performed had an in-range true result, so it equals the integer addition, and by induction the returned sum or prefix equals $\\sum x_t$ in $\\mathbb{Z}$."
+msgstr ""
+
+#: manual/design/backend/native.md:125
+msgid "The cost is that checked addition is a partial operation and is **not** associative: whether some partial sum leaves the range depends on the bracketing. With $x = (-1, 0, \\mathrm{MAX}, 1)$:"
+msgstr ""
+
+#: manual/design/backend/native.md:136
+msgid "So the values are independent of $w$ and $c$, but the set of accepted inputs is not. The alternative, wrapping arithmetic, would make every result defined and chunking-independent, but silently wrong as an integer; the runtime chose exactness."
+msgstr ""
+
+#: manual/design/backend/native.md:141
+msgid "Fixed kernels in C"
+msgstr ""
+
+#: manual/design/backend/native.md:143
+msgid "Plans can name `Map` and reduction kernels, but MoonBit closures cannot cross the C interface and run on C threads. The runtime therefore implements a fixed set of kernels in C: doubling, sum, minimum, maximum and prefix sum, for 32- and 64-bit integers. The facade wraps the 32-bit doubling, sum and prefix sum; the others are reachable through the `ffi_*` declarations."
+msgstr ""
+
+#: manual/design/backend/native.md:149
+msgid "Borrowed arrays, caller-allocated output"
+msgstr ""
+
+#: manual/design/backend/native.md:151
+msgid "The MoonBit side passes `FixedArray` payloads to C with `#borrow`: C reads the input and writes the output in place and takes no ownership, so no copy is made and no reference count changes. The typed wrappers allocate the output with `FixedArray::make` before the call. Reductions return their value directly; the bridge passes a stack variable as the one-element output."
+msgstr ""
+
+#: manual/design/backend/native.md:157
+msgid "One scheduler lock for workflows"
+msgstr ""
+
+#: manual/design/backend/native.md:159
+msgid "The workflow runtime keeps all scheduling state, the ready queue, dependency counters, channel slots, mutex flags and barrier counters, under a single `pthread_mutex_t`, and workers execute each node while holding it. This makes every node step atomic with respect to the others without any per-capability locks, at the price that non-compute nodes never run simultaneously; they are bookkeeping steps that take constant time."
+msgstr ""
+
+#: manual/design/backend/native.md:166
+msgid "The threading model"
+msgstr ""
+
+#: manual/design/backend/native.md:170
+msgid "Each kernel runs its chunk loop as an OpenMP `parallel for` with `num_threads(w)` when the runtime is compiled with OpenMP, one iteration per chunk. Without OpenMP the pragmas are ignored and `select_thread_count` returns $1$, so the same chunks run one after another on the calling thread. The `moon` build compiles the native stubs without OpenMP flags, so from MoonBit the kernels currently run sequentially; the CMake build of `native/` enables OpenMP. Because the chunking is the same in both builds, the results and the overflow behaviour are the same."
+msgstr ""
+
+#: manual/design/backend/native.md:181
+msgid "`submit_workflow_async` starts $w + 1$ POSIX threads: $w$ workers and one **compute lane**. Scheduling is Kahn's topological sort run by a pool:"
+msgstr ""
+
+#: manual/design/backend/native.md:184
+msgid "Each node $v$ has a counter of unfinished predecessors, initially its in-degree. Nodes with counter $0$ go into a FIFO ring buffer of capacity $|V|$."
+msgstr ""
+
+#: manual/design/backend/native.md:187
+msgid "A worker waits on the scheduler's condition variable until the queue is non-empty, dequeues a node and executes it. Completing a node decrements the counters of its successors and enqueues those that reach $0$."
+msgstr ""
+
+#: manual/design/backend/native.md:190
+msgid "A compute node is handed to the compute lane, and the worker waits for it. In v1 the lane only checks the node kind and reports success; the plan is not executed."
+msgstr ""
+
+#: manual/design/backend/native.md:193
+msgid "When all $|V|$ nodes have completed the state becomes `Completed`; the first failing node sets `Failed`, its status and `failed_node_id`. Both wake every waiting thread so that the pool shuts down."
+msgstr ""
+
+#: manual/design/backend/native.md:197
+msgid "There are no per-thread queues and no work stealing: all workers share one queue, and FIFO order with execution under the lock makes the order in which ready nodes run the order in which they became ready."
+msgstr ""
+
+#: manual/design/backend/native.md:201
+msgid "Node semantics"
+msgstr ""
+
+#: manual/design/backend/native.md:203
+msgid "Node"
+msgstr ""
+
+#: manual/design/backend/native.md:203
+msgid "Effect when executed"
+msgstr ""
+
+#: manual/design/backend/native.md:205
+msgid "Completes immediately; no data moves."
+msgstr ""
+
+#: manual/design/backend/native.md:206
+msgid "Blocks if the channel slot is full, otherwise fills it."
+msgstr ""
+
+#: manual/design/backend/native.md:207
+msgid "Blocks if the slot is empty, otherwise empties it."
+msgstr ""
+
+#: manual/design/backend/native.md:208
+msgid "Blocks if the mutex flag is set, otherwise sets it."
+msgstr ""
+
+#: manual/design/backend/native.md:209
+msgid "Fails with status 12 if the flag is clear, otherwise clears it."
+msgstr ""
+
+#: manual/design/backend/native.md:210
+msgid "Blocks until a `Signal` on the same condition variable wakes it."
+msgstr ""
+
+#: manual/design/backend/native.md:211
+msgid "Wakes one blocked `Wait`, if any; otherwise the signal is lost."
+msgstr ""
+
+#: manual/design/backend/native.md:212
+msgid "Blocks until every barrier node of its group has arrived."
+msgstr ""
+
+#: manual/design/backend/native.md:214
+msgid "A channel is a slot of capacity one, and capabilities carry no payload: the runtime enforces the protocol, not the transfer of data."
+msgstr ""
+
+#: manual/design/backend/native.md:217
+msgid "A barrier's group is the set of `Barrier` nodes with the same capability and the same depth $d(v)$, the length of the longest path from a source to $v$:"
+msgstr ""
+
+#: manual/design/backend/native.md:224
+msgid "The runtime computes $d$ by $|V|$ rounds of relaxation over all edges, which is enough because a longest path in an acyclic graph has at most $|V| - 1$ edges. A group with fewer than two nodes fails with status 14 (`BARRIER_BROKEN`)."
+msgstr ""
+
+#: manual/design/backend/native.md:228
+msgid "The memory model"
+msgstr ""
+
+#: manual/design/backend/native.md:230
+msgid "For kernels, the chunks partition $[0, n)$, and in each parallel phase iteration $j$ writes only output indices in $[s_j, s_{j+1})$ and its own `partials[j]` or `summaries[j]` cell. Distinct iterations therefore write disjoint locations, and there is no data race. The end of an OpenMP `parallel for` is a barrier, so the sequential carry phase sees every phase-one write, and phase three sees the carries. The MoonBit caller is blocked for the whole call, so no MoonBit code touches the arrays while C threads run, and the borrowed arrays stay alive because the caller still holds them."
+msgstr ""
+
+#: manual/design/backend/native.md:240
+msgid "For workflows, every access to shared scheduler state happens under the scheduler mutex, and condition-variable waits re-acquire it, so all such accesses are ordered. `poll_workflow` takes the same mutex to copy a consistent snapshot."
+msgstr ""
+
+#: manual/design/backend/native.md:247
+msgid "**Kernel results.** When a kernel succeeds, the doubled values, the sum and the prefix sums equal their values in $\\mathbb{Z}$, independent of $w$ and $c$, as derived above."
+msgstr ""
+
+#: manual/design/backend/native.md:250
+msgid "**Validation before work.** Every kernel checks null pointers, positive sizes, $w \\le n$, $c \\le n$, buffer lengths and the cover condition before it allocates or computes, and returns status 1 otherwise (7 for a null pointer)."
+msgstr ""
+
+#: manual/design/backend/native.md:254
+msgid "**Workflow admission.** Before starting threads the runtime requires a positive worker and node count, capabilities for the nodes that need them with matching kinds, no `RwLock`, `Semaphore` or `Opaque` capability, no self edge, existing edge endpoints, and acyclicity, which it checks completely by Kahn's algorithm: a finite graph is acyclic exactly when repeatedly removing nodes without incoming edges removes them all."
+msgstr ""
+
+#: manual/design/backend/native.md:260
+msgid "**Termination.** If no `Send`, `Recv` or `Lock` node ever blocks, every `Wait` is signalled after it blocks, and every barrier group has at least two nodes, every node completes once and the workflow reaches `Completed` or `Failed`."
+msgstr ""
+
+#: manual/design/backend/native.md:265
+msgid "Known defects"
+msgstr ""
+
+#: manual/design/backend/native.md:267
+msgid "These behaviours of the current branch contradict the intent of the code and are tracked for fixing:"
+msgstr ""
+
+#: manual/design/backend/native.md:270
+msgid "**Request lifetime.** `luna_mbt_workflow_submit_async` builds the request on its stack and frees the capability, node and edge arrays right after the runtime starts, but the worker threads keep a pointer to that request. Workflow runs read freed memory and crash intermittently."
+msgstr ""
+
+#: manual/design/backend/native.md:274
+msgid "**Lost wake-ups.** Only `Signal` and a completed barrier re-enqueue blocked nodes. A `Send`, `Recv` or `Lock` that blocks is never retried, so the workflow never finishes and `wait_workflow` does not return."
+msgstr ""
+
+#: manual/design/backend/native.md:277
+msgid "**Errors without a channel.** A rejected workflow becomes an empty handle reported as `Ok`, and `execute_reduce_sum_i32` reports failures as `0`."
+msgstr ""
+
+#: manual/design/backend/native.md:279
+msgid "**Runtime identity.** `supports_openmp()` is the constant `true`, while the `moon` build has no OpenMP."
+msgstr ""
+
+#: manual/design/backend/native.md:284
+msgid "**Work-stealing deques.** Per-worker deques pay off when tasks are many and uneven. Workflow nodes here are constant-time protocol steps executed under one lock, so a shared FIFO is simpler and enough; data parallelism is left to OpenMP inside each kernel."
+msgstr ""
+
+#: manual/design/backend/native.md:288
+msgid "**Executing MoonBit closures on C threads.** The MoonBit runtime gives no guarantee that its objects may be used from foreign threads, so the kernels are fixed C functions instead."
+msgstr ""
+
+#: manual/design/backend/native.md:291
+msgid "**Copying arrays across the interface.** Copies would make the memory model trivial but double the memory traffic of every kernel; borrowing plus disjoint writes gives the same safety."
+msgstr ""
+
+#: manual/design/backend/native.md:294
+msgid "**Wrapping arithmetic.** Rejected in favour of exact results, as derived above."
+msgstr ""
+
+#: manual/design/backend/native.md:299
+msgid "The backend does not execute plans, user-defined kernels, floating-point data or `Bytes`; it does not move data through channels or shared capabilities; it does not implement read-write locks or semaphores; it does not detect deadlocks or offer timeouts; and it does not build for any target but `native`."
+msgstr ""
+
+#: manual/design/core.md:1
+msgid "core design"
+msgstr ""
+
+#: manual/design/core.md:5
+msgid "The root package is the facade most programs import. It should let a program build policies, plans and workflows, run kernels and submit workflows through one import, with sensible defaults, while the real definitions stay in the packages that own them. It is also where the backend is chosen, so it is the only package besides `backend/native` that depends on the C runtime."
+msgstr ""
+
+#: manual/design/core.md:13
+msgid "The facade adds no new concepts; it is a set of equations between its functions and those of the underlying packages. With $\\mathbf{d}$ the default policy $(\\mathrm{Native}, \\mathrm{Synchronous}, 1, 1, \\mathrm{PreserveInputOrder})$:"
+msgstr ""
+
+#: manual/design/core.md:25
+msgid "and likewise for every other function. The only facts specific to the facade are its defaults. For the kernels the defaults are $w = c = 1$, and the native cover condition $w \\ge \\lceil n / c \\rceil$ becomes"
+msgstr ""
+
+#: manual/design/core.md:33
+msgid "so with default arguments the kernels accept only inputs of length one."
+msgstr ""
+
+#: manual/design/core.md:37
+msgid "Free functions with defaults"
+msgstr ""
+
+#: manual/design/core.md:39
+msgid "The facade exposes free functions such as `map`, `workflow` and `spawn_task` rather than methods on the imported types, because the types belong to other packages and cannot gain methods here. Optional arguments carry the defaults, so the common call is short: `@luna_thread.map(\"double\", @luna_thread.i32_type(), 16)` is a complete, valid plan. Capability helpers bind each kind to its only valid access mode (`channel_capability` to `MoveOnly`, `mutex_capability` to `SynchronizeOnly`, `shared_read_capability` to `ReadOnly`), which removes a whole class of `InvalidCapabilityAccess` issues."
+msgstr ""
+
+#: manual/design/core.md:48
+msgid "Backend routing in one place"
+msgstr ""
+
+#: manual/design/core.md:50
+msgid "`submit_workflow` dispatches on the backend: `Native` goes to `@native.submit_workflow`, anything else to `@workflow.submit`. Both produce the same validated submission today, but routing through the backend package is where execution will be attached. The direct-execution and asynchronous functions call `backend/native` unconditionally, because it is the only backend that executes."
+msgstr ""
+
+#: manual/design/core.md:57
+msgid "The facade is native-only"
+msgstr ""
+
+#: manual/design/core.md:59
+msgid "Because it imports `backend/native`, whose foreign functions exist only on the native target, the facade declares `supported_targets = \"native\"`. Code that must build everywhere imports `plan`, `shared` and `workflow` directly; they provide everything except execution."
+msgstr ""
+
+#: manual/design/core.md:64
+msgid "Kernel defaults kept from the original interface"
+msgstr ""
+
+#: manual/design/core.md:66
+msgid "The kernel defaults $w = c = 1$ are the smallest valid policy values, matching `make_policy`, but as derived above they satisfy the cover condition only for one element. Changing them would change the meaning of existing calls; the API and tutorial pages tell users to pass both arguments."
+msgstr ""
+
+#: manual/design/core.md:73
+msgid "**Faithful forwarding.** Each facade function returns exactly what the underlying function returns for the same arguments and defaults; the facade holds no state."
+msgstr ""
+
+#: manual/design/core.md:76
+msgid "**Defaults are valid policies.** `default_policy()` lies in the v1 policy subset; `make_policy` with no arguments returns `Ok(default_policy())`."
+msgstr ""
+
+#: manual/design/core.md:78
+msgid "**Single dependency on C.** Only `execute_*`, `submit_workflow_async`, `poll_workflow`, `wait_workflow` and `drop_workflow` reach the C runtime."
+msgstr ""
+
+#: manual/design/core.md:83
+msgid "**Re-exporting whole packages.** Re-exporting every name of `plan`, `shared` and `workflow` would duplicate their API pages; the facade keeps the entry points a typical program needs, and the packages remain importable."
+msgstr ""
+
+#: manual/design/core.md:86
+msgid "**Choosing the backend by target at compile time.** That would make the facade build on every target but silently change behaviour with the target; v1 makes the native requirement explicit instead."
+msgstr ""
+
+#: manual/design/core.md:92
+msgid "The facade does not define types, validate anything itself, execute plans, manage thread pools, or support the JavaScript backend; it forwards to the packages that do or will."
+msgstr ""
+
+#: manual/design/plan.md:1
+msgid "plan design"
+msgstr ""
+
+#: manual/design/plan.md:5
+msgid "A plan states *what* data-parallel operation to perform, on what input shape, under which policy, without saying *how* or running it. Keeping this as plain, comparable data lets `luna_thread` validate work before it reaches a runtime, embed it in workflows, and translate it for different backends. The package must stay backend-independent and build on every target."
+msgstr ""
+
+#: manual/design/plan.md:13
+msgid "Let the input be a sequence $x = (x_0, \\dots, x_{n-1}) \\in A^n$ with $n > 0$. The four plan kinds denote these functions:"
+msgstr ""
+
+#: manual/design/plan.md:25
+msgid "A reduction kernel must be **associative**, $(a \\oplus b) \\oplus c = a \\oplus (b \\oplus c)$, so that the bracketing a parallel runtime chooses does not matter. The three kernels of v1 are commutative and associative on the integers:"
+msgstr ""
+
+#: manual/design/plan.md:29
+msgid "Kernel"
+msgstr ""
+
+#: manual/design/plan.md:29
+msgid "Identity"
+msgstr ""
+
+#: manual/design/plan.md:32
+msgid "none in $\\mathbb{Z}$; the largest value of a fixed-width type"
+msgstr ""
+
+#: manual/design/plan.md:33
+msgid "none in $\\mathbb{Z}$; the smallest value of a fixed-width type"
+msgstr ""
+
+#: manual/design/plan.md:37
+msgid "Plans are data, not closures"
+msgstr ""
+
+#: manual/design/plan.md:39
+msgid "The plan records the kind, the element type, the length, the policy, an optional named kernel and the ordering, and nothing executable. A closure could express any $f$ and $\\oplus$, but it cannot be compared, inspected, validated, or passed to C threads. Named kernels can be checked against what a runtime implements: `reduction_kernel_is_supported_in_v1` accepts exactly the kernels with a C implementation, and `Custom(name)` keeps a place for kernels that a later runtime may register."
+msgstr ""
+
+#: manual/design/plan.md:47
+msgid "Ordering is a property of the kind"
+msgstr ""
+
+#: manual/design/plan.md:49
+msgid "`OrderingGuarantee` says whether results must keep input positions. For a reduction with a commutative and associative $\\oplus$, the result is the same for every permutation $\\pi$ of the input:"
+msgstr ""
+
+#: manual/design/plan.md:57
+msgid "by the generalised commutative law, so `RelaxedOrder` is safe for `Reduce` and `MapReduce`, and for `Map` it only permits results to be produced out of order. A scan is different: $y_i$ depends on which elements come before position $i$. For $x = (1, 2)$ and the swap $\\pi$, the sums are"
+msgstr ""
+
+#: manual/design/plan.md:66
+msgid "so a scan has no meaning without input order. `scan` therefore always sets `PreserveInputOrder`, and `validate` reports both `UnsupportedOrdering` and `ScanRequiresStableOrdering` for a hand-built relaxed scan."
+msgstr ""
+
+#: manual/design/plan.md:70
+msgid "The v1 subset is checked, not encoded in types"
+msgstr ""
+
+#: manual/design/plan.md:72
+msgid "`ValueType` lists `F32`, `F64`, `Bytes` and `Opaque`, and `ExecutionPolicy` can name the JavaScript backend and asynchronous mode, although v1 supports none of them. The types describe the whole model of the specification; `validate` decides what the current runtime accepts. When a runtime grows, the predicates change and user code that builds plans does not."
+msgstr ""
+
+#: manual/design/plan.md:78
+msgid "Integer element types are also the ones for which chunked reduction is well-defined. Floating-point addition is not associative: in `Double`,"
+msgstr ""
+
+#: manual/design/plan.md:85
+msgid "so a parallel sum of `F64` data would depend on the worker count and chunk size. Supporting it needs a decision about which bracketing to promise, which v1 does not make."
+msgstr ""
+
+#: manual/design/plan.md:89
+msgid "Validation reports every issue"
+msgstr ""
+
+#: manual/design/plan.md:91
+msgid "`validate` returns an array of all issues rather than the first one, so a caller can show every problem of a plan together, and a workflow can wrap each one as `InvalidComputePlan`. The issues are independent tests, listed in a fixed order. `is_runnable` is the conjunction of their negations:"
+msgstr ""
+
+#: manual/design/plan.md:100
+msgid "Size checks stop short of the cover condition"
+msgstr ""
+
+#: manual/design/plan.md:102
+msgid "`validate` rejects $c > n$ and $w > n$ because no runtime can use more chunks than elements. It does not check the native cover condition $w \\ge \\lceil n / c \\rceil$, which belongs to one backend's chunking strategy (see the [native backend design](backend/native.md)). Backends check their own conditions when they build requests or run kernels."
+msgstr ""
+
+#: manual/design/plan.md:110
+msgid "**Builders fix the kind.** `map`, `reduce`, `scan` and `map_reduce` produce plans of the corresponding kind; `reduce` and `map_reduce` always carry a kernel; `scan` and `reduce` always preserve order."
+msgstr ""
+
+#: manual/design/plan.md:113
+msgid "**Validation is total and pure.** `validate` terminates for every plan, has no effects, and depends only on the plan's fields."
+msgstr ""
+
+#: manual/design/plan.md:115
+msgid "**Supported plans name implemented kernels.** If $\\operatorname{validate}(p) = [\\,]$ and $p$ reduces, its kernel is `Sum`, `Min` or `Max` and its element type is `I32` or `I64`, the combinations the C runtime implements."
+msgstr ""
+
+#: manual/design/plan.md:119
+msgid "**Equality is structural.** Two plans are equal exactly when all fields are equal, so plans can serve as keys and test expectations."
+msgstr ""
+
+#: manual/design/plan.md:124
+msgid "**A generic `Plan[T]`.** Typing the element would push the element type into every workflow node and backend signature, and the C interface would still need a runtime tag. A `ValueType` tag keeps plans of different element types in one array."
+msgstr ""
+
+#: manual/design/plan.md:128
+msgid "**Separate types per kind.** `MapPlan`, `ReducePlan` and so on would encode \"reduce has a kernel\" in the type, but workflows and requests would need a sum type over them anyway; `PlanKind` plus validation is that sum type."
+msgstr ""
+
+#: manual/design/plan.md:131
+msgid "**Validation inside the builders.** Builders that return `Result` would make the hand-built plans that tests and tools need impossible to express."
+msgstr ""
+
+#: manual/design/plan.md:136
+msgid "The package does not execute plans, hold input data, allocate buffers, choose chunk sizes, check backend-specific conditions, or describe user-defined functions; the map function is implied by the backend (doubling in the native backend), not stored in the plan."
+msgstr ""
+
+#: manual/design/shared.md:1
+msgid "shared design"
+msgstr ""
+
+#: manual/design/shared.md:5
+msgid "Every package of `luna_thread` needs to say which backend, which mode, how many workers and what ordering it means, and every backend needs to speak the C runtime's integer codes. `shared` is the one place where these are defined, so that `plan`, `workflow` and the backends agree on them without depending on each other. It has no dependencies of its own and builds on every target."
+msgstr ""
+
+#: manual/design/shared.md:13
+msgid "Policies as a refined product"
+msgstr ""
+
+#: manual/design/shared.md:15
+msgid "An execution policy is an element of the product"
+msgstr ""
+
+#: manual/design/shared.md:21
+msgid "backend, mode, worker count, chunk size and ordering. The v1 runtime accepts the subset"
+msgstr ""
+
+#: manual/design/shared.md:28
+msgid "`make_execution_policy` is a partial constructor $P \\rightharpoonup P_1$: it returns its argument when it lies in $P_1$ and otherwise the first violated condition, in the order listed. `validate_policy` returns the list of all violated conditions, so"
+msgstr ""
+
+#: manual/design/shared.md:37
+msgid "Status codes as a section and a retraction"
+msgstr ""
+
+#: manual/design/shared.md:39
+msgid "Let $S$ be the eight constructors of `NativeStatus` and $\\gamma = $ `native_status_code` $: S \\to \\mathbb{Z}$ number them $0$ to $7$. Let $\\rho = $ `native_status_from_code` $: \\mathbb{Z} \\to S$ invert $\\gamma$ on $\\{0, \\dots, 7\\}$ and send every other integer to `InvalidArgument`. Then"
+msgstr ""
+
+#: manual/design/shared.md:48
+msgid "so $\\gamma$ is injective (a section) and $\\rho$ is surjective (a retraction). The other composite is the identity only on the image of $\\gamma$:"
+msgstr ""
+
+#: manual/design/shared.md:59
+msgid "Converting a C status to `NativeStatus` and back therefore preserves codes $0$ to $7$ and collapses the workflow statuses $8$ to $14$ to $1$."
+msgstr ""
+
+#: manual/design/shared.md:64
+msgid "Return the first policy error, list all policy issues"
+msgstr ""
+
+#: manual/design/shared.md:66
+msgid "Constructing a policy is the common case, and one error message is enough to fix a call, so `make_execution_policy` returns `Result` with the first problem. Re-checking a stored policy happens inside workflow validation, which reports everything at once, so `validate_policy` returns all problems. Both test the same four conditions in the same order."
+msgstr ""
+
+#: manual/design/shared.md:72
+msgid "Aborting conveniences are kept small"
+msgstr ""
+
+#: manual/design/shared.md:74
+msgid "`ExecutionPolicy::new`, `native_policy` and `javascript_policy` unwrap the result of `make_execution_policy`. For the native defaults this cannot fail. For the JavaScript backend it always fails in v1, so `javascript_policy` aborts; it exists so that code written for the planned JavaScript backend compiles today. Code that takes policy arguments from users should call `make_execution_policy`."
+msgstr ""
+
+#: manual/design/shared.md:81
+msgid "Capabilities are declared, not probed"
+msgstr ""
+
+#: manual/design/shared.md:83
+msgid "`RuntimeCapabilities::for_backend` returns a fixed table. Probing the running system would need the native backend, which `shared` must not depend on, and would differ between the `moon` build and the CMake build. The table states the intended capabilities of each backend; the backend pages state what the current implementation does."
+msgstr ""
+
+#: manual/design/shared.md:89
+msgid "Integer-coded mirrors of the C structs"
+msgstr ""
+
+#: manual/design/shared.md:91
+msgid "`NativeBuffer` and the three request records copy the field order and integer encodings of the C structs in `luna_thread_runtime.h`, so that a binding can fill them without knowing the typed records of `backend/native`. The specification calls this correspondence the ABI layout isomorphism. The records store values unchecked; checking belongs to the backend that sends them."
+msgstr ""
+
+#: manual/design/shared.md:99
+msgid "**Policy subset.** Every policy returned by `make_execution_policy`, `ExecutionPolicy::new` or `native_policy` lies in $P_1$."
+msgstr ""
+
+#: manual/design/shared.md:101
+msgid "**Status round trip.** $\\rho(\\gamma(s)) = s$ for every `NativeStatus` $s$, as derived above; the test in the [shared API](../api/shared.md) checks all eight."
+msgstr ""
+
+#: manual/design/shared.md:103
+msgid "**No dependencies.** The package imports only the MoonBit core library, so the dependency graph of the module stays acyclic."
+msgstr ""
+
+#: manual/design/shared.md:108
+msgid "**A typed error per backend.** One `PolicyIssue` type keeps policies backend-independent; the issues name the unsupported backend or mode as data."
+msgstr ""
+
+#: manual/design/shared.md:110
+msgid "**A partial `native_status_from_code`.** Returning `NativeStatus?` would force every caller to handle codes the runtime may add later; mapping them to `InvalidArgument` errs on the side of failure."
+msgstr ""
+
+#: manual/design/shared.md:113
+msgid "**Defining the integer codes in each backend.** The codes are part of the C contract, so they live in the package every backend shares."
+msgstr ""
+
+#: manual/design/shared.md:118
+msgid "The package does not run anything, probe the system, validate the integer request records, or describe statuses $8$ to $14$ as constructors; the workflow runtime reports those as raw integers."
+msgstr ""
+
+#: manual/design/workflow.md:1
+msgid "workflow design"
+msgstr ""
+
+#: manual/design/workflow.md:5
+msgid "Data-parallel plans cover one operation at a time. Real programs also spawn and join tasks, pass work through channels, and protect shared state with locks. The `workflow` package gives these a single description: a task graph whose nodes are typed steps, whose resources are explicit capabilities, and whose edges fix the order of execution. The graph is data, so it can be validated in MoonBit on any target before a runtime executes it."
+msgstr ""
+
+#: manual/design/workflow.md:14
+msgid "A workflow is a triple $W = (C, V, E)$ of capabilities, nodes and edges."
+msgstr ""
+
+#: manual/design/workflow.md:16
+msgid "Each capability $\\kappa \\in C$ has an id, a kind $k(\\kappa) \\in K$ and an access mode $a(\\kappa) \\in M$."
+msgstr ""
+
+#: manual/design/workflow.md:18
+msgid "Each node $v \\in V$ has an id, a kind $t(v) \\in T$ and optionally a capability $\\operatorname{cap}(v)$."
+msgstr ""
+
+#: manual/design/workflow.md:20
+msgid "Each edge $(u, v) \\in E$ says that $v$ may start only after $u$ has completed."
+msgstr ""
+
+#: manual/design/workflow.md:23
+msgid "Two relations type the graph. $\\mathrm{Acc} \\subseteq K \\times M$ lists the valid access modes of each capability kind, and $\\mathrm{Use} \\subseteq T \\times K$ the capability kinds each node kind may use (both tables are in the [workflow API](../api/workflow.md)). A workflow is **well formed** when ids are unique, edges join existing distinct nodes, and"
+msgstr ""
+
+#: manual/design/workflow.md:35
+msgid "The edges define the relation $u \\prec v$, \"there is a path from $u$ to $v$\". An execution order is a sequence of all nodes in which $u$ comes before $v$ whenever $u \\prec v$, a **topological order**. Such an order exists exactly when $(V, E)$ has no directed cycle: a cycle $v_0 \\to \\dots \\to v_m = v_0$ would require $v_0$ before itself, and conversely Kahn's algorithm builds an order for every acyclic graph by repeatedly removing a node without incoming edges."
+msgstr ""
+
+#: manual/design/workflow.md:45
+msgid "Capabilities are declared, nodes refer to them by id"
+msgstr ""
+
+#: manual/design/workflow.md:47
+msgid "Synchronisation resources exist independently of the steps that use them: two nodes that send and receive must agree on one channel. Declaring a capability once and referring to it by id makes that agreement explicit and checkable, and gives the runtime a dense table of resources to allocate. The access mode records the intent of the declaration, such as `MoveOnly` for a channel or `ReadOnly` for a shared view, so that `validate` can reject a `WriteShared` node on a read-only buffer."
+msgstr ""
+
+#: manual/design/workflow.md:55
+msgid "Every edge kind orders the same way"
+msgstr ""
+
+#: manual/design/workflow.md:57
+msgid "`DataDependency`, `ControlDependency`, `OwnershipTransfer` and `SynchronizationDependency` all mean $u$ completes before $v$ starts. The kind documents why the edge exists, and the specification gives ownership transfer further meaning, but v1 checks and schedules all edges alike, so the order relation $\\prec$ does not depend on the kinds."
+msgstr ""
+
+#: manual/design/workflow.md:63
+msgid "Builders mutate in place"
+msgstr ""
+
+#: manual/design/workflow.md:65
+msgid "`Workflow` stores its capabilities, nodes and edges in `Array`s, and `add_capability`, `add_node` and `add_edge` push onto them and return the same workflow. This makes chained construction cheap, $O(1)$ amortised per step, but it is not a persistent builder: after `let b = a.add_node(n)`, `a` and `b` are the same value and both contain `n`. Code that needs two variants must build two workflows."
+msgstr ""
+
+#: manual/design/workflow.md:72
+msgid "Validation is layered"
+msgstr ""
+
+#: manual/design/workflow.md:74
+msgid "`validate` in MoonBit checks the whole data model on every target: policy, capability kinds and access modes, node and capability references, edge endpoints, the plans of compute nodes, and cycles. The native runtime checks again what it relies on when a workflow is submitted. The two layers agree on most rules but not all:"
+msgstr ""
+
+#: manual/design/workflow.md:80
+msgid "Rule"
+msgstr ""
+
+#: manual/design/workflow.md:80
+msgid "Native runtime"
+msgstr ""
+
+#: manual/design/workflow.md:82
+msgid "`RwLock`, `Semaphore` capabilities"
+msgstr ""
+
+#: manual/design/workflow.md:82
+#: manual/design/workflow.md:83
+msgid "accepted"
+msgstr ""
+
+#: manual/design/workflow.md:82
+msgid "rejected (status 8)"
+msgstr ""
+
+#: manual/design/workflow.md:83
+msgid "`Lock` and `Unlock` on an `RwLock`"
+msgstr ""
+
+#: manual/design/workflow.md:83
+msgid "rejected"
+msgstr ""
+
+#: manual/design/workflow.md:84
+msgid "Access modes, duplicate ids, compute plans"
+msgstr ""
+
+#: manual/design/workflow.md:84
+msgid "checked"
+msgstr ""
+
+#: manual/design/workflow.md:84
+msgid "not checked"
+msgstr ""
+
+#: manual/design/workflow.md:85
+msgid "Cycles"
+msgstr ""
+
+#: manual/design/workflow.md:85
+msgid "partial (below)"
+msgstr ""
+
+#: manual/design/workflow.md:85
+msgid "complete (status 9)"
+msgstr ""
+
+#: manual/design/workflow.md:87
+msgid "The MoonBit layer reports every issue, so a user sees all problems at once; the native layer stops at the first, because it only decides whether to start."
+msgstr ""
+
+#: manual/design/workflow.md:90
+msgid "The MoonBit cycle check is partial"
+msgstr ""
+
+#: manual/design/workflow.md:92
+msgid "`validate` reports `CyclicDependency` when (a) the graph has nodes but none without incoming edges, or (b) two edges point in opposite directions between the same pair of nodes. Both conditions imply a cycle when every edge joins existing nodes:"
+msgstr ""
+
+#: manual/design/workflow.md:97
+msgid "(b) is a cycle of length two."
+msgstr ""
+
+#: manual/design/workflow.md:98
+msgid "For (a), walk backwards from any node along incoming edges. Every node has one, so the walk never stops; with $|V|$ nodes it must repeat a node within $|V| + 1$ steps, and the repeated segment is a cycle."
+msgstr ""
+
+#: manual/design/workflow.md:102
+msgid "The converse fails: in $1 \\to 2 \\to 3 \\to 4 \\to 2$, node $1$ has no incoming edge and no pair of edges is opposite, so `validate` reports nothing although $2 \\to 3 \\to 4 \\to 2$ is a cycle. The native runtime runs Kahn's algorithm, which removes $1$ and then finds no node to remove among $\\{2, 3, 4\\}$, and rejects the graph. An edge from an unknown node also counts as an incoming edge for (a), so a graph whose only incoming edges come from unknown ids gets a `CyclicDependency` next to its `InvalidNodeReference` issues."
+msgstr ""
+
+#: manual/design/workflow.md:112
+msgid "**Soundness of acceptance.** If `validate` returns no issue, the workflow is well formed in the sense above, except possibly for a cycle of length three or more that is reachable from a source."
+msgstr ""
+
+#: manual/design/workflow.md:115
+msgid "**Soundness of rejection.** Every issue names a real violation, with the one `CyclicDependency` caveat for edges from unknown nodes."
+msgstr ""
+
+#: manual/design/workflow.md:117
+msgid "**Submission.** `submit(w, backend)` is accepted exactly when `validate(w)` is empty and `backend` is `Native`; it never sets `completed`."
+msgstr ""
+
+#: manual/design/workflow.md:119
+msgid "**Complexity.** `validate` runs in $O(|V|^2 + |C|^2 + |E|^2 + |V| \\cdot |C| + |V| \\cdot |E|)$: duplicate detection filters the whole array for each element, endpoint and in-degree lookups scan the node and edge arrays, and the opposite-edge test compares all pairs of edges."
+msgstr ""
+
+#: manual/design/workflow.md:127
+msgid "**Capabilities embedded in nodes.** A channel stored inside each `Send` node could not be shared with the matching `Recv`."
+msgstr ""
+
+#: manual/design/workflow.md:129
+msgid "**Typed edges with different scheduling.** Giving each edge kind its own scheduling rule would make the order relation depend on runtime policy; v1 keeps one rule."
+msgstr ""
+
+#: manual/design/workflow.md:132
+msgid "**A persistent builder.** Copying the arrays on every `add_*` would make construction quadratic for the convenience of keeping old versions."
+msgstr ""
+
+#: manual/design/workflow.md:134
+msgid "**Full cycle detection in MoonBit.** A topological sort in `validate` would close the gap described above; the current check is cheaper and the native runtime catches the remaining cases. The gap is a candidate for a fix."
+msgstr ""
+
+#: manual/design/workflow.md:140
+msgid "The package does not schedule or execute workflows, move data between nodes, check that blocking nodes are matched (that a `Recv` has a `Send` that runs first), detect deadlocks, or give edge kinds different meanings."
 msgstr ""
 
 #: manual/index.md:1
@@ -129,98 +2264,626 @@ msgid "luna_thread"
 msgstr ""
 
 #: manual/index.md:3
-msgid "luna_thread is a MoonBit library workspace for parallel execution through the foreign function interface. MoonBit code builds a workflow graph, and a native runtime executes it; a JavaScript compatibility path reaches the same runtime through an N-API addon."
+msgid "`luna_thread` lets MoonBit programs describe parallel work as data and run part of it on a native C runtime. A program builds **plans** (map, reduce, scan and map-reduce over a typed input domain) and **workflows** (task graphs whose nodes use capabilities such as channels, mutexes and barriers), validates them in MoonBit, and executes integer kernels and workflow graphs through the C foreign function interface. A JavaScript path through a Node.js addon is scaffolded but does not execute anything yet."
 msgstr ""
 
-#: manual/index.md:5
-msgid "Realization paths"
-msgstr ""
-
-#: manual/index.md:7
-msgid "MoonBit facade → MoonBit C FFI → C wrapper → C runtime"
-msgstr ""
-
-#: manual/index.md:8
-msgid "MoonBit facade → MoonBit JS FFI → JS wrapper → N-API addon → C runtime"
-msgstr ""
-
-#: manual/index.md:10
-msgid "Packages"
-msgstr ""
-
-#: manual/index.md:12
-msgid "**`facade`** (`luna_thread/`): the root MoonBit package that applications import. See the [API reference](api/facade.md), the [design notes](design/facade.md) and the [tutorial](tutorial/facade.md)."
-msgstr ""
-
-#: manual/index.md:13
-msgid "**`backend`** (`native/`, `js/` and `luna_thread/backend/`): the native C runtime and the Node.js addon that realize the FFI design. See the [API reference](api/backend.md), the [design notes](design/backend.md) and the [tutorial](tutorial/backend.md)."
+#: manual/index.md:11
+msgid "The repository also holds the normative specification that the implementation is moving towards. This manual describes what the current branch implements; where the code is narrower than the specification, the pages say so."
 msgstr ""
 
 #: manual/index.md:15
-msgid "Specification"
-msgstr ""
-
-#: manual/index.md:17
-msgid "The specification is the authoritative design narrative for the workspace: it defines the workflow graph, capabilities, ownership transfer and separation-safe execution that the facade and the backends must realize. The English text is normative; the Chinese text is a strict mirror of it."
-msgstr ""
-
-#: manual/index.md:19
 msgid "[A Normative Specification for a MoonBit Workflow and Parallel FFI Runtime](../attachments/moonbit_parallel_spec/main.typ)"
 msgstr ""
 
-#: manual/tutorial/backend.md:1
-msgid "backend Tutorial"
+#: manual/index.md:17
+msgid "Status"
 msgstr ""
 
-#: manual/tutorial/backend.md:3
-msgid "Use this page as the starting point for practical workflows around this module. backend in Luna-Flow/luna_thread."
+#: manual/index.md:19
+msgid "The module is at version 0.1.0 and implements a first, deliberately small subset (\"v1\"):"
 msgstr ""
 
-#: manual/tutorial/backend.md:5
-#: manual/tutorial/facade.md:5
-msgid "Suggested Flow"
+#: manual/index.md:22
+msgid "Plans and workflows are validated in MoonBit, and only the native backend in synchronous mode passes validation."
 msgstr ""
 
-#: manual/tutorial/backend.md:7
-msgid "Read the repository README and the backend API reference."
+#: manual/index.md:24
+msgid "The executable kernels are element-wise doubling, sum, minimum and maximum reductions, and inclusive prefix sums over `Int` and `Int64`. The facade exposes the `Int` versions of doubling, sum and prefix sum."
 msgstr ""
 
-#: manual/tutorial/backend.md:8
-msgid "Start from the constructors or entry points under `native and js`."
+#: manual/index.md:27
+msgid "Workflow graphs run on a pthread scheduler in C that executes the synchronisation protocol of each node. Compute nodes are scheduled but do not yet run their plan."
 msgstr ""
 
-#: manual/tutorial/backend.md:9
-#: manual/tutorial/facade.md:9
-msgid "Validate behavior with the existing tests or examples before depending on edge-case semantics."
+#: manual/index.md:30
+msgid "The facade and `backend/native` build only for the `native` target; `plan`, `shared`, `workflow` and `backend/js` build for every target."
 msgstr ""
 
-#: manual/tutorial/backend.md:11
-#: manual/tutorial/facade.md:11
-msgid "Practical Guidance"
+#: manual/index.md:33
+msgid "Packages"
 msgstr ""
 
-#: manual/tutorial/backend.md:13
-#: manual/tutorial/facade.md:13
-msgid "Prefer the documented entry points over internal helpers."
+#: manual/index.md:35
+msgid "The MoonBit module lives in the `luna_thread/` directory of the repository; its root package is documented as `core`."
 msgstr ""
 
-#: manual/tutorial/backend.md:14
-#: manual/tutorial/facade.md:14
-msgid "Record runtime, numeric, or proof-state assumptions explicitly in downstream code."
+#: manual/index.md:38
+msgid "Import path"
 msgstr ""
 
-#: manual/tutorial/facade.md:1
-msgid "facade Tutorial"
+#: manual/index.md:38
+msgid "Pages"
 msgstr ""
 
-#: manual/tutorial/facade.md:3
-msgid "Begin with `luna_thread/luna_thread.mbt` and the package tests to understand the exposed MoonBit facade."
+#: manual/index.md:40
+msgid "The facade: policies, plan and workflow builders, direct execution and asynchronous workflows."
 msgstr ""
 
-#: manual/tutorial/facade.md:7
-msgid "Read the repository README and the facade API reference."
+#: manual/index.md:40
+msgid "[API](api/core.md) · [Tutorial](tutorial/core.md) · [Design](design/core.md)"
 msgstr ""
 
-#: manual/tutorial/facade.md:8
-msgid "Start from the constructors or entry points under `luna_thread`."
+#: manual/index.md:41
+msgid "Backend-independent data-parallel plans and their validation."
+msgstr ""
+
+#: manual/index.md:41
+msgid "[API](api/plan.md) · [Tutorial](tutorial/plan.md) · [Design](design/plan.md)"
+msgstr ""
+
+#: manual/index.md:42
+msgid "Task graphs with capabilities, their validation and submission records."
+msgstr ""
+
+#: manual/index.md:42
+msgid "[API](api/workflow.md) · [Tutorial](tutorial/workflow.md) · [Design](design/workflow.md)"
+msgstr ""
+
+#: manual/index.md:43
+msgid "Execution policies, backend targets, runtime capabilities and the integer-coded FFI records."
+msgstr ""
+
+#: manual/index.md:43
+msgid "[API](api/shared.md) · [Tutorial](tutorial/shared.md) · [Design](design/shared.md)"
+msgstr ""
+
+#: manual/index.md:44
+msgid "The C FFI backend: kernels, the workflow runtime and typed native requests."
+msgstr ""
+
+#: manual/index.md:44
+msgid "[API](api/backend/native.md) · [Tutorial](tutorial/backend/native.md) · [Design](design/backend/native.md)"
+msgstr ""
+
+#: manual/index.md:45
+msgid "The placeholder for the JavaScript backend."
+msgstr ""
+
+#: manual/index.md:45
+msgid "[API](api/backend/js.md) · [Tutorial](tutorial/backend/js.md) · [Design](design/backend/js.md)"
+msgstr ""
+
+#: manual/index.md:47
+msgid "The C runtime in `native/`, its copy compiled as a MoonBit native stub, and the Node.js addon in `js/` are not MoonBit packages; the [architecture guide](architecture.md) describes them and how the layers fit together."
+msgstr ""
+
+#: manual/index.md:52
+msgid "Reading paths"
+msgstr ""
+
+#: manual/index.md:54
+msgid "If you want to run something, start with the [core tutorial](tutorial/core.md): it doubles, sums and scans an array on the native backend and submits a small workflow. To understand what a plan or a workflow means before you build one, read the [plan tutorial](tutorial/plan.md) and the [workflow tutorial](tutorial/workflow.md). If you already use the library, the API pages list every public name, starting with the [core API](api/core.md). Contributors should read the [architecture guide](architecture.md) and the design pages, in particular the [native backend design](design/backend/native.md) for the threading and memory model, then the specification above."
+msgstr ""
+
+#: manual/index.md:64
+msgid "Toolchain"
+msgstr ""
+
+#: manual/index.md:66
+msgid "The module uses the `moon.mod` and `moon.pkg` manifest syntax and needs MoonBit `moonc` 0.10 or later. Running the facade needs the `native` target and a C compiler; the build links the C runtime from the package's native stubs and uses POSIX threads. Building the standalone C runtime with OpenMP uses CMake, and the Node.js addon uses `node-gyp`; `scripts/check-env.sh` checks for all of them."
+msgstr ""
+
+#: manual/index.md:73
+msgid "Installation"
+msgstr ""
+
+#: manual/index.md:75
+msgid "Add the module to your project:"
+msgstr ""
+
+#: manual/index.md:81
+msgid "Import the facade in the `moon.pkg` of a package that builds for the native target:"
+msgstr ""
+
+#: manual/index.md:92
+msgid "The facade is then available as `@luna_thread`. Packages that only build plans or workflows can import `Luna-Flow/luna_thread/plan` or `Luna-Flow/luna_thread/workflow` on any target."
+msgstr ""
+
+#: manual/tutorial/backend/js.md:1
+msgid "backend/js tutorial"
+msgstr ""
+
+#: manual/tutorial/backend/js.md:3
+msgid "This short tutorial shows what the JavaScript backend package offers today and how to write code that is ready for it: the package names the JavaScript target, and the rest of the module already describes JavaScript policies and capabilities, but nothing executes on JavaScript yet."
+msgstr ""
+
+#: manual/tutorial/backend/js.md:8
+#: manual/tutorial/backend/native.md:8
+#: manual/tutorial/core.md:8
+#: manual/tutorial/plan.md:7
+#: manual/tutorial/shared.md:7
+#: manual/tutorial/workflow.md:8
+msgid "Quick start"
+msgstr ""
+
+#: manual/tutorial/backend/js.md:10
+msgid "Import the package; it builds on every target:"
+msgstr ""
+
+#: manual/tutorial/backend/js.md:24
+#: manual/tutorial/backend/native.md:32
+#: manual/tutorial/core.md:46
+#: manual/tutorial/plan.md:28
+#: manual/tutorial/shared.md:27
+#: manual/tutorial/workflow.md:33
+msgid "Everyday tasks"
+msgstr ""
+
+#: manual/tutorial/backend/js.md:26
+msgid "Select a backend by target"
+msgstr ""
+
+#: manual/tutorial/backend/js.md:28
+msgid "Code that chooses a backend at run time can use each backend package's `backend_target`:"
+msgstr ""
+
+#: manual/tutorial/backend/js.md:45
+msgid "Check what the JavaScript backend would accept"
+msgstr ""
+
+#: manual/tutorial/backend/js.md:47
+msgid "Validation tells you that v1 rejects the JavaScript backend, so you can fall back to the native one:"
+msgstr ""
+
+#: manual/tutorial/backend/js.md:64
+#: manual/tutorial/backend/native.md:99
+#: manual/tutorial/core.md:154
+#: manual/tutorial/plan.md:97
+#: manual/tutorial/shared.md:88
+#: manual/tutorial/workflow.md:119
+msgid "Going further"
+msgstr ""
+
+#: manual/tutorial/backend/js.md:66
+msgid "The specification describes a JavaScript realization that passes typed array buffers to a Node.js addon. The addon in `js/` is built with `make js-install` and `make js-build` and currently exports only `runtimeName`; the [architecture guide](../../architecture.md) describes it."
+msgstr ""
+
+#: manual/tutorial/backend/js.md:71
+#: manual/tutorial/backend/native.md:108
+#: manual/tutorial/core.md:169
+#: manual/tutorial/plan.md:107
+#: manual/tutorial/shared.md:96
+#: manual/tutorial/workflow.md:130
+msgid "Common pitfalls"
+msgstr ""
+
+#: manual/tutorial/backend/js.md:73
+msgid "Do not call `@shared.javascript_policy()`: it aborts in v1."
+msgstr ""
+
+#: manual/tutorial/backend/js.md:74
+msgid "`RuntimeCapabilities::for_backend(JavaScript)` declares async and zero-copy support that does not exist yet."
+msgstr ""
+
+#: manual/tutorial/backend/js.md:77
+#: manual/tutorial/backend/native.md:120
+#: manual/tutorial/core.md:188
+#: manual/tutorial/plan.md:118
+#: manual/tutorial/shared.md:106
+#: manual/tutorial/workflow.md:143
+msgid "Next steps"
+msgstr ""
+
+#: manual/tutorial/backend/js.md:79
+msgid "The [backend/js API](../../api/backend/js.md) lists the three functions, and the [backend/js design](../../design/backend/js.md) explains why the package exists before the backend does."
+msgstr ""
+
+#: manual/tutorial/backend/native.md:1
+msgid "backend/native tutorial"
+msgstr ""
+
+#: manual/tutorial/backend/native.md:3
+msgid "This tutorial shows you how to call the native backend directly: run the typed kernels, reach the `Int64` and minimum and maximum kernels through the raw foreign functions, turn plans into native requests, and run a workflow on the C scheduler."
+msgstr ""
+
+#: manual/tutorial/backend/native.md:10
+msgid "Import the backend from a package that builds for the native target:"
+msgstr ""
+
+#: manual/tutorial/backend/native.md:20
+msgid "Compute prefix sums with three workers and chunks of two:"
+msgstr ""
+
+#: manual/tutorial/backend/native.md:34
+msgid "Find the minimum and maximum of `Int64` data"
+msgstr ""
+
+#: manual/tutorial/backend/native.md:36
+msgid "The raw functions take the length explicitly and return the result directly:"
+msgstr ""
+
+#: manual/tutorial/backend/native.md:47
+msgid "Write into your own output array"
+msgstr ""
+
+#: manual/tutorial/backend/native.md:49
+msgid "Map and scan write into an array you provide and return a status code, `0` on success:"
+msgstr ""
+
+#: manual/tutorial/backend/native.md:62
+msgid "Turn a plan into a request"
+msgstr ""
+
+#: manual/tutorial/backend/native.md:64
+msgid "The `*_from_plan` functions check a plan and translate it to the backend's typed request:"
+msgstr ""
+
+#: manual/tutorial/backend/native.md:80
+msgid "Run a workflow"
+msgstr ""
+
+#: manual/tutorial/backend/native.md:82
+msgid "`submit_workflow_async` starts the graph on worker threads; `wait_workflow` blocks until it finishes. Because of the known bridge defect described in the [backend/native API](../../api/backend/native.md), this example is not compiled into the documentation tests:"
+msgstr ""
+
+#: manual/tutorial/backend/native.md:101
+msgid "The kernels take the same three numbers $n$, $w$ and $c$, and the [native backend design](../../design/backend/native.md) derives how they split the input, why the results do not depend on $w$ and $c$ when they succeed, and when overflow is detected. To link the C runtime with OpenMP outside MoonBit, build `native/` with CMake as described in the [architecture guide](../../architecture.md)."
+msgstr ""
+
+#: manual/tutorial/backend/native.md:110
+msgid "Every kernel needs $w \\ge \\lceil n / c \\rceil$, $w \\le n$ and $c \\le n$; otherwise it fails with `InvalidArgument` (or returns `0` for reductions)."
+msgstr ""
+
+#: manual/tutorial/backend/native.md:112
+msgid "The raw functions trust the `length` you pass. Passing more than the array holds reads past its end."
+msgstr ""
+
+#: manual/tutorial/backend/native.md:114
+msgid "The `moon` build does not enable OpenMP: the kernels run on the calling thread even though `supports_openmp()` returns `true`."
+msgstr ""
+
+#: manual/tutorial/backend/native.md:116
+msgid "Requests built from plans have empty buffers; nothing executes them yet."
+msgstr ""
+
+#: manual/tutorial/backend/native.md:117
+msgid "A workflow whose nodes block without being woken never finishes, and `wait_workflow` does not return."
+msgstr ""
+
+#: manual/tutorial/backend/native.md:122
+msgid "The [backend/native API](../../api/backend/native.md) lists every function, including the raw ones. The [backend/native design](../../design/backend/native.md) describes the threading and memory model. The [core tutorial](../core.md) shows the same kernels through the facade."
+msgstr ""
+
+#: manual/tutorial/core.md:1
+msgid "core tutorial"
+msgstr ""
+
+#: manual/tutorial/core.md:3
+msgid "This tutorial shows you how to run parallel integer kernels from MoonBit with the `luna_thread` facade, how to describe the same work as a plan that the library validates, and how to build and check a workflow graph. Everything runs on the native target."
+msgstr ""
+
+#: manual/tutorial/core.md:10
+msgid "Add the module:"
+msgstr ""
+
+#: manual/tutorial/core.md:16
+msgid "Import the facade from a package that builds for the native target:"
+msgstr ""
+
+#: manual/tutorial/core.md:26
+msgid "Sum an array with two workers that each take a chunk of up to three elements:"
+msgstr ""
+
+#: manual/tutorial/core.md:40
+msgid "`moon test --target native` reports:"
+msgstr ""
+
+#: manual/tutorial/core.md:48
+msgid "Choose the worker count and chunk size"
+msgstr ""
+
+#: manual/tutorial/core.md:50
+msgid "The kernels split $n$ elements into $\\lceil n / c \\rceil$ chunks of at most $c$ elements and need one worker per chunk, so pick $c$ first and then $w = \\lceil n / c \\rceil$. Both must also be at most $n$."
+msgstr ""
+
+#: manual/tutorial/core.md:68
+msgid "Double the elements and handle overflow"
+msgstr ""
+
+#: manual/tutorial/core.md:70
+msgid "`execute_map_i32` doubles every element and reports overflow as an error instead of wrapping around:"
+msgstr ""
+
+#: manual/tutorial/core.md:88
+msgid "Compute prefix sums"
+msgstr ""
+
+#: manual/tutorial/core.md:90
+msgid "`execute_scan_sum_i32` returns the running totals:"
+msgstr ""
+
+#: manual/tutorial/core.md:102
+msgid "Describe the work as a plan and validate it"
+msgstr ""
+
+#: manual/tutorial/core.md:104
+msgid "A plan records what should run without running it. Validation tells you whether the v1 runtime supports it:"
+msgstr ""
+
+#: manual/tutorial/core.md:123
+msgid "Build and check a workflow"
+msgstr ""
+
+#: manual/tutorial/core.md:125
+msgid "A workflow is a graph of tasks. This one spawns, computes the plan above and joins, with edges that fix the order:"
+msgstr ""
+
+#: manual/tutorial/core.md:150
+msgid "This needs `\"Luna-Flow/luna_thread/workflow\"` in the imports as well, for `Edge`. `submit_workflow` validates and records the submission; it does not run the graph."
+msgstr ""
+
+#: manual/tutorial/core.md:156
+msgid "To run a workflow's synchronisation protocol on real threads, submit it with `submit_workflow_async`, then `wait_workflow` and `drop_workflow`. The asynchronous path is experimental because of a known defect in the C bridge; read the warning in the [core API](../api/core.md) before you use it."
+msgstr ""
+
+#: manual/tutorial/core.md:161
+msgid "For other element types and kernels, `backend/native` exposes the raw C entry points, including `Int64` and minimum and maximum reductions; see the [native backend tutorial](backend/native.md). For finer control over plans and graphs, use the `plan` and `workflow` packages directly: the [plan tutorial](plan.md) and the [workflow tutorial](workflow.md) build plans and graphs field by field. Packages that only describe work can import those two packages and build for every target."
+msgstr ""
+
+#: manual/tutorial/core.md:171
+msgid "The defaults `worker_count=1` and `chunk_size=1` only work for one-element inputs. For longer inputs the kernels return `Err(InvalidArgument)`, and `execute_reduce_sum_i32` returns `0`."
+msgstr ""
+
+#: manual/tutorial/core.md:174
+msgid "`execute_reduce_sum_i32` returns `0` both for a sum of zero and for any failure. Check the input and parameters yourself, or use the scan and take the last element when you need to tell them apart."
+msgstr ""
+
+#: manual/tutorial/core.md:177
+msgid "Whether an `Int` sum overflows can depend on the chunking, because partial sums are checked: `[-1, 0, 2147483647, 1]` sums with `chunk_size=4` and fails with `chunk_size=2`."
+msgstr ""
+
+#: manual/tutorial/core.md:180
+msgid "`is_ready` does not check the worker-per-chunk condition, so a ready plan can still be rejected by a kernel."
+msgstr ""
+
+#: manual/tutorial/core.md:182
+msgid "`javascript_policy()` aborts in v1, and `make_policy` rejects the JavaScript backend and asynchronous mode."
+msgstr ""
+
+#: manual/tutorial/core.md:184
+msgid "`Workflow::add_node` and the other builders change the workflow in place."
+msgstr ""
+
+#: manual/tutorial/core.md:185
+msgid "The facade builds only for the native target. Packages that import it need `supported_targets = \"native\"` or a native-only build."
+msgstr ""
+
+#: manual/tutorial/core.md:190
+msgid "The [core API](../api/core.md) lists every facade function with its exact semantics. The [core design](../design/core.md) explains why the facade is a set of free functions with defaults, and the [native backend design](../design/backend/native.md) explains how the kernels and the workflow scheduler use threads and memory. The [architecture guide](../architecture.md) shows how the packages and the C runtime fit together."
+msgstr ""
+
+#: manual/tutorial/plan.md:1
+msgid "plan tutorial"
+msgstr ""
+
+#: manual/tutorial/plan.md:3
+msgid "This tutorial shows you how to describe a data-parallel operation as a `Plan`, check it against the v1 subset, and read the reasons when a plan is rejected. Plans are plain data, so this package works on every target."
+msgstr ""
+
+#: manual/tutorial/plan.md:9
+msgid "Import the package, and `shared` for policies:"
+msgstr ""
+
+#: manual/tutorial/plan.md:18
+msgid "Build a map plan over eight `Int` values and validate it:"
+msgstr ""
+
+#: manual/tutorial/plan.md:30
+msgid "Give a plan a policy"
+msgstr ""
+
+#: manual/tutorial/plan.md:32
+msgid "The default policy uses one worker and chunk size one. Build a parallel policy with `make_execution_policy` and pass it to the builder:"
+msgstr ""
+
+#: manual/tutorial/plan.md:45
+msgid "Read why a plan is rejected"
+msgstr ""
+
+#: manual/tutorial/plan.md:47
+msgid "`validate` returns all problems at once, so you can report them together:"
+msgstr ""
+
+#: manual/tutorial/plan.md:61
+msgid "The fourth issue is `WorkerCountExceedsInput`: eight workers for four elements."
+msgstr ""
+
+#: manual/tutorial/plan.md:64
+msgid "Build an unusual plan by hand"
+msgstr ""
+
+#: manual/tutorial/plan.md:66
+msgid "`Plan::new` stores whatever you give it, which is how you test validation rules such as the ordering requirement of scans:"
+msgstr ""
+
+#: manual/tutorial/plan.md:83
+msgid "Inspect a plan"
+msgstr ""
+
+#: manual/tutorial/plan.md:85
+msgid "Accessors return each field, and the kind predicates save a match:"
+msgstr ""
+
+#: manual/tutorial/plan.md:99
+msgid "Plans become executable through `backend/native`, whose `map_request_from_plan`, `reduce_request_from_plan` and `scan_request_from_plan` turn a valid plan into a typed request, and through workflows, where `@workflow.compute_node` embeds a plan in a task graph and `@workflow.validate` reports its issues as `InvalidComputePlan`. Write library code against `Plan` and `ValidationIssue` rather than against the facade, so it builds for every target."
+msgstr ""
+
+#: manual/tutorial/plan.md:109
+msgid "`is_runnable` does not check that there is one worker per chunk ($w \\ge \\lceil n / c \\rceil$), which the native kernels require."
+msgstr ""
+
+#: manual/tutorial/plan.md:111
+msgid "`reduce` and `scan` always preserve input order; to try other orderings use `Plan::new`."
+msgstr ""
+
+#: manual/tutorial/plan.md:113
+msgid "A scan plan has no kernel; the native scan is always a prefix sum."
+msgstr ""
+
+#: manual/tutorial/plan.md:114
+msgid "The enumerations are read-only outside the package: write `@plan.i32_type()`, not `@plan.I32`, when you build a value. Matching on `@plan.I32` works."
+msgstr ""
+
+#: manual/tutorial/plan.md:120
+msgid "The [plan API](../api/plan.md) lists every rule of `validate`. The [plan design](../design/plan.md) explains what each plan kind computes and why scans need ordered input. The [workflow tutorial](workflow.md) puts plans into task graphs."
+msgstr ""
+
+#: manual/tutorial/shared.md:1
+msgid "shared tutorial"
+msgstr ""
+
+#: manual/tutorial/shared.md:3
+msgid "This tutorial shows you how to build and check execution policies, ask what a backend declares it can do, and convert native status codes. These are the values every other package of `luna_thread` takes as input."
+msgstr ""
+
+#: manual/tutorial/shared.md:9
+msgid "Import the package:"
+msgstr ""
+
+#: manual/tutorial/shared.md:17
+msgid "Build a policy with four workers and chunks of 256 elements:"
+msgstr ""
+
+#: manual/tutorial/shared.md:29
+msgid "Handle a rejected policy"
+msgstr ""
+
+#: manual/tutorial/shared.md:31
+msgid "`make_execution_policy` returns the first problem it finds, so you can report it without aborting:"
+msgstr ""
+
+#: manual/tutorial/shared.md:55
+msgid "Re-check a stored policy"
+msgstr ""
+
+#: manual/tutorial/shared.md:57
+msgid "`validate_policy` lists every issue of a policy you already have, for example one read back from a workflow:"
+msgstr ""
+
+#: manual/tutorial/shared.md:67
+msgid "Ask what a backend declares"
+msgstr ""
+
+#: manual/tutorial/shared.md:78
+msgid "Convert status codes"
+msgstr ""
+
+#: manual/tutorial/shared.md:90
+msgid "Policies flow into `@plan` builders, `@workflow.Workflow::new` and the facade's `make_policy`. The integer-coded request records (`NativeBuffer`, `NativeMapRequest` and the others) mirror the C structs and are useful when you write your own bindings to the C runtime; the [architecture guide](../architecture.md) lists the codes."
+msgstr ""
+
+#: manual/tutorial/shared.md:98
+msgid "`ExecutionPolicy::new` and `javascript_policy` abort on a rejected policy; `javascript_policy` always aborts in v1. Use `make_execution_policy` when the arguments come from outside."
+msgstr ""
+
+#: manual/tutorial/shared.md:101
+msgid "`RuntimeCapabilities::for_backend` is a fixed table. The JavaScript row does not mean the JavaScript backend runs anything."
+msgstr ""
+
+#: manual/tutorial/shared.md:103
+msgid "`native_status_from_code` maps every unknown code, including the workflow statuses 8 to 14, to `InvalidArgument`. Keep the raw code when you need it."
+msgstr ""
+
+#: manual/tutorial/shared.md:108
+msgid "The [shared API](../api/shared.md) lists every value, and the [shared design](../design/shared.md) explains the policy rules and the status code mapping. The [plan tutorial](plan.md) uses policies in plans."
+msgstr ""
+
+#: manual/tutorial/workflow.md:1
+msgid "workflow tutorial"
+msgstr ""
+
+#: manual/tutorial/workflow.md:3
+msgid "This tutorial shows you how to describe concurrent work as a task graph: you declare capabilities, add nodes that use them, order the nodes with edges, and let `validate` check the result before anything runs. The package works on every target."
+msgstr ""
+
+#: manual/tutorial/workflow.md:10
+msgid "Import the package, and `shared` and `plan` when you need policies and compute nodes:"
+msgstr ""
+
+#: manual/tutorial/workflow.md:21
+msgid "A fork-join graph with two nodes:"
+msgstr ""
+
+#: manual/tutorial/workflow.md:35
+msgid "Pass work through a channel"
+msgstr ""
+
+#: manual/tutorial/workflow.md:37
+msgid "Nodes that communicate name a capability by id. A channel is used with `MoveOnly` access, and the edge from `send` to `recv` makes the receive wait for the send:"
+msgstr ""
+
+#: manual/tutorial/workflow.md:58
+msgid "Protect a critical section"
+msgstr ""
+
+#: manual/tutorial/workflow.md:60
+msgid "A mutex is used with `SynchronizeOnly` access by a `Lock` and an `Unlock` node:"
+msgstr ""
+
+#: manual/tutorial/workflow.md:82
+msgid "The write names capability `2`, which the graph does not declare. Adding an `AtomicCell` with `ReadWrite` access as capability `2` fixes it."
+msgstr ""
+
+#: manual/tutorial/workflow.md:85
+msgid "Embed a plan"
+msgstr ""
+
+#: manual/tutorial/workflow.md:87
+msgid "A compute node carries a plan, and the plan's own issues are reported with the node id:"
+msgstr ""
+
+#: manual/tutorial/workflow.md:104
+msgid "Submit a workflow"
+msgstr ""
+
+#: manual/tutorial/workflow.md:106
+msgid "`submit` validates and records whether the chosen backend accepts the graph:"
+msgstr ""
+
+#: manual/tutorial/workflow.md:121
+msgid "To run a graph, pass it to `@native.submit_workflow_async` (or the facade's `submit_workflow_async`) on the native target; the [native backend tutorial](backend/native.md) shows how, and the [native backend design](../design/backend/native.md) explains which node kinds can block and what wakes them. Because `validate` returns every issue, a tool can show all problems of a graph at once; the predicates `is_missing_capability`, `is_cyclic_dependency`, `is_invalid_compute_plan` and `is_unsupported_shared_write` group the common ones."
+msgstr ""
+
+#: manual/tutorial/workflow.md:132
+msgid "`add_capability`, `add_node` and `add_edge` change the workflow in place. Two variables bound to the same workflow see the same nodes."
+msgstr ""
+
+#: manual/tutorial/workflow.md:134
+msgid "`validate` misses cycles of three or more nodes when some node has no incoming edge; the native runtime rejects them on submission."
+msgstr ""
+
+#: manual/tutorial/workflow.md:136
+msgid "A `Recv`, `Lock` or `Send` that can run before its partner may block forever on the native runtime. Order such nodes with edges."
+msgstr ""
+
+#: manual/tutorial/workflow.md:138
+msgid "A single `Barrier` node in a group fails at run time with status `14`; a barrier needs at least two nodes at the same depth."
+msgstr ""
+
+#: manual/tutorial/workflow.md:140
+msgid "`RwLock` and `Semaphore` pass `validate` but are rejected by the native runtime."
+msgstr ""
+
+#: manual/tutorial/workflow.md:145
+msgid "The [workflow API](../api/workflow.md) lists every check of `validate`. The [workflow design](../design/workflow.md) gives the graph model and the cycle checks. The [core tutorial](core.md) builds workflows through the facade."
 msgstr ""

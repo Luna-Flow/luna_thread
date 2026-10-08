@@ -8,222 +8,3011 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: conf.json:summary
-msgid "A MoonBit library for parallel execution through native and JavaScript FFI runtimes, defined by a normative specification."
-msgstr "一个通过原生与 JavaScript FFI 运行时实现并行执行的 MoonBit 库，由一份规范性规格定义。"
+msgid "Parallel plans and workflow graphs for MoonBit, validated in MoonBit and executed by a native C runtime through the FFI."
+msgstr "面向 MoonBit 的并行计划与工作流图：在 MoonBit 中验证，并通过 FFI 由原生 C 运行时执行。"
 
-#: manual/api/backend.md:1
-msgid "backend API"
-msgstr "backend API 参考"
+#: manual/api/backend/js.md:1
+msgid "backend/js API"
+msgstr "backend/js API"
 
-#: manual/api/backend.md:3
-msgid "backend is part of Luna-Flow/luna_thread. This page should describe the public types, constructors, functions, traits, and observable semantics that are implemented in the current branch."
-msgstr "backend 属于 Luna-Flow/luna_thread。本页描述当前分支已经实现的公开类型、构造器、函数、trait 以及可观察语义。"
+#: manual/api/backend/js.md:3
+msgid "The package `Luna-Flow/luna_thread/backend/js`, imported as `@js`, is the placeholder for the JavaScript backend. It names its target and nothing more: it declares no foreign functions and executes nothing. It builds on every target."
+msgstr "包 `Luna-Flow/luna_thread/backend/js` 以 `@js` 导入，是 JavaScript 后端的占位包。它只给出自己的目标，别无其他：不声明任何外部函数，也不执行任何东西。它可以在所有目标上构建。"
 
-#: manual/api/backend.md:5
-#: manual/api/facade.md:5
-msgid "Scope"
-msgstr "范围"
+#: manual/api/backend/js.md:10
+msgid "Returns `JavaScript`."
+msgstr "返回 `JavaScript`。"
 
-#: manual/api/backend.md:7
-msgid "Source boundary: `native and js`"
-msgstr "源码边界：`native and js`"
+#: manual/api/backend/js.md:18
+msgid "Returns `Map`, the plan kind the backend would run first."
+msgstr "返回 `Map`，即该后端会最先运行的计划种类。"
 
-#: manual/api/backend.md:8
-#: manual/api/facade.md:8
-msgid "Audience: package users, integrators, and maintainers who need the exported contract"
-msgstr "读者：需要依赖公开契约的使用者、集成方和维护者"
+#: manual/api/backend/js.md:26
+msgid "Returns `\"backend/js\"`."
+msgstr "返回 `\"backend/js\"`。"
 
-#: manual/api/backend.md:9
-#: manual/api/facade.md:9
-msgid "Status: active"
-msgstr "状态：active"
+#: manual/api/backend/native.md:1
+msgid "backend/native API"
+msgstr "backend/native API"
 
-#: manual/api/backend.md:11
-#: manual/api/facade.md:11
-msgid "Public Contract"
-msgstr "公开契约"
+#: manual/api/backend/native.md:3
+msgid "The package `Luna-Flow/luna_thread/backend/native`, imported as `@native`, is the C foreign function interface backend. It runs the integer kernels of the C runtime on MoonBit arrays, submits workflows to the C scheduler, and turns plans into typed native requests. It builds only for the `native` target and links the C runtime from its native stubs."
+msgstr "包 `Luna-Flow/luna_thread/backend/native` 以 `@native` 导入，是基于 C 外部函数接口的后端。它在 MoonBit 数组上运行 C 运行时的整数内核，把工作流提交给 C 调度器，并把计划转换为带类型的原生请求。它只能在 `native` 目标上构建，并通过原生桩链接 C 运行时。"
 
-#: manual/api/backend.md:13
-#: manual/api/facade.md:13
-msgid "Describe only exported behavior that exists today."
-msgstr "只描述今天已经存在的导出行为。"
+#: manual/api/backend/native.md:9
+msgid "The enumerations of this package are read-only outside it: match on their constructors. The request records are built by the `*_from_plan` functions."
+msgstr "本包的枚举类型在包外是只读的：可以对其构造器做模式匹配。请求记录由 `*_from_plan` 函数构建。"
 
-#: manual/api/backend.md:14
-#: manual/api/facade.md:14
-msgid "Call out backend or subtype differences when they are observable."
-msgstr "如果后端、子类型或执行路径存在可观察差异，要明确写出。"
+#: manual/api/backend/native.md:12
+msgid "Backend information"
+msgstr "后端信息"
 
-#: manual/api/backend.md:15
-#: manual/api/facade.md:15
-msgid "Keep naming, argument ordering, and error semantics aligned with sibling modules when possible."
-msgstr "在可能的情况下，与同类模块保持命名、参数顺序和错误语义一致。"
+#: manual/api/backend/native.md:16
+msgid "Returns `Native`."
+msgstr "返回 `Native`。"
 
-#: manual/api/facade.md:1
-msgid "facade API"
-msgstr "facade API 参考"
+#: manual/api/backend/native.md:24
+msgid "Returns `Map`."
+msgstr "返回 `Map`。"
 
-#: manual/api/facade.md:3
-msgid "facade is part of Luna-Flow/luna_thread. This page should describe the public types, constructors, functions, traits, and observable semantics that are implemented in the current branch."
-msgstr "facade 属于 Luna-Flow/luna_thread。本页描述当前分支已经实现的公开类型、构造器、函数、trait 以及可观察语义。"
+#: manual/api/backend/native.md:32
+msgid "Returns `\"backend/native\"`."
+msgstr "返回 `\"backend/native\"`。"
 
-#: manual/api/facade.md:7
-msgid "Source boundary: `luna_thread`"
-msgstr "源码边界：`luna_thread`"
+#: manual/api/backend/native.md:40
+msgid "Returns `true`."
+msgstr "返回 `true`。"
 
-#: manual/design/backend.md:1
-msgid "backend Design"
-msgstr "backend 设计"
+#: manual/api/backend/native.md:46
+msgid "The value is a constant. The `moon` build compiles the C stubs without OpenMP, so in that build the kernels run on the calling thread; see the [native backend design](../../design/backend/native.md)."
+msgstr "这个值是常量。`moon` 构建在编译 C 桩时没有启用 OpenMP，因此在该构建中内核运行在调用线程上；参见[原生后端设计](../../design/backend/native.md)。"
 
-#: manual/design/backend.md:3
-msgid "This subsystem covers the native C runtime scaffold and the Node.js addon scaffold used to realize the FFI design."
-msgstr "该子系统涵盖用于实现 FFI 设计的原生 C 运行时脚手架和 Node.js 插件脚手架。"
+#: manual/api/backend/native.md:50
+#: manual/design/backend/native.md:168
+msgid "Kernels"
+msgstr "内核"
 
-#: manual/design/backend.md:5
-#: manual/design/facade.md:5
-msgid "Responsibilities"
-msgstr "职责"
+#: manual/api/backend/native.md:52
+msgid "All kernels take a `FixedArray[Int]` of length $n$, a worker count $w$ and a chunk size $c$, block until they finish, and leave the input unchanged. They require"
+msgstr "所有内核都接受一个长度为 $n$ 的 `FixedArray[Int]`、工作线程数 $w$ 和块大小 $c$，阻塞直到完成，并且不修改输入。它们要求"
 
-#: manual/design/backend.md:7
-msgid "Keep the code and docs aligned around `native and js`."
-msgstr "让代码和文档围绕 `native and js` 保持一致。"
+#: manual/api/backend/native.md:60
+msgid "and fail with `InvalidArgument` otherwise. The facade functions of the same names in the [core API](../core.md) wrap these with optional arguments."
+msgstr "否则以 `InvalidArgument` 失败。[core API](../core.md) 中同名的门面函数用可选参数包装了这些函数。"
 
-#: manual/design/backend.md:8
-#: manual/design/facade.md:8
-msgid "Preserve the real execution model instead of smoothing over important internal differences."
-msgstr "如实保留执行模型，不掩盖重要的内部差异。"
+#: manual/api/backend/native.md:65
+msgid "Returns a new array with every element doubled, or `Overflow` when some $2 x_i$ does not fit in 32 bits."
+msgstr "返回一个每个元素都翻倍的新数组；若某个 $2 x_i$ 超出 32 位范围，则返回 `Overflow`。"
 
-#: manual/design/backend.md:9
-#: manual/design/facade.md:9
-msgid "Note extension points, invariants, and limitations that maintainers must keep stable."
-msgstr "记录维护者必须稳定保留的扩展点、不变量和限制。"
+#: manual/api/backend/native.md:74
+msgid "Returns the sum of the elements, or `0` on any failure."
+msgstr "返回各元素之和，任何失败时返回 `0`。"
 
-#: manual/design/backend.md:11
-#: manual/design/facade.md:11
-msgid "Maintenance Notes"
-msgstr "维护说明"
+#: manual/api/backend/native.md:80
+msgid "The kernel adds each chunk from the left and then adds the chunk sums from the left, failing when any of these partial sums overflows. A returned non-zero value is the exact sum; `0` is either the sum or a failure."
+msgstr "内核先从左到右累加每个块，再从左到右累加各块的和；只要其中任何一个部分和溢出就失败。返回的非零值就是精确的和；`0` 则既可能是和，也可能表示失败。"
 
-#: manual/design/backend.md:13
-#: manual/design/facade.md:13
-msgid "Update this page whenever the module boundary, core algorithm, or observable semantics change."
-msgstr "只要模块边界、核心算法或可观察语义变化，就更新本页。"
+#: manual/api/backend/native.md:86
+msgid "Returns the inclusive prefix sums."
+msgstr "返回包含式前缀和。"
 
-#: manual/design/backend.md:14
-#: manual/design/facade.md:14
-msgid "If the module is intentionally incomplete, say so here instead of documenting speculative APIs."
-msgstr "如果模块仍然不完整，也要明确写出，不要伪造未来 API。"
+#: manual/api/backend/native.md:92
+msgid "It fails with `Overflow` when a partial sum overflows."
+msgstr "若某个部分和溢出，则以 `Overflow` 失败。"
 
-#: manual/design/facade.md:1
-msgid "facade Design"
-msgstr "facade 设计"
+#: manual/api/backend/native.md:106
+#: manual/api/core.md:298
+#: manual/api/workflow.md:248
+#: manual/design/backend/native.md:179
+msgid "Workflows"
+msgstr "工作流"
 
-#: manual/design/facade.md:3
-msgid "Use this page to explain the structural responsibilities and implementation constraints of this module. facade in Luna-Flow/luna_thread."
-msgstr "本页用于说明这个模块的结构职责和实现约束。 这里聚焦 Luna-Flow/luna_thread 中的 facade。"
+#: manual/api/backend/native.md:110
+msgid "Returns `true` when `@workflow.validate` finds no issue and the workflow's policy names the native backend."
+msgstr "当 `@workflow.validate` 没有发现任何问题，且工作流的策略指定原生后端时，返回 `true`。"
 
-#: manual/design/facade.md:7
-msgid "Keep the code and docs aligned around `luna_thread`."
-msgstr "让代码和文档围绕 `luna_thread` 保持一致。"
+#: manual/api/backend/native.md:119
+msgid "Returns `@workflow.submit(workflow, backend=Native)`: a validated submission record. It does not run the workflow."
+msgstr "返回 `@workflow.submit(workflow, backend=Native)`：一条经过验证的提交记录。它不会运行工作流。"
+
+#: manual/api/backend/native.md:128
+msgid "The state of a workflow in the C runtime."
+msgstr "工作流在 C 运行时中的状态。"
+
+#: manual/api/backend/native.md:140
+msgid "`Submitted` holds until a worker takes the first node. The runtime never sets `Rejected`; a rejected submission yields an empty handle instead."
+msgstr "在某个工作线程取走第一个节点之前，状态一直是 `Submitted`。运行时从不设置 `Rejected`；被拒绝的提交会得到一个空句柄。"
+
+#: manual/api/backend/native.md:145
+msgid "A snapshot of a workflow: its state, the runtime status code, the number of completed nodes and the id of the failed node (`-1` when none failed)."
+msgstr "工作流的一个快照：状态、运行时状态码、已完成节点数，以及失败节点的 id（没有失败时为 `-1`）。"
+
+#: manual/api/backend/native.md:157
+msgid "`status` is one of the codes in the [architecture guide](../../architecture.md)."
+msgstr "`status` 是[架构指南](../../architecture.md)中列出的状态码之一。"
+
+#: manual/api/backend/native.md:159
+msgid "`NativeWorkflowHandle` and `WorkflowHandle`"
+msgstr "`NativeWorkflowHandle` 和 `WorkflowHandle`"
+
+#: manual/api/backend/native.md:161
+msgid "An opaque pointer to a running workflow in the C runtime, and its MoonBit wrapper."
+msgstr "指向 C 运行时中正在运行的工作流的不透明指针，及其 MoonBit 包装。"
+
+#: manual/api/backend/native.md:175
+msgid "Copies a workflow into flat integer arrays and starts it on the C scheduler with `worker_count` threads from its policy."
+msgstr "把工作流复制为扁平的整数数组，并以其策略中的 `worker_count` 个线程在 C 调度器上启动它。"
+
+#: manual/api/backend/native.md:182
+msgid "The workflow is not validated in MoonBit; the C runtime checks it and, when it rejects the graph, returns an empty handle. The function always returns `Ok`. Compute nodes are scheduled, but their plans are not executed."
+msgstr "工作流不会在 MoonBit 中验证；由 C 运行时检查，若拒绝该图则返回空句柄。该函数总是返回 `Ok`。计算节点会被调度，但其计划不会被执行。"
+
+#: manual/api/backend/native.md:186
+msgid "[!WARNING] The C bridge frees the request arrays after the runtime has started, while the worker threads still read them. This is a known defect that makes programs crash intermittently. Treat this function as experimental."
+msgstr "[!WARNING] C 桥接层在运行时启动后就释放了请求数组，而工作线程仍在读取它们。这是一个已知缺陷，会让程序间歇性崩溃。请把这个函数视为实验性的。"
+
+#: manual/api/backend/native.md:193
+msgid "Returns a snapshot without waiting."
+msgstr "不等待，直接返回一个快照。"
+
+#: manual/api/backend/native.md:201
+msgid "Waits until the workflow is `Completed` or `Failed` and returns the snapshot."
+msgstr "等待工作流进入 `Completed` 或 `Failed`，然后返回快照。"
+
+#: manual/api/backend/native.md:207
+msgid "On an empty handle it returns at once with state `Submitted` and status `7`. It does not return if the workflow deadlocks."
+msgstr "对空句柄，它会立即返回，状态为 `Submitted`，状态码为 `7`。如果工作流发生死锁，它不会返回。"
+
+#: manual/api/backend/native.md:212
+msgid "Stops and joins the runtime threads and frees the workflow. Call it once per handle; it does nothing for an empty handle."
+msgstr "停止并汇合运行时线程，然后释放工作流。每个句柄只调用一次；对空句柄不做任何事。"
+
+#: manual/api/backend/native.md:219
+msgid "Typed native requests"
+msgstr "带类型的原生请求"
+
+#: manual/api/backend/native.md:221
+msgid "`NativeValueType` and `NativeReductionKernel`"
+msgstr "`NativeValueType` 和 `NativeReductionKernel`"
+
+#: manual/api/backend/native.md:223
+msgid "The value types and reduction kernels the C runtime implements."
+msgstr "C 运行时实现的值类型和归约内核。"
+
+#: manual/api/backend/native.md:240
+msgid "Why a plan could not become a native request, or why a kernel failed."
+msgstr "计划无法转换为原生请求的原因，或内核失败的原因。"
+
+#: manual/api/backend/native.md:253
+msgid "`NativeMapRequest`, `NativeReduceRequest` and `NativeScanRequest`"
+msgstr "`NativeMapRequest`、`NativeReduceRequest` 和 `NativeScanRequest`"
+
+#: manual/api/backend/native.md:255
+msgid "Typed counterparts of the C request structs."
+msgstr "C 请求结构体的带类型对应物。"
+
+#: manual/api/backend/native.md:288
+msgid "The `input` and `output` buffers of requests built from plans are `NativeBuffer::new(0, 0)`: a plan describes the shape of the data, not the data. No function of the module sends these records to C; they are the validated description that a future executor will fill with buffers."
+msgstr "由计划构建的请求，其 `input` 和 `output` 缓冲区都是 `NativeBuffer::new(0, 0)`：计划描述的是数据的形状，而不是数据本身。本模块中没有任何函数把这些记录发送给 C；它们是经过验证的描述，将来的执行器会为其填入缓冲区。"
+
+#: manual/api/backend/native.md:295
+msgid "Turns a `Map` plan into a `NativeMapRequest`."
+msgstr "把 `Map` 计划转换为 `NativeMapRequest`。"
+
+#: manual/api/backend/native.md:301
+msgid "It fails with `UnsupportedMode` when the plan is not a `Map` plan, and otherwise with the error mapped from the first issue of `@plan.validate`: value type, reduction kernel, backend and mode issues map to the error of the same name, `MissingReductionKernel` maps to `UnsupportedReductionKernel`, and the remaining issues map to `InvalidArgument`."
+msgstr "若计划不是 `Map` 计划，则以 `UnsupportedMode` 失败；否则以 `@plan.validate` 的第一个问题所映射的错误失败：值类型、归约内核、后端和模式的问题映射为同名错误，`MissingReductionKernel` 映射为 `UnsupportedReductionKernel`，其余问题映射为 `InvalidArgument`。"
+
+#: manual/api/backend/native.md:309
+msgid "Turns a `Reduce` or `MapReduce` plan into a `NativeReduceRequest`, with the same error rules."
+msgstr "把 `Reduce` 或 `MapReduce` 计划转换为 `NativeReduceRequest`，错误规则相同。"
+
+#: manual/api/backend/native.md:318
+msgid "Turns a `Scan` plan into a `NativeScanRequest` whose kernel is `Sum`, with the same error rules."
+msgstr "把 `Scan` 计划转换为内核为 `Sum` 的 `NativeScanRequest`，错误规则相同。"
+
+#: manual/api/backend/native.md:325
+msgid "`map_request_is_valid`, `reduce_request_is_valid` and `scan_request_is_valid`"
+msgstr "`map_request_is_valid`、`reduce_request_is_valid` 和 `scan_request_is_valid`"
+
+#: manual/api/backend/native.md:327
+msgid "Check the request fields the C validator also checks: positive element count, worker count and chunk size, a supported value type, and for scans the `Sum` kernel."
+msgstr "检查 C 验证器同样会检查的请求字段：元素数、工作线程数和块大小为正，值类型受支持，对扫描还要求内核为 `Sum`。"
+
+#: manual/api/backend/native.md:337
+msgid "`map_request_value_type`, `reduce_request_value_type`, `scan_request_value_type`, `reduce_request_kernel` and `scan_request_kernel`"
+msgstr "`map_request_value_type`、`reduce_request_value_type`、`scan_request_value_type`、`reduce_request_kernel` 和 `scan_request_kernel`"
+
+#: manual/api/backend/native.md:339
+msgid "Return the C codes of a request's value type (`0` for `I32`, `1` for `I64`) and kernel (`0` for `Sum`, `1` for `Min`, `2` for `Max`)."
+msgstr "返回请求的值类型（`I32` 为 `0`，`I64` 为 `1`）和内核（`Sum` 为 `0`，`Min` 为 `1`，`Max` 为 `2`）的 C 编码。"
+
+#: manual/api/backend/native.md:365
+msgid "Raw foreign functions"
+msgstr "原始外部函数"
+
+#: manual/api/backend/native.md:367
+msgid "These `extern \"C\"` declarations are public so that callers can reach kernels the typed functions do not wrap, such as the `Int64` kernels and minimum and maximum reductions. Arrays are borrowed for the duration of the call. Map and scan return a status code and write into `output`, which must have at least `length` elements; reductions return the result, or `0` on failure. The arguments are the input, its length, the worker count and the chunk size."
+msgstr "这些 `extern \"C\"` 声明是公开的，使调用者可以使用带类型函数没有包装的内核，例如 `Int64` 内核以及最小值和最大值归约。数组在调用期间被借用。映射和扫描返回状态码，并写入 `output`，它必须至少有 `length` 个元素；归约直接返回结果，失败时返回 `0`。参数依次是输入、其长度、工作线程数和块大小。"
+
+#: manual/api/backend/native.md:374
+msgid "`ffi_execute_map_i32` and `ffi_execute_map_i64`"
+msgstr "`ffi_execute_map_i32` 和 `ffi_execute_map_i64`"
+
+#: manual/api/backend/native.md:376
+msgid "Double every element into `output`."
+msgstr "把每个元素翻倍后写入 `output`。"
+
+#: manual/api/backend/native.md:383
+msgid "`ffi_execute_reduce_sum_i32`, `ffi_execute_reduce_sum_i64`, `ffi_execute_reduce_min_i32`, `ffi_execute_reduce_min_i64`, `ffi_execute_reduce_max_i32` and `ffi_execute_reduce_max_i64`"
+msgstr "`ffi_execute_reduce_sum_i32`、`ffi_execute_reduce_sum_i64`、`ffi_execute_reduce_min_i32`、`ffi_execute_reduce_min_i64`、`ffi_execute_reduce_max_i32` 和 `ffi_execute_reduce_max_i64`"
+
+#: manual/api/backend/native.md:385
+msgid "Return the sum, minimum or maximum of the input."
+msgstr "返回输入的和、最小值或最大值。"
+
+#: manual/api/backend/native.md:396
+msgid "Minimum and maximum never overflow."
+msgstr "最小值和最大值不会溢出。"
+
+#: manual/api/backend/native.md:398
+msgid "`ffi_execute_scan_sum_i32` and `ffi_execute_scan_sum_i64`"
+msgstr "`ffi_execute_scan_sum_i32` 和 `ffi_execute_scan_sum_i64`"
+
+#: manual/api/backend/native.md:400
+msgid "Write the inclusive prefix sums into `output`."
+msgstr "把包含式前缀和写入 `output`。"
+
+#: manual/api/backend/native.md:409
+msgid "Starts a workflow from flat arrays: worker count; capability ids, kind codes and count; node ids, kind codes, capability ids (`-1` for none) and count; edge sources, targets, kind codes and count. Returns a null handle when the runtime rejects the graph."
+msgstr "从扁平数组启动一个工作流：工作线程数；能力的 id、种类编码和数量；节点的 id、种类编码、能力 id（无则为 `-1`）和数量；边的起点、终点、种类编码和数量。运行时拒绝该图时返回空句柄。"
+
+#: manual/api/backend/native.md:418
+msgid "`ffi_workflow_poll_state`, `ffi_workflow_poll_status`, `ffi_workflow_poll_completed_nodes`, `ffi_workflow_poll_failed_node_id`, `ffi_workflow_wait_status` and `ffi_workflow_destroy`"
+msgstr "`ffi_workflow_poll_state`、`ffi_workflow_poll_status`、`ffi_workflow_poll_completed_nodes`、`ffi_workflow_poll_failed_node_id`、`ffi_workflow_wait_status` 和 `ffi_workflow_destroy`"
+
+#: manual/api/backend/native.md:420
+msgid "Read one field of a workflow snapshot, wait and return the final status, or destroy the workflow."
+msgstr "读取工作流快照的一个字段、等待并返回最终状态，或销毁工作流。"
+
+#: manual/api/backend/native.md:432
+msgid "On a null handle the poll functions return `0`, `ffi_workflow_wait_status` returns `7` and `ffi_workflow_destroy` does nothing."
+msgstr "对空句柄，轮询函数返回 `0`，`ffi_workflow_wait_status` 返回 `7`，`ffi_workflow_destroy` 不做任何事。"
+
+#: manual/api/backend/native.md:446
+msgid "Equality"
+msgstr "相等性"
+
+#: manual/api/backend/native.md:450
+msgid "Structural equality, promoted on `NativeMapRequest`, `NativeReduceRequest`, `NativeScanRequest`, `NativeReductionKernel`, `NativeRequestError`, `NativeValueType`, `WorkflowResult` and `WorkflowRuntimeState`. Use `==` and `!=`. `WorkflowHandle` has no equality."
+msgstr "结构相等，作为方法提升到 `NativeMapRequest`、`NativeReduceRequest`、`NativeScanRequest`、`NativeReductionKernel`、`NativeRequestError`、`NativeValueType`、`WorkflowResult` 和 `WorkflowRuntimeState` 上。请使用 `==` 和 `!=`。`WorkflowHandle` 没有相等性。"
+
+#: manual/api/core.md:1
+msgid "core API"
+msgstr "core API"
+
+#: manual/api/core.md:3
+msgid "The root package `Luna-Flow/luna_thread`, imported as `@luna_thread`, is the facade of the module. It re-exports the common constructors of `plan`, `shared` and `workflow` with defaults filled in, executes integer kernels on the native backend, and submits workflows. It builds only for the `native` target. Every function here is a thin wrapper; the linked package pages give the full semantics of the types it returns."
+msgstr "根包 `Luna-Flow/luna_thread` 以 `@luna_thread` 导入，是本模块的门面。它重新导出 `plan`、`shared` 和 `workflow` 中常用的构造函数并填好默认值，在原生后端上执行整数内核，并提交工作流。它只能在 `native` 目标上构建。这里的每个函数都是一层薄包装；所链接的包页面给出了其返回类型的完整语义。"
+
+#: manual/api/core.md:10
+msgid "Module information"
+msgstr "模块信息"
+
+#: manual/api/core.md:14
+msgid "Returns the fixed description `\"luna_thread MoonBit facade\"`."
+msgstr "返回固定的描述 `\"luna_thread MoonBit facade\"`。"
+
+#: manual/api/core.md:20
+msgid "`root_plan_package` and `root_workflow_package`"
+msgstr "`root_plan_package` 和 `root_workflow_package`"
+
+#: manual/api/core.md:22
+msgid "Return the names that the `plan` and `workflow` packages report for themselves, `\"plan\"` and `\"workflow\"`."
+msgstr "返回 `plan` 和 `workflow` 包报告的自身名称，即 `\"plan\"` 和 `\"workflow\"`。"
+
+#: manual/api/core.md:38
+msgid "Policies and capabilities"
+msgstr "策略与能力"
+
+#: manual/api/core.md:42
+msgid "Returns `Native`, the backend that plans, workflows and submissions use when none is given."
+msgstr "返回 `Native`，即未指定后端时计划、工作流和提交所使用的后端。"
+
+#: manual/api/core.md:51
+msgid "Returns the default execution policy: native backend, synchronous mode, one worker, chunk size one, input order preserved. It is the same value as `@shared.native_policy()`."
+msgstr "返回默认执行策略：原生后端、同步模式、一个工作线程、块大小为一、保持输入顺序。它与 `@shared.native_policy()` 是同一个值。"
+
+#: manual/api/core.md:61
+msgid "Builds a policy for the JavaScript backend. In v1 the policy constructor rejects every backend other than `Native`, so this function aborts; it is kept for the JavaScript backend that the specification describes."
+msgstr "为 JavaScript 后端构建策略。在 v1 中，策略构造器拒绝 `Native` 以外的所有后端，因此这个函数会中止；保留它是为了规范中描述的 JavaScript 后端。"
+
+#: manual/api/core.md:71
+msgid "Builds an execution policy and checks it, returning the first problem as a `PolicyError`."
+msgstr "构建一个执行策略并检查它，把第一个问题作为 `PolicyError` 返回。"
+
+#: manual/api/core.md:78
+msgid "The defaults are `Native`, `Synchronous`, `1`, `1` and `PreserveInputOrder`. The checks run in this order and the first failure is returned: `worker_count > 0`, `chunk_size > 0`, `backend == Native`, `mode == Synchronous`. The result is the same as `@shared.make_execution_policy`."
+msgstr "默认值依次为 `Native`、`Synchronous`、`1`、`1` 和 `PreserveInputOrder`。检查按以下顺序进行并返回第一个失败：`worker_count > 0`、`chunk_size > 0`、`backend == Native`、`mode == Synchronous`。结果与 `@shared.make_execution_policy` 相同。"
+
+#: manual/api/core.md:97
+msgid "Returns the declared capability table of a backend; see `RuntimeCapabilities::for_backend` in the [shared API](shared.md)."
+msgstr "返回后端声明的能力表；参见 [shared API](shared.md) 中的 `RuntimeCapabilities::for_backend`。"
+
+#: manual/api/core.md:112
+msgid "Value types and reduction kernels"
+msgstr "值类型与归约内核"
+
+#: manual/api/core.md:114
+#: manual/api/plan.md:159
+msgid "`i32_type`, `i64_type`, `f32_type`, `f64_type`, `bytes_type` and `opaque_type`"
+msgstr "`i32_type`、`i64_type`、`f32_type`、`f64_type`、`bytes_type` 和 `opaque_type`"
+
+#: manual/api/core.md:116
+msgid "Return the element types `I32`, `I64`, `F32`, `F64`, `Bytes` and `Opaque(name)` of a plan's input domain. Only `I32` and `I64` pass validation in v1."
+msgstr "返回计划输入域的元素类型 `I32`、`I64`、`F32`、`F64`、`Bytes` 和 `Opaque(name)`。在 v1 中只有 `I32` 和 `I64` 能通过验证。"
+
+#: manual/api/core.md:129
+msgid "`sum_reduction`, `min_reduction` and `max_reduction`"
+msgstr "`sum_reduction`、`min_reduction` 和 `max_reduction`"
+
+#: manual/api/core.md:131
+msgid "Return the reduction kernels `Sum`, `Min` and `Max`, the three kernels that pass validation in v1."
+msgstr "返回归约内核 `Sum`、`Min` 和 `Max`，即在 v1 中能通过验证的三个内核。"
+
+#: manual/api/core.md:148
+msgid "Plans"
+msgstr "计划"
+
+#: manual/api/core.md:152
+msgid "Builds a map plan over `input_length` elements of one type."
+msgstr "构建一个作用于 `input_length` 个同类型元素的映射计划。"
+
+#: manual/api/core.md:158
+msgid "The arguments are the label, the element type and the input length. The policy defaults to `default_policy()` and the ordering to `PreserveInputOrder`. The plan is not checked; call `validate` or `is_ready`."
+msgstr "参数依次是标签、元素类型和输入长度。策略默认为 `default_policy()`，顺序默认为 `PreserveInputOrder`。计划不会被检查；请调用 `validate` 或 `is_ready`。"
+
+#: manual/api/core.md:164
+msgid "Builds a reduce plan that combines the input with a reduction kernel."
+msgstr "构建一个用归约内核合并输入的归约计划。"
+
+#: manual/api/core.md:170
+msgid "The ordering of a reduce plan is always `PreserveInputOrder`."
+msgstr "归约计划的顺序总是 `PreserveInputOrder`。"
+
+#: manual/api/core.md:174
+msgid "Builds a scan (prefix) plan."
+msgstr "构建一个扫描（前缀）计划。"
+
+#: manual/api/core.md:180
+msgid "A scan has no reduction kernel in the plan and always preserves input order."
+msgstr "扫描计划中没有归约内核，并且总是保持输入顺序。"
+
+#: manual/api/core.md:184
+msgid "Builds a plan that maps every element and then reduces the results."
+msgstr "构建一个先映射每个元素、再归约结果的计划。"
+
+#: manual/api/core.md:192
+msgid "Returns every reason why a plan is outside the v1 subset, or an empty array."
+msgstr "返回计划超出 v1 子集的所有原因，若没有则返回空数组。"
+
+#: manual/api/core.md:198
+msgid "This is `@plan.validate`; the [plan API](plan.md) lists the checks."
+msgstr "这就是 `@plan.validate`；[plan API](plan.md) 列出了各项检查。"
+
+#: manual/api/core.md:202
+msgid "Returns `true` when `validate` finds no issue."
+msgstr "当 `validate` 没有发现问题时返回 `true`。"
+
+#: manual/api/core.md:208
+msgid "A ready plan satisfies the v1 rules, but the native kernels have one more requirement, the cover condition $w \\ge \\lceil n / c \\rceil$ described under `execute_map_i32`."
+msgstr "就绪的计划满足 v1 的规则，但原生内核还有一个要求，即 `execute_map_i32` 下所述的覆盖条件 $w \\ge \\lceil n / c \\rceil$。"
+
+#: manual/api/core.md:228
+msgid "Direct execution"
+msgstr "直接执行"
+
+#: manual/api/core.md:230
+msgid "These functions run a kernel of the native C runtime on a `FixedArray[Int]` and block until it finishes. They do not use plans. Let $n$ be the input length, $w$ the worker count and $c$ the chunk size. Every kernel requires"
+msgstr "这些函数在 `FixedArray[Int]` 上运行原生 C 运行时的一个内核，并阻塞直到完成。它们不使用计划。设 $n$ 为输入长度，$w$ 为工作线程数，$c$ 为块大小。每个内核都要求"
+
+#: manual/api/core.md:238
+msgid "and otherwise fails with `InvalidArgument`. With the defaults $w = c = 1$ only an input of length one is accepted, so pass both arguments. The input is split into $\\lceil n / c \\rceil$ contiguous chunks whose sizes differ by at most one; the [native backend design](../design/backend/native.md) derives this and the results below."
+msgstr "否则以 `InvalidArgument` 失败。使用默认值 $w = c = 1$ 时只接受长度为一的输入，所以请两个参数都传。输入被分成 $\\lceil n / c \\rceil$ 个连续的块，各块大小至多相差一；[原生后端设计](../design/backend/native.md)推导了这一点以及下面的结果。"
+
+#: manual/api/core.md:246
+msgid "Doubles every element, returning a new array, or `Overflow` when some $2 x_i$ does not fit in 32 bits."
+msgstr "把每个元素翻倍并返回新数组；若某个 $2 x_i$ 超出 32 位范围，则返回 `Overflow`。"
+
+#: manual/api/core.md:253
+msgid "The input is not modified. The map is fixed to $x \\mapsto 2x$ in v1."
+msgstr "输入不会被修改。在 v1 中映射固定为 $x \\mapsto 2x$。"
+
+#: manual/api/core.md:257
+msgid "Returns the sum of the elements."
+msgstr "返回各元素之和。"
+
+#: manual/api/core.md:263
+msgid "The sum is exact when it is returned. On any failure, an invalid argument or an overflow of a partial sum, the function returns `0`, which cannot be told apart from a true sum of zero. Whether a partial sum overflows depends on the chunking: `[-1, 0, 2147483647, 1]` sums to `2147483647` with $w = 1, c = 4$ but returns `0` with $w = 2, c = 2$."
+msgstr "返回的和总是精确的。任何失败（无效参数或部分和溢出）时，函数返回 `0`，这与真实的零和无法区分。部分和是否溢出取决于分块方式：`[-1, 0, 2147483647, 1]` 在 $w = 1, c = 4$ 时求得 `2147483647`，在 $w = 2, c = 2$ 时却返回 `0`。"
+
+#: manual/api/core.md:271
+msgid "Returns the inclusive prefix sums $y_i = x_0 + \\dots + x_i$."
+msgstr "返回包含式前缀和 $y_i = x_0 + \\dots + x_i$。"
+
+#: manual/api/core.md:277
+msgid "It fails with `InvalidArgument` when the arguments break the conditions above and with `Overflow` when a partial sum overflows."
+msgstr "参数违反上述条件时以 `InvalidArgument` 失败，部分和溢出时以 `Overflow` 失败。"
+
+#: manual/api/core.md:302
+msgid "Creates an empty workflow with a label and a policy (default `default_policy()`)."
+msgstr "创建一个带标签和策略（默认为 `default_policy()`）的空工作流。"
+
+#: manual/api/core.md:309
+msgid "Add capabilities, nodes and edges with `Workflow::add_capability`, `Workflow::add_node` and `Workflow::add_edge` from the [workflow API](workflow.md). These methods change the workflow in place."
+msgstr "使用 [workflow API](workflow.md) 中的 `Workflow::add_capability`、`Workflow::add_node` 和 `Workflow::add_edge` 添加能力、节点和边。这些方法会就地修改工作流。"
+
+#: manual/api/core.md:313
+msgid "`compute_task`, `spawn_task` and `join_task`"
+msgstr "`compute_task`、`spawn_task` 和 `join_task`"
+
+#: manual/api/core.md:315
+msgid "Create a compute node that carries a plan, a spawn node and a join node."
+msgstr "分别创建一个携带计划的计算节点、一个派生节点和一个汇合节点。"
+
+#: manual/api/core.md:323
+msgid "The first two arguments are the node id and label. None of these nodes needs a capability."
+msgstr "前两个参数是节点 id 和标签。这些节点都不需要能力。"
+
+#: manual/api/core.md:326
+msgid "`channel_capability`, `mutex_capability` and `shared_read_capability`"
+msgstr "`channel_capability`、`mutex_capability` 和 `shared_read_capability`"
+
+#: manual/api/core.md:328
+msgid "Create capabilities with the only access mode that is valid for their kind: a channel with `MoveOnly`, a mutex with `SynchronizeOnly` and a shared read view with `ReadOnly`."
+msgstr "以各自种类唯一有效的访问模式创建能力：通道使用 `MoveOnly`，互斥锁使用 `SynchronizeOnly`，共享只读视图使用 `ReadOnly`。"
+
+#: manual/api/core.md:338
+msgid "`workflow_validate` and `workflow_is_ready`"
+msgstr "`workflow_validate` 和 `workflow_is_ready`"
+
+#: manual/api/core.md:340
+msgid "Return the issues found by `@workflow.validate`, and whether there are none."
+msgstr "返回 `@workflow.validate` 找到的问题，以及是否一个问题都没有。"
+
+#: manual/api/core.md:349
+msgid "Validates a workflow for a backend and records the outcome as a `Submission`."
+msgstr "针对某个后端验证工作流，并把结果记录为 `Submission`。"
+
+#: manual/api/core.md:355
+msgid "The submission is accepted when the workflow has no issues and the backend is `Native`. Nothing is executed: `completed` is always `false`. Use `submit_workflow_async` to run a workflow."
+msgstr "当工作流没有问题且后端为 `Native` 时，提交被接受。不会执行任何东西：`completed` 总是 `false`。要运行工作流，请使用 `submit_workflow_async`。"
+
+#: manual/api/core.md:377
+msgid "Asynchronous workflows"
+msgstr "异步工作流"
+
+#: manual/api/core.md:381
+msgid "Starts a workflow on the native runtime and returns a handle at once."
+msgstr "在原生运行时上启动一个工作流，并立即返回句柄。"
+
+#: manual/api/core.md:387
+msgid "The workflow is not validated in MoonBit first; the C runtime checks it. The current implementation always returns `Ok`. When the C runtime rejects the graph, the handle is empty and `wait_workflow` reports state `Submitted` with status `7` (`NullPointer`)."
+msgstr "工作流不会先在 MoonBit 中验证，而是由 C 运行时检查。当前实现总是返回 `Ok`。当 C 运行时拒绝该图时，句柄为空，`wait_workflow` 报告状态 `Submitted`、状态码 `7`（`NullPointer`）。"
+
+#: manual/api/core.md:392
+msgid "[!WARNING] The C bridge frees the node, edge and capability arrays, and the request that points to them, as soon as the runtime has started, while the worker threads still read them. Tests that run workflows crash intermittently because of this. Treat asynchronous workflows as experimental until it is fixed."
+msgstr "[!WARNING] 运行时一启动，C 桥接层就释放了节点、边和能力数组以及指向它们的请求，而工作线程仍在读取它们。因此运行工作流的测试会间歇性崩溃。在修复之前，请把异步工作流视为实验性功能。"
+
+#: manual/api/core.md:400
+msgid "Returns a snapshot of a running workflow without waiting."
+msgstr "不等待，返回正在运行的工作流的快照。"
+
+#: manual/api/core.md:408
+msgid "Blocks until the workflow completes or fails, then returns its result."
+msgstr "阻塞直到工作流完成或失败，然后返回其结果。"
+
+#: manual/api/core.md:414
+msgid "`status` is `0` on success or a runtime status code such as `14` (`BARRIER_BROKEN`); `completed_nodes` counts finished nodes and `failed_node_id` names the failing node, or is `-1`. A workflow whose nodes block without being woken never finishes, and `wait_workflow` does not return; see the [native backend design](../design/backend/native.md)."
+msgstr "成功时 `status` 为 `0`，否则为运行时状态码，例如 `14`（`BARRIER_BROKEN`）；`completed_nodes` 统计已完成的节点，`failed_node_id` 指出失败的节点，或为 `-1`。若节点阻塞后从未被唤醒，工作流永远不会结束，`wait_workflow` 也不会返回；参见[原生后端设计](../design/backend/native.md)。"
+
+#: manual/api/core.md:422
+msgid "Stops the worker threads of a workflow and frees its runtime."
+msgstr "停止工作流的工作线程并释放其运行时。"
+
+#: manual/api/core.md:428
+msgid "Call it exactly once per handle, after the last `poll_workflow` or `wait_workflow`."
+msgstr "每个句柄恰好调用一次，且在最后一次 `poll_workflow` 或 `wait_workflow` 之后调用。"
+
+#: manual/api/core.md:443
+msgid "The last example is not compiled into the documentation tests because of the defect described under `submit_workflow_async`."
+msgstr "由于 `submit_workflow_async` 下所述的缺陷，最后这个示例没有编译进文档测试。"
+
+#: manual/api/plan.md:1
+msgid "plan API"
+msgstr "plan API"
+
+#: manual/api/plan.md:3
+msgid "The package `Luna-Flow/luna_thread/plan`, imported as `@plan`, describes one data-parallel operation as a value: its kind, the element type and length of its input, the execution policy, an optional reduction kernel and an ordering guarantee. It validates plans against the v1 subset. It executes nothing and builds on every target."
+msgstr "包 `Luna-Flow/luna_thread/plan` 以 `@plan` 导入，把一个数据并行操作描述为一个值：它的种类、输入的元素类型和长度、执行策略、可选的归约内核以及顺序保证。它按 v1 子集验证计划。它不执行任何东西，可以在所有目标上构建。"
+
+#: manual/api/plan.md:9
+#: manual/api/shared.md:10
+#: manual/api/workflow.md:9
+msgid "The enumerations of this package are read-only outside it: match on their constructors, but build values with the functions below."
+msgstr "本包的枚举类型在包外是只读的：可以对其构造器做模式匹配，但请用下面的函数构建值。"
+
+#: manual/api/plan.md:12
+msgid "Types"
+msgstr "类型"
+
+#: manual/api/plan.md:16
+msgid "The four operations a plan can describe."
+msgstr "计划可以描述的四种操作。"
+
+#: manual/api/plan.md:27
+msgid "`Map` applies a function to every element, `Reduce` combines all elements with a kernel, `Scan` produces the running combination (prefix), and `MapReduce` maps and then reduces."
+msgstr "`Map` 对每个元素应用一个函数，`Reduce` 用内核合并所有元素，`Scan` 产生逐步累积的结果（前缀），`MapReduce` 先映射再归约。"
+
+#: manual/api/plan.md:33
+msgid "The element type of a plan's input."
+msgstr "计划输入的元素类型。"
+
+#: manual/api/plan.md:46
+msgid "Only `I32` and `I64` are supported in v1."
+msgstr "v1 只支持 `I32` 和 `I64`。"
+
+#: manual/api/plan.md:50
+msgid "The binary operation of a reduce, map-reduce or scan."
+msgstr "归约、映射归约或扫描所用的二元运算。"
+
+#: manual/api/plan.md:61
+msgid "`Custom(name)` names a kernel that the runtime does not know; it never passes validation in v1."
+msgstr "`Custom(name)` 指一个运行时不认识的内核；在 v1 中它永远无法通过验证。"
+
+#: manual/api/plan.md:66
+msgid "The element type and length of a plan's input."
+msgstr "计划输入的元素类型和长度。"
+
+#: manual/api/plan.md:78
+msgid "`DataDomain::new(t, n)` stores its arguments unchecked; `validate` rejects $n \\le 0$."
+msgstr "`DataDomain::new(t, n)` 不检查地保存参数；`validate` 会拒绝 $n \\le 0$。"
+
+#: manual/api/plan.md:83
+msgid "A complete plan."
+msgstr "一个完整的计划。"
+
+#: manual/api/plan.md:97
+msgid "`Plan::new` stores its arguments unchecked. `policy` defaults to `@shared.native_policy()`, `reduction` to `None` and `ordering` to `PreserveInputOrder`. Use it for combinations the builders below do not make, such as a scan with relaxed ordering."
+msgstr "`Plan::new` 不检查地保存参数。`policy` 默认为 `@shared.native_policy()`，`reduction` 默认为 `None`，`ordering` 默认为 `PreserveInputOrder`。下面的构建函数无法构造的组合（例如顺序宽松的扫描）可以用它来构造。"
+
+#: manual/api/plan.md:102
+msgid "`Plan::label`, `Plan::kind`, `Plan::domain`, `Plan::policy`, `Plan::reduction` and `Plan::ordering`"
+msgstr "`Plan::label`、`Plan::kind`、`Plan::domain`、`Plan::policy`、`Plan::reduction` 和 `Plan::ordering`"
+
+#: manual/api/plan.md:104
+msgid "Return the fields of a plan."
+msgstr "返回计划的各个字段。"
+
+#: manual/api/plan.md:117
+msgid "One reason why a plan is outside the v1 subset."
+msgstr "计划超出 v1 子集的一个原因。"
+
+#: manual/api/plan.md:134
+msgid "`validate` describes when each one is reported."
+msgstr "`validate` 说明了每种问题在何时报告。"
+
+#: manual/api/plan.md:138
+msgid "Structural equality, promoted as a method on every type of the package: `DataDomain`, `Plan`, `PlanKind`, `ReductionKernel`, `ValidationIssue` and `ValueType`. Use `==` and `!=`."
+msgstr "结构相等，作为方法提升到本包的每个类型上：`DataDomain`、`Plan`、`PlanKind`、`ReductionKernel`、`ValidationIssue` 和 `ValueType`。请使用 `==` 和 `!=`。"
+
+#: manual/api/plan.md:146
+msgid "Constructors for enumerations"
+msgstr "枚举的构造函数"
+
+#: manual/api/plan.md:148
+msgid "`map_plan_kind`, `reduce_plan_kind`, `scan_plan_kind` and `map_reduce_plan_kind`"
+msgstr "`map_plan_kind`、`reduce_plan_kind`、`scan_plan_kind` 和 `map_reduce_plan_kind`"
+
+#: manual/api/plan.md:150
+msgid "Return `Map`, `Reduce`, `Scan` and `MapReduce`."
+msgstr "返回 `Map`、`Reduce`、`Scan` 和 `MapReduce`。"
+
+#: manual/api/plan.md:161
+msgid "Return `I32`, `I64`, `F32`, `F64`, `Bytes` and `Opaque(name)`."
+msgstr "返回 `I32`、`I64`、`F32`、`F64`、`Bytes` 和 `Opaque(name)`。"
+
+#: manual/api/plan.md:172
+msgid "`sum_reduction`, `min_reduction`, `max_reduction` and `custom_reduction`"
+msgstr "`sum_reduction`、`min_reduction`、`max_reduction` 和 `custom_reduction`"
+
+#: manual/api/plan.md:174
+msgid "Return `Sum`, `Min`, `Max` and `Custom(name)`."
+msgstr "返回 `Sum`、`Min`、`Max` 和 `Custom(name)`。"
+
+#: manual/api/plan.md:191
+msgid "Building plans"
+msgstr "构建计划"
+
+#: manual/api/plan.md:195
+msgid "Builds a `Map` plan."
+msgstr "构建一个 `Map` 计划。"
+
+#: manual/api/plan.md:201
+msgid "The arguments are the label, the element type and the input length; `policy` defaults to `@shared.native_policy()` and `ordering` to `PreserveInputOrder`. The reduction is `None`."
+msgstr "参数依次是标签、元素类型和输入长度；`policy` 默认为 `@shared.native_policy()`，`ordering` 默认为 `PreserveInputOrder`。归约为 `None`。"
+
+#: manual/api/plan.md:207
+msgid "Builds a `Reduce` plan with a reduction kernel and `PreserveInputOrder`."
+msgstr "构建一个带归约内核且顺序为 `PreserveInputOrder` 的 `Reduce` 计划。"
+
+#: manual/api/plan.md:215
+msgid "Builds a `Scan` plan with `PreserveInputOrder` and no reduction kernel."
+msgstr "构建一个顺序为 `PreserveInputOrder` 且没有归约内核的 `Scan` 计划。"
+
+#: manual/api/plan.md:221
+msgid "The native scan kernel is a prefix sum, so a scan plan does not name its kernel."
+msgstr "原生扫描内核就是前缀和，因此扫描计划不指定内核。"
+
+#: manual/api/plan.md:226
+msgid "Builds a `MapReduce` plan."
+msgstr "构建一个 `MapReduce` 计划。"
+
+#: manual/api/plan.md:242
+#: manual/api/workflow.md:306
+msgid "Validation"
+msgstr "验证"
+
+#: manual/api/plan.md:246
+msgid "Returns every issue of a plan, in a fixed order, or an empty array."
+msgstr "按固定顺序返回计划的所有问题，若没有则返回空数组。"
+
+#: manual/api/plan.md:252
+msgid "With $n$ the input length, $w$ the worker count and $c$ the chunk size of the policy, the checks are:"
+msgstr "设 $n$ 为输入长度，$w$ 和 $c$ 为策略中的工作线程数和块大小，检查如下："
+
+#: manual/api/plan.md:255
+msgid "Issue"
+msgstr "问题"
+
+#: manual/api/plan.md:255
+msgid "Reported when"
+msgstr "报告条件"
+
+#: manual/api/plan.md:258
+msgid "the element type is not `I32` or `I64`"
+msgstr "元素类型不是 `I32` 或 `I64`"
+
+#: manual/api/plan.md:261
+msgid "the policy's backend is not `Native`"
+msgstr "策略的后端不是 `Native`"
+
+#: manual/api/plan.md:262
+msgid "the policy's mode is not `Synchronous`"
+msgstr "策略的模式不是 `Synchronous`"
+
+#: manual/api/plan.md:263
+msgid "a `Reduce` or `MapReduce` plan has no kernel"
+msgstr "`Reduce` 或 `MapReduce` 计划没有内核"
+
+#: manual/api/plan.md:264
+msgid "the kernel of a `Reduce` or `MapReduce` plan is `Custom`"
+msgstr "`Reduce` 或 `MapReduce` 计划的内核是 `Custom`"
+
+#: manual/api/plan.md:265
+msgid "`UnsupportedOrdering` and `ScanRequiresStableOrdering`"
+msgstr "`UnsupportedOrdering` 和 `ScanRequiresStableOrdering`"
+
+#: manual/api/plan.md:265
+msgid "a `Scan` plan has `RelaxedOrder`; both are reported"
+msgstr "`Scan` 计划的顺序为 `RelaxedOrder`；两个问题都会报告"
+
+#: manual/api/plan.md:267
+msgid "`validate` does not check the cover condition $w \\ge \\lceil n / c \\rceil$ that the native kernels also require."
+msgstr "`validate` 不检查原生内核同样要求的覆盖条件 $w \\ge \\lceil n / c \\rceil$。"
+
+#: manual/api/plan.md:272
+#: manual/api/workflow.md:372
+msgid "Returns `true` when `validate` returns no issue."
+msgstr "当 `validate` 没有返回任何问题时返回 `true`。"
+
+#: manual/api/plan.md:278
+msgid "`value_type_is_supported_in_v1`, `reduction_kernel_is_supported_in_v1` and `ordering_is_valid_for_kind`"
+msgstr "`value_type_is_supported_in_v1`、`reduction_kernel_is_supported_in_v1` 和 `ordering_is_valid_for_kind`"
+
+#: manual/api/plan.md:280
+msgid "The individual v1 rules used by `validate`."
+msgstr "`validate` 使用的各条 v1 规则。"
+
+#: manual/api/plan.md:288
+msgid "The first accepts `I32` and `I64`, the second `Sum`, `Min` and `Max`. The third accepts every ordering except `RelaxedOrder` for `Scan`."
+msgstr "第一个接受 `I32` 和 `I64`，第二个接受 `Sum`、`Min` 和 `Max`。第三个接受除 `Scan` 的 `RelaxedOrder` 以外的所有顺序。"
+
+#: manual/api/plan.md:308
+msgid "Predicates"
+msgstr "谓词"
+
+#: manual/api/plan.md:310
+msgid "`is_map`, `is_reduce`, `is_scan` and `is_map_reduce`"
+msgstr "`is_map`、`is_reduce`、`is_scan` 和 `is_map_reduce`"
+
+#: manual/api/plan.md:312
+msgid "Test the kind of a plan."
+msgstr "检查计划的种类。"
+
+#: manual/api/plan.md:323
+msgid "Returns `true` when the plan's kernel is `Some(Sum)`."
+msgstr "当计划的内核为 `Some(Sum)` 时返回 `true`。"
+
+#: manual/api/plan.md:329
+msgid "`is_chunk_size_too_large`, `is_scan_requires_stable_ordering`, `is_unsupported_value_type`, `is_unsupported_reduction_kernel`, `is_unsupported_backend`, `is_unsupported_mode` and `is_unsupported_ordering`"
+msgstr "`is_chunk_size_too_large`、`is_scan_requires_stable_ordering`、`is_unsupported_value_type`、`is_unsupported_reduction_kernel`、`is_unsupported_backend`、`is_unsupported_mode` 和 `is_unsupported_ordering`"
+
+#: manual/api/plan.md:331
+msgid "Test which issue a `ValidationIssue` is, for use with `Array::any`."
+msgstr "判断一个 `ValidationIssue` 是哪种问题，可配合 `Array::any` 使用。"
+
+#: manual/api/plan.md:343
+msgid "`is_chunk_size_too_large` matches `ChunkSizeDoesNotFitInput`; the others match the issue of the same name."
+msgstr "`is_chunk_size_too_large` 匹配 `ChunkSizeDoesNotFitInput`；其余的匹配同名问题。"
+
+#: manual/api/plan.md:356
+msgid "Package information"
+msgstr "包信息"
+
+#: manual/api/plan.md:358
+msgid "`package_name` and `default_backend_label`"
+msgstr "`package_name` 和 `default_backend_label`"
+
+#: manual/api/plan.md:360
+msgid "Return `\"plan\"` and the label of the default backend, `\"native\"`."
+msgstr "返回 `\"plan\"` 以及默认后端的标签 `\"native\"`。"
+
+#: manual/api/shared.md:1
+msgid "shared API"
+msgstr "shared API"
+
+#: manual/api/shared.md:3
+msgid "The package `Luna-Flow/luna_thread/shared`, imported as `@shared`, holds the vocabulary that every other package of the module uses: backend targets, execution modes, ordering guarantees, execution policies and their validation, the declared capabilities of each backend, native status codes, and integer-coded records that mirror the C request structs. It builds on every target."
+msgstr "包 `Luna-Flow/luna_thread/shared` 以 `@shared` 导入，包含本模块其他所有包都使用的词汇：后端目标、执行模式、顺序保证、执行策略及其验证、各后端声明的能力、原生状态码，以及镜像 C 请求结构体的整数编码记录。它可以在所有目标上构建。"
+
+#: manual/api/shared.md:13
+msgid "Targets, modes and orderings"
+msgstr "目标、模式与顺序"
+
+#: manual/api/shared.md:17
+msgid "The runtime that executes a plan or workflow."
+msgstr "执行计划或工作流的运行时。"
+
+#: manual/api/shared.md:28
+msgid "Whether a submission blocks until it finishes."
+msgstr "提交是否阻塞到完成为止。"
+
+#: manual/api/shared.md:39
+msgid "Whether results must keep the order of the input."
+msgstr "结果是否必须保持输入的顺序。"
+
+#: manual/api/shared.md:48
+msgid "`native_target`, `javascript_target`, `synchronous_mode`, `asynchronous_mode`, `preserve_input_order` and `relaxed_order`"
+msgstr "`native_target`、`javascript_target`、`synchronous_mode`、`asynchronous_mode`、`preserve_input_order` 和 `relaxed_order`"
+
+#: manual/api/shared.md:50
+msgid "Return `Native`, `JavaScript`, `Synchronous`, `Asynchronous`, `PreserveInputOrder` and `RelaxedOrder`."
+msgstr "返回 `Native`、`JavaScript`、`Synchronous`、`Asynchronous`、`PreserveInputOrder` 和 `RelaxedOrder`。"
+
+#: manual/api/shared.md:64
+msgid "Returns `\"native\"` or `\"javascript\"`."
+msgstr "返回 `\"native\"` 或 `\"javascript\"`。"
+
+#: manual/api/shared.md:77
+msgid "Execution policies"
+msgstr "执行策略"
+
+#: manual/api/shared.md:81
+msgid "How a plan or workflow should run: backend, mode, number of workers, chunk size and ordering."
+msgstr "计划或工作流应如何运行：后端、模式、工作线程数、块大小和顺序。"
+
+#: manual/api/shared.md:94
+msgid "`PolicyIssue` and `PolicyError`"
+msgstr "`PolicyIssue` 和 `PolicyError`"
+
+#: manual/api/shared.md:96
+msgid "A reason why a policy is outside the v1 subset, and the error that carries the first such reason."
+msgstr "策略超出 v1 子集的一个原因，以及携带第一个此类原因的错误。"
+
+#: manual/api/shared.md:114
+msgid "Builds a policy and returns the first problem as a `PolicyError`."
+msgstr "构建一个策略，并把第一个问题作为 `PolicyError` 返回。"
+
+#: manual/api/shared.md:120
+msgid "The defaults are `Native`, `Synchronous`, `1`, `1` and `PreserveInputOrder`. The checks run in the order `worker_count > 0`, `chunk_size > 0`, `backend == Native`, `mode == Synchronous`; the ordering is not checked."
+msgstr "默认值依次为 `Native`、`Synchronous`、`1`、`1` 和 `PreserveInputOrder`。检查顺序为 `worker_count > 0`、`chunk_size > 0`、`backend == Native`、`mode == Synchronous`；顺序本身不检查。"
+
+#: manual/api/shared.md:126
+msgid "Builds a policy like `make_execution_policy` and aborts when it would return an error."
+msgstr "像 `make_execution_policy` 那样构建策略，并在它会返回错误时中止。"
+
+#: manual/api/shared.md:133
+msgid "`native_policy` and `javascript_policy`"
+msgstr "`native_policy` 和 `javascript_policy`"
+
+#: manual/api/shared.md:135
+msgid "Return the default native policy, and attempt the same for the JavaScript backend."
+msgstr "返回默认的原生策略，以及为 JavaScript 后端做同样尝试的结果。"
+
+#: manual/api/shared.md:143
+msgid "`native_policy()` is `make_execution_policy().unwrap()`. `javascript_policy()` is `make_execution_policy(backend=JavaScript).unwrap()`, which aborts in v1 because the JavaScript backend is rejected."
+msgstr "`native_policy()` 就是 `make_execution_policy().unwrap()`。`javascript_policy()` 是 `make_execution_policy(backend=JavaScript).unwrap()`，由于 JavaScript 后端被拒绝，它在 v1 中会中止。"
+
+#: manual/api/shared.md:149
+msgid "Returns every issue of an existing policy, in the order of the checks above."
+msgstr "按上述检查的顺序返回已有策略的所有问题。"
+
+#: manual/api/shared.md:155
+msgid "Policies built with the functions above always pass; `validate_policy` matters for a policy stored in a workflow, which `@workflow.validate` re-checks."
+msgstr "用上面的函数构建的策略总能通过检查；`validate_policy` 用于存放在工作流中的策略，`@workflow.validate` 会重新检查它。"
+
+#: manual/api/shared.md:160
+msgid "Returns `true` when the policy asks for more than one worker."
+msgstr "当策略要求不止一个工作线程时返回 `true`。"
+
+#: manual/api/shared.md:180
+msgid "Runtime capabilities"
+msgstr "运行时能力"
+
+#: manual/api/shared.md:184
+msgid "The features a backend declares."
+msgstr "后端声明的特性。"
+
+#: manual/api/shared.md:197
+msgid "Returns the declared table of a backend."
+msgstr "返回后端声明的能力表。"
+
+#: manual/api/shared.md:203
+msgid "Backend"
+msgstr "后端"
+
+#: manual/api/shared.md:203
+msgid "Parallelism"
+msgstr "并行"
+
+#: manual/api/shared.md:203
+msgid "Async"
+msgstr "异步"
+
+#: manual/api/shared.md:203
+msgid "Zero-copy buffers"
+msgstr "零拷贝缓冲区"
+
+#: manual/api/shared.md:208
+msgid "The table is a fixed declaration, not a probe of the running system. The JavaScript entries describe the backend the specification plans; the JavaScript backend executes nothing yet."
+msgstr "该表是固定的声明，而不是对运行中系统的探测。JavaScript 一行描述的是规范所规划的后端；JavaScript 后端目前什么也不执行。"
+
+#: manual/api/shared.md:212
+msgid "Native status codes"
+msgstr "原生状态码"
+
+#: manual/api/shared.md:216
+msgid "The status codes 0 to 7 of the C runtime."
+msgstr "C 运行时的状态码 0 到 7。"
+
+#: manual/api/shared.md:231
+msgid "`native_status_code` and `native_status_from_code`"
+msgstr "`native_status_code` 和 `native_status_from_code`"
+
+#: manual/api/shared.md:233
+msgid "Convert between `NativeStatus` and its C code."
+msgstr "在 `NativeStatus` 与其 C 编码之间转换。"
+
+#: manual/api/shared.md:240
+msgid "`native_status_code` numbers the constructors 0 to 7 in declaration order. `native_status_from_code` inverts it on 0 to 7 and maps every other code, including the workflow statuses 8 to 14, to `InvalidArgument`."
+msgstr "`native_status_code` 按声明顺序把构造器编号为 0 到 7。`native_status_from_code` 在 0 到 7 上是它的逆，并把其他所有编码（包括工作流状态码 8 到 14）映射为 `InvalidArgument`。"
+
+#: manual/api/shared.md:255
+msgid "Integer-coded native records"
+msgstr "整数编码的原生记录"
+
+#: manual/api/shared.md:257
+msgid "These records mirror the C structs `luna_thread_buffer`, `luna_thread_map_request`, `luna_thread_reduce_request` and `luna_thread_scan_request` field by field, with enumerations as `Int` codes. No package of the module consumes them; `backend/native` uses its own typed records. They store their arguments unchecked."
+msgstr "这些记录逐字段镜像 C 结构体 `luna_thread_buffer`、`luna_thread_map_request`、`luna_thread_reduce_request` 和 `luna_thread_scan_request`，枚举以 `Int` 编码表示。本模块中没有包使用它们；`backend/native` 使用自己的带类型记录。它们不检查地保存参数。"
+
+#: manual/api/shared.md:265
+msgid "A pointer, as an `Int`, and a length."
+msgstr "一个以 `Int` 表示的指针和一个长度。"
+
+#: manual/api/shared.md:279
+msgid "Input and output buffers, element count, value type code, worker count and chunk size."
+msgstr "输入和输出缓冲区、元素数、值类型编码、工作线程数和块大小。"
+
+#: manual/api/shared.md:300
+msgid "The constructor takes the fields in declaration order."
+msgstr "构造函数按声明顺序接受各字段。"
+
+#: manual/api/shared.md:302
+msgid "`NativeReduceRequest` and `NativeScanRequest`"
+msgstr "`NativeReduceRequest` 和 `NativeScanRequest`"
+
+#: manual/api/shared.md:304
+msgid "The same fields as `NativeMapRequest` plus a reduction kernel code, placed after the value type."
+msgstr "字段与 `NativeMapRequest` 相同，另外在值类型之后多一个归约内核编码。"
+
+#: manual/api/shared.md:354
+#: manual/api/workflow.md:450
+msgid "Equality and package information"
+msgstr "相等性与包信息"
+
+#: manual/api/shared.md:358
+msgid "Structural equality, promoted on every type of the package: `BackendTarget`, `ExecutionMode`, `ExecutionPolicy`, `NativeBuffer`, `NativeMapRequest`, `NativeReduceRequest`, `NativeScanRequest`, `NativeStatus`, `OrderingGuarantee`, `PolicyError`, `PolicyIssue` and `RuntimeCapabilities`. Use `==` and `!=`."
+msgstr "结构相等，作为方法提升到本包的每个类型上：`BackendTarget`、`ExecutionMode`、`ExecutionPolicy`、`NativeBuffer`、`NativeMapRequest`、`NativeReduceRequest`、`NativeScanRequest`、`NativeStatus`、`OrderingGuarantee`、`PolicyError`、`PolicyIssue` 和 `RuntimeCapabilities`。请使用 `==` 和 `!=`。"
+
+#: manual/api/shared.md:370
+msgid "Returns `\"shared\"`."
+msgstr "返回 `\"shared\"`。"
+
+#: manual/api/workflow.md:1
+msgid "workflow API"
+msgstr "workflow API"
+
+#: manual/api/workflow.md:3
+msgid "The package `Luna-Flow/luna_thread/workflow`, imported as `@workflow`, describes a task graph: a set of capabilities (channels, locks, barriers and shared data), a set of nodes that compute or synchronise, and dependency edges between nodes. It validates the graph and records submissions. It executes nothing itself and builds on every target; `backend/native` runs workflows."
+msgstr "包 `Luna-Flow/luna_thread/workflow` 以 `@workflow` 导入，用于描述任务图：一组能力（通道、锁、屏障和共享数据）、一组进行计算或同步的节点，以及节点之间的依赖边。它验证图并记录提交。它本身不执行任何东西，可以在所有目标上构建；工作流由 `backend/native` 运行。"
+
+#: manual/api/workflow.md:12
+msgid "Capabilities"
+msgstr "能力"
+
+#: manual/api/workflow.md:16
+msgid "The kind of resource a capability stands for."
+msgstr "能力所代表的资源种类。"
+
+#: manual/api/workflow.md:33
+msgid "`Opaque(name)` is never supported. The native runtime additionally rejects `RwLock` and `Semaphore`."
+msgstr "`Opaque(name)` 永远不受支持。原生运行时还会拒绝 `RwLock` 和 `Semaphore`。"
+
+#: manual/api/workflow.md:38
+msgid "How nodes may use a capability."
+msgstr "节点可以如何使用能力。"
+
+#: manual/api/workflow.md:50
+msgid "Each capability kind admits only some access modes:"
+msgstr "每种能力只允许部分访问模式："
+
+#: manual/api/workflow.md:52
+msgid "Kind"
+msgstr "种类"
+
+#: manual/api/workflow.md:52
+msgid "Valid access modes"
+msgstr "有效的访问模式"
+
+#: manual/api/workflow.md:59
+#: manual/architecture.md:84
+#: manual/architecture.md:85
+#: manual/architecture.md:86
+#: manual/architecture.md:87
+#: manual/architecture.md:88
+#: manual/architecture.md:89
+#: manual/architecture.md:90
+msgid "none"
+msgstr "无"
+
+#: manual/api/workflow.md:63
+msgid "A capability with an id, a label, a kind and an access mode."
+msgstr "带有 id、标签、种类和访问模式的能力。"
+
+#: manual/api/workflow.md:75
+msgid "`Capability::new` does not check the access mode; `validate` does."
+msgstr "`Capability::new` 不检查访问模式；由 `validate` 检查。"
+
+#: manual/api/workflow.md:77
+msgid "`owned_buffer_capability`, `shared_read_view_capability`, `atomic_cell_capability`, `mutex_capability`, `condvar_capability`, `rwlock_capability`, `semaphore_capability`, `barrier_capability`, `channel_capability` and `opaque_capability`"
+msgstr "`owned_buffer_capability`、`shared_read_view_capability`、`atomic_cell_capability`、`mutex_capability`、`condvar_capability`、`rwlock_capability`、`semaphore_capability`、`barrier_capability`、`channel_capability` 和 `opaque_capability`"
+
+#: manual/api/workflow.md:79
+msgid "Return the capability kinds of the same names."
+msgstr "返回同名的能力种类。"
+
+#: manual/api/workflow.md:94
+msgid "`read_only_access`, `write_only_access`, `read_write_access`, `synchronize_only_access` and `move_only_access`"
+msgstr "`read_only_access`、`write_only_access`、`read_write_access`、`synchronize_only_access` 和 `move_only_access`"
+
+#: manual/api/workflow.md:96
+msgid "Return the access modes of the same names."
+msgstr "返回同名的访问模式。"
+
+#: manual/api/workflow.md:119
+msgid "Nodes"
+msgstr "节点"
+
+#: manual/api/workflow.md:123
+msgid "What a node does."
+msgstr "节点做什么。"
+
+#: manual/api/workflow.md:142
+msgid "`Compute`, `Spawn` and `Join` need no capability. The other kinds must name a capability of a matching kind:"
+msgstr "`Compute`、`Spawn` 和 `Join` 不需要能力。其他种类必须指定一个种类匹配的能力："
+
+#: manual/api/workflow.md:145
+#: manual/architecture.md:97
+msgid "Node kind"
+msgstr "节点种类"
+
+#: manual/api/workflow.md:145
+msgid "Capability kinds"
+msgstr "能力种类"
+
+#: manual/api/workflow.md:152
+msgid "`AtomicCell`, `OwnedBuffer` (not with `ReadOnly` access)"
+msgstr "`AtomicCell`、`OwnedBuffer`（访问模式不能是 `ReadOnly`）"
+
+#: manual/api/workflow.md:156
+msgid "A node with an id, a label, a kind and an optional capability id."
+msgstr "带有 id、标签、种类和可选能力 id 的节点。"
+
+#: manual/api/workflow.md:170
+msgid "Creates a `Compute(plan)` node without a capability."
+msgstr "创建一个不带能力的 `Compute(plan)` 节点。"
+
+#: manual/api/workflow.md:176
+msgid "`spawn_node`, `join_node`, `send_node`, `recv_node`, `lock_node`, `unlock_node`, `wait_node`, `signal_node`, `barrier_node`, `read_shared_node` and `write_shared_node`"
+msgstr "`spawn_node`、`join_node`、`send_node`、`recv_node`、`lock_node`、`unlock_node`、`wait_node`、`signal_node`、`barrier_node`、`read_shared_node` 和 `write_shared_node`"
+
+#: manual/api/workflow.md:178
+msgid "Create a node of the kind of the same name, with an id, a label and an optional capability id."
+msgstr "创建同名种类的节点，参数为 id、标签和可选的能力 id。"
+
+#: manual/api/workflow.md:204
+msgid "Edges"
+msgstr "边"
+
+#: manual/api/workflow.md:208
+msgid "Why one node must run before another."
+msgstr "为什么一个节点必须在另一个之前运行。"
+
+#: manual/api/workflow.md:219
+msgid "All four kinds order their endpoints in the same way; the kind documents the reason and is passed to the runtime unchanged."
+msgstr "四种边以相同的方式对端点排序；种类只说明原因，并原样传给运行时。"
+
+#: manual/api/workflow.md:224
+msgid "A dependency from node `from` to node `to`: `to` may start only after `from` has completed."
+msgstr "从节点 `from` 到节点 `to` 的依赖：`to` 只能在 `from` 完成后开始。"
+
+#: manual/api/workflow.md:236
+msgid "`data_dependency`, `control_dependency`, `ownership_transfer_dependency` and `synchronization_dependency`"
+msgstr "`data_dependency`、`control_dependency`、`ownership_transfer_dependency` 和 `synchronization_dependency`"
+
+#: manual/api/workflow.md:238
+msgid "Return `DataDependency`, `ControlDependency`, `OwnershipTransfer` and `SynchronizationDependency`."
+msgstr "返回 `DataDependency`、`ControlDependency`、`OwnershipTransfer` 和 `SynchronizationDependency`。"
+
+#: manual/api/workflow.md:252
+msgid "A labelled task graph with an execution policy."
+msgstr "带标签和执行策略的任务图。"
+
+#: manual/api/workflow.md:265
+msgid "`Workflow::new` creates an empty graph; `policy` defaults to `@shared.native_policy()`."
+msgstr "`Workflow::new` 创建一个空图；`policy` 默认为 `@shared.native_policy()`。"
+
+#: manual/api/workflow.md:268
+msgid "`Workflow::add_capability`, `Workflow::add_node` and `Workflow::add_edge`"
+msgstr "`Workflow::add_capability`、`Workflow::add_node` 和 `Workflow::add_edge`"
+
+#: manual/api/workflow.md:270
+msgid "Append a capability, node or edge and return the same workflow."
+msgstr "追加一个能力、节点或边，并返回同一个工作流。"
+
+#: manual/api/workflow.md:278
+msgid "These methods push onto the workflow's arrays in place: the receiver and the result are the same value, and every other reference to the workflow sees the addition. They do not check anything."
+msgstr "这些方法就地向工作流的数组追加元素：接收者与结果是同一个值，对该工作流的所有其他引用都能看到新增的内容。它们不做任何检查。"
+
+#: manual/api/workflow.md:282
+msgid "`Workflow::label`, `Workflow::policy`, `Workflow::capabilities`, `Workflow::nodes` and `Workflow::edges`"
+msgstr "`Workflow::label`、`Workflow::policy`、`Workflow::capabilities`、`Workflow::nodes` 和 `Workflow::edges`"
+
+#: manual/api/workflow.md:284
+msgid "Return the fields of a workflow. The arrays are the workflow's own arrays, not copies."
+msgstr "返回工作流的各个字段。返回的数组就是工作流自己的数组，而不是副本。"
+
+#: manual/api/workflow.md:310
+msgid "One problem found in a workflow."
+msgstr "在工作流中发现的一个问题。"
+
+#: manual/api/workflow.md:337
+msgid "Returns every issue of a workflow, or an empty array."
+msgstr "返回工作流的所有问题，若没有则返回空数组。"
+
+#: manual/api/workflow.md:343
+msgid "The checks, in the order their issues appear:"
+msgstr "各项检查，按其问题出现的顺序："
+
+#: manual/api/workflow.md:345
+msgid "`EmptyWorkflow` when there are no nodes, then one `InvalidPolicy` per issue of `@shared.validate_policy` on the workflow's policy."
+msgstr "没有节点时报告 `EmptyWorkflow`，然后对工作流策略运行 `@shared.validate_policy`，每个问题报告一个 `InvalidPolicy`。"
+
+#: manual/api/workflow.md:347
+msgid "For each capability: `UnsupportedCapability` for `Opaque`, `InvalidCapabilityAccess` when the access mode is not valid for the kind, and `DuplicateCapabilityId` when its id occurs more than once (reported once per occurrence)."
+msgstr "对每个能力：`Opaque` 报告 `UnsupportedCapability`；访问模式对该种类无效时报告 `InvalidCapabilityAccess`；其 id 出现不止一次时报告 `DuplicateCapabilityId`（每次出现报告一次）。"
+
+#: manual/api/workflow.md:351
+msgid "For each node: `DuplicateNodeId` (once per occurrence), `MissingNodeCapability` when the kind needs a capability and has none, `MissingCapability` when the named capability does not exist, an `InvalidChannelNode`, `InvalidMutexNode`, `InvalidCondvarNode` or `InvalidBarrierNode` when the capability has the wrong kind (an `InvalidDependency` with equal endpoints for the other node kinds), `UnsupportedSharedWrite` when a `WriteShared` node names a `ReadOnly` capability, and one `InvalidComputePlan` per issue of `@plan.validate` on a compute node's plan."
+msgstr "对每个节点：`DuplicateNodeId`（每次出现一次）；种类需要能力却没有时报告 `MissingNodeCapability`；指定的能力不存在时报告 `MissingCapability`；能力种类不对时报告 `InvalidChannelNode`、`InvalidMutexNode`、`InvalidCondvarNode` 或 `InvalidBarrierNode`（其他节点种类则报告端点相同的 `InvalidDependency`）；`WriteShared` 节点指定了 `ReadOnly` 能力时报告 `UnsupportedSharedWrite`；对计算节点的计划运行 `@plan.validate`，每个问题报告一个 `InvalidComputePlan`。"
+
+#: manual/api/workflow.md:360
+msgid "For each edge: `SelfEdge` when `from == to`, `InvalidNodeReference` for each endpoint that is not a node, and `InvalidDependency` when either is not."
+msgstr "对每条边：`from == to` 时报告 `SelfEdge`；每个不是节点的端点报告一个 `InvalidNodeReference`；任一端点不是节点时报告 `InvalidDependency`。"
+
+#: manual/api/workflow.md:362
+msgid "`CyclicDependency` when the graph has no node without incoming edges, or when two edges point in opposite directions between the same nodes."
+msgstr "图中没有入边为零的节点，或者同一对节点之间有两条方向相反的边时，报告 `CyclicDependency`。"
+
+#: manual/api/workflow.md:365
+msgid "The cycle check in step 5 does not find every cycle: a cycle of three or more nodes that is reachable from a source passes. The native runtime checks for cycles completely and rejects such a graph when it is submitted. The [workflow design](../design/workflow.md) discusses both checks."
+msgstr "第 5 步的环检查并不能找出所有的环：从某个源节点可达的、长度为三或以上的环会通过检查。原生运行时会完整地检查环，并在提交时拒绝这样的图。[工作流设计](../design/workflow.md)讨论了这两种检查。"
+
+#: manual/api/workflow.md:378
+msgid "`is_invalid_compute_plan`, `is_cyclic_dependency`, `is_missing_capability` and `is_unsupported_shared_write`"
+msgstr "`is_invalid_compute_plan`、`is_cyclic_dependency`、`is_missing_capability` 和 `is_unsupported_shared_write`"
+
+#: manual/api/workflow.md:380
+msgid "Test which issue a `WorkflowIssue` is."
+msgstr "判断一个 `WorkflowIssue` 是哪种问题。"
+
+#: manual/api/workflow.md:389
+msgid "`is_missing_capability` matches both `MissingCapability` and `MissingNodeCapability`."
+msgstr "`is_missing_capability` 同时匹配 `MissingCapability` 和 `MissingNodeCapability`。"
+
+#: manual/api/workflow.md:404
+msgid "Submission"
+msgstr "提交"
+
+#: manual/api/workflow.md:408
+msgid "The record of a submission: the workflow, the target backend, whether it was accepted and completed, and the issues found."
+msgstr "提交的记录：工作流、目标后端、是否被接受、是否已完成，以及发现的问题。"
+
+#: manual/api/workflow.md:427
+msgid "Validates a workflow and records whether the backend accepts it."
+msgstr "验证工作流，并记录后端是否接受它。"
+
+#: manual/api/workflow.md:433
+msgid "The submission is accepted exactly when `validate` returns no issue and the backend (default `Native`) is `Native`. `completed` is always `false`: `submit` does not run the workflow."
+msgstr "当且仅当 `validate` 没有返回问题且后端（默认为 `Native`）是 `Native` 时，提交被接受。`completed` 总是 `false`：`submit` 不会运行工作流。"
+
+#: manual/api/workflow.md:454
+msgid "Structural equality, promoted on every type of the package: `AccessMode`, `Capability`, `CapabilityKind`, `Edge`, `EdgeKind`, `Node`, `NodeKind`, `Submission`, `Workflow` and `WorkflowIssue`. Use `==` and `!=`."
+msgstr "结构相等，作为方法提升到本包的每个类型上：`AccessMode`、`Capability`、`CapabilityKind`、`Edge`、`EdgeKind`、`Node`、`NodeKind`、`Submission`、`Workflow` 和 `WorkflowIssue`。请使用 `==` 和 `!=`。"
+
+#: manual/api/workflow.md:464
+msgid "Returns `\"workflow\"`."
+msgstr "返回 `\"workflow\"`。"
+
+#: manual/architecture.md:1
+msgid "Architecture"
+msgstr "架构"
+
+#: manual/architecture.md:3
+msgid "This guide shows how the MoonBit packages, the C runtime and the JavaScript addon of `luna_thread` fit together, and which integer codes cross the foreign function interface. The package pages describe each MoonBit package in detail."
+msgstr "本指南说明 `luna_thread` 的 MoonBit 包、C 运行时和 JavaScript 插件如何组合在一起，以及哪些整数编码会跨越外部函数接口。各个包页面详细描述了每个 MoonBit 包。"
+
+#: manual/architecture.md:7
+msgid "Layers"
+msgstr "层次"
+
+#: manual/architecture.md:9
+msgid "The specification names two realization paths:"
+msgstr "规范列出了两条实现路径："
+
+#: manual/architecture.md:16
+msgid "The first path exists. The second stops at the MoonBit side: `backend/js` names the JavaScript target, and the addon in `js/` exports only a `runtimeName` function."
+msgstr "第一条路径已经存在。第二条路径止步于 MoonBit 一侧：`backend/js` 只给出 JavaScript 目标，`js/` 中的插件只导出一个 `runtimeName` 函数。"
+
+#: manual/architecture.md:20
+msgid "The MoonBit packages depend on each other without cycles:"
+msgstr "MoonBit 包之间的依赖没有环："
+
+#: manual/architecture.md:22
+#: manual/index.md:38
+msgid "Package"
+msgstr "包"
+
+#: manual/architecture.md:22
+msgid "Imports"
+msgstr "导入"
+
+#: manual/architecture.md:24
+msgid "nothing but the core library"
+msgstr "只有核心库"
+
+#: manual/architecture.md:31
+msgid "`shared` holds the vocabulary every other package uses: backend targets, execution modes, ordering guarantees, execution policies and their validation, runtime capability tables, and integer-coded mirrors of the C request structs."
+msgstr "`shared` 包含其他所有包都使用的词汇：后端目标、执行模式、顺序保证、执行策略及其验证、运行时能力表，以及 C 请求结构体的整数编码镜像。"
+
+#: manual/architecture.md:35
+msgid "`plan` describes one data-parallel operation over a typed input domain and checks it against the v1 subset."
+msgstr "`plan` 描述作用于带类型输入域的单个数据并行操作，并按 v1 子集检查它。"
+
+#: manual/architecture.md:37
+msgid "`workflow` describes a task graph whose nodes may be compute plans or synchronisation steps bound to capabilities, and checks its structure."
+msgstr "`workflow` 描述一个任务图，其节点可以是计算计划，也可以是绑定到能力的同步步骤，并检查其结构。"
+
+#: manual/architecture.md:39
+msgid "`backend/native` translates plans into typed native requests, calls the C kernels, and marshals workflows to the C scheduler."
+msgstr "`backend/native` 把计划转换为带类型的原生请求，调用 C 内核，并把工作流编组后交给 C 调度器。"
+
+#: manual/architecture.md:41
+msgid "`core`, the root package, re-exports the common entry points with defaults and routes submissions to the native backend."
+msgstr "根包 `core` 以默认值重新导出常用入口，并把提交路由到原生后端。"
+
+#: manual/architecture.md:44
+msgid "The C runtime"
+msgstr "C 运行时"
+
+#: manual/architecture.md:46
+msgid "The runtime is one C file with one header:"
+msgstr "运行时由一个 C 文件和一个头文件组成："
+
+#: manual/architecture.md:48
+msgid "File"
+msgstr "文件"
+
+#: manual/architecture.md:48
+msgid "Role"
+msgstr "作用"
+
+#: manual/architecture.md:50
+msgid "Public C API: status codes, request structs, workflow types."
+msgstr "公开的 C API：状态码、请求结构体、工作流类型。"
+
+#: manual/architecture.md:51
+msgid "Kernels, validation and the workflow scheduler."
+msgstr "内核、验证和工作流调度器。"
+
+#: manual/architecture.md:52
+msgid "The same source, compiled as a MoonBit native stub; it differs only in its `#include` path."
+msgstr "同一份源码，作为 MoonBit 原生桩编译；它只有 `#include` 路径不同。"
+
+#: manual/architecture.md:53
+msgid "`luna_mbt_*` wrappers that turn MoonBit arguments into request structs."
+msgstr "把 MoonBit 参数转换为请求结构体的 `luna_mbt_*` 包装函数。"
+
+#: manual/architecture.md:54
+msgid "Declarations of the `luna_mbt_*` wrappers."
+msgstr "`luna_mbt_*` 包装函数的声明。"
+
+#: manual/architecture.md:55
+msgid "A C smoke test of the kernels and of their failure statuses."
+msgstr "内核及其失败状态的 C 冒烟测试。"
+
+#: manual/architecture.md:57
+msgid "The two copies of the runtime must be kept identical by hand."
+msgstr "运行时的两份副本必须手工保持一致。"
+
+#: manual/architecture.md:59
+msgid "There are two builds. `moon` compiles the stubs with the system C compiler and no OpenMP flags, so the `#pragma omp` loops run on the calling thread, while the workflow scheduler still starts POSIX threads. CMake (`make native-configure`, `make native-build`) builds `native/` as a static library with OpenMP when `LUNA_THREAD_ENABLE_OPENMP` is on, together with the smoke test. The [native backend design](design/backend/native.md) explains both execution models."
+msgstr "有两种构建方式。`moon` 用系统 C 编译器编译桩，且不带 OpenMP 选项，因此 `#pragma omp` 循环在调用线程上运行，而工作流调度器仍会启动 POSIX 线程。CMake（`make native-configure`、`make native-build`）在开启 `LUNA_THREAD_ENABLE_OPENMP` 时把 `native/` 构建为启用 OpenMP 的静态库，并一同构建冒烟测试。[原生后端设计](design/backend/native.md)解释了这两种执行模型。"
+
+#: manual/architecture.md:67
+msgid "Codes across the interface"
+msgstr "跨越接口的编码"
+
+#: manual/architecture.md:69
+msgid "All enumerations cross the C interface as `Int`. The MoonBit side maps them in `backend/native` (and `shared` for statuses)."
+msgstr "所有枚举都以 `Int` 的形式跨越 C 接口。MoonBit 一侧在 `backend/native` 中映射它们（状态码则在 `shared` 中）。"
+
+#: manual/architecture.md:72
+msgid "Status codes"
+msgstr "状态码"
+
+#: manual/architecture.md:74
+#: manual/architecture.md:97
+msgid "Code"
+msgstr "编码"
+
+#: manual/architecture.md:74
+msgid "C name"
+msgstr "C 名称"
+
+#: manual/architecture.md:74
+msgid "MoonBit `NativeStatus`"
+msgstr "MoonBit `NativeStatus`"
+
+#: manual/architecture.md:92
+msgid "Codes 8 to 14 come only from the workflow runtime; `WorkflowResult::status` carries them as raw integers."
+msgstr "编码 8 到 14 只来自工作流运行时；`WorkflowResult::status` 以原始整数携带它们。"
+
+#: manual/architecture.md:95
+msgid "Workflow codes"
+msgstr "工作流编码"
+
+#: manual/architecture.md:97
+msgid "Capability kind"
+msgstr "能力种类"
+
+#: manual/architecture.md:97
+msgid "Edge kind"
+msgstr "边种类"
+
+#: manual/architecture.md:97
+msgid "Runtime state"
+msgstr "运行时状态"
+
+#: manual/architecture.md:112
+msgid "Value types are `0` for `I32` and `1` for `I64`; reduction kernels are `0` for `Sum`, `1` for `Min` and `2` for `Max`."
+msgstr "值类型 `I32` 为 `0`，`I64` 为 `1`；归约内核 `Sum` 为 `0`，`Min` 为 `1`，`Max` 为 `2`。"
+
+#: manual/architecture.md:115
+msgid "The JavaScript addon"
+msgstr "JavaScript 插件"
+
+#: manual/architecture.md:117
+msgid "`js/` is a `node-gyp` project (`make js-install`, `make js-build`) whose C source registers one function, `runtimeName`, returning `\"luna_thread_addon\"`. It does not link the C runtime yet."
+msgstr "`js/` 是一个 `node-gyp` 项目（`make js-install`、`make js-build`），其 C 源码只注册一个函数 `runtimeName`，返回 `\"luna_thread_addon\"`。它还没有链接 C 运行时。"
+
+#: manual/architecture.md:121
+msgid "The specification"
+msgstr "规范"
+
+#: manual/architecture.md:123
+msgid "`doc/attachments/moonbit_parallel_spec/main.typ` is the normative English specification and `main.zh_CN.typ` its Chinese mirror; `make docs` compiles both. The specification defines the workflow calculus, ownership transfer, the ABI layouts and the conformance obligations. The implementation covers the data model and validation of Part I and the native realization of a subset of it; the package design pages state which parts. `docs/spec-review-report-zh.md` records review findings in Chinese."
+msgstr "`doc/attachments/moonbit_parallel_spec/main.typ` 是具有规范效力的英文规范，`main.zh_CN.typ` 是其中文镜像；`make docs` 会编译两者。规范定义了工作流演算、所有权转移、ABI 布局以及一致性义务。实现覆盖了第一部分的数据模型和验证，以及其中一个子集的原生实现；各包的设计页面说明具体覆盖了哪些部分。`docs/spec-review-report-zh.md` 用中文记录了评审意见。"
+
+#: manual/architecture.md:131
+msgid "Repository layout"
+msgstr "仓库布局"
+
+#: manual/architecture.md:133
+msgid "Path"
+msgstr "路径"
+
+#: manual/architecture.md:133
+#: manual/index.md:38
+msgid "Contents"
+msgstr "内容"
+
+#: manual/architecture.md:135
+msgid "The MoonBit module (`moon.mod`) and its packages."
+msgstr "MoonBit 模块（`moon.mod`）及其包。"
+
+#: manual/architecture.md:136
+msgid "The C runtime, its header, CMake build and smoke test."
+msgstr "C 运行时、头文件、CMake 构建和冒烟测试。"
+
+#: manual/architecture.md:137
+msgid "The Node.js addon scaffold."
+msgstr "Node.js 插件的脚手架。"
+
+#: manual/architecture.md:138
+msgid "This manual, its translations and the specification."
+msgstr "本手册、其翻译和规范。"
+
+#: manual/architecture.md:139
+msgid "Checks the MoonBit, C, Node.js and Typst toolchains."
+msgstr "检查 MoonBit、C、Node.js 和 Typst 工具链。"
+
+#: manual/architecture.md:140
+msgid "Shortcuts for checking, building the native runtime and the addon, and compiling the specification."
+msgstr "用于检查、构建原生运行时和插件以及编译规范的快捷命令。"
+
+#: manual/design/backend/js.md:1
+msgid "backend/js design"
+msgstr "backend/js 设计"
+
+#: manual/design/backend/js.md:3
+#: manual/design/backend/native.md:3
+#: manual/design/core.md:3
+#: manual/design/plan.md:3
+#: manual/design/shared.md:3
+#: manual/design/workflow.md:3
+msgid "Design goal"
+msgstr "设计目标"
+
+#: manual/design/backend/js.md:5
+msgid "The specification describes a second realization path: MoonBit code compiled to JavaScript that passes typed array buffers to a Node.js addon, which calls the same C runtime as the native backend. `backend/js` reserves the package for that path and fixes its identity, so that the rest of the module can already name the JavaScript target in policies, capability tables and submissions."
+msgstr "规范描述了第二条实现路径：编译为 JavaScript 的 MoonBit 代码把类型化数组缓冲区传给 Node.js 插件，插件调用与原生后端相同的 C 运行时。`backend/js` 为这条路径预留了包并固定其身份，使模块的其余部分已经可以在策略、能力表和提交中指定 JavaScript 目标。"
+
+#: manual/design/backend/js.md:11
+#: manual/design/backend/native.md:15
+#: manual/design/core.md:11
+#: manual/design/plan.md:11
+#: manual/design/shared.md:11
+#: manual/design/workflow.md:12
+msgid "Mathematical background"
+msgstr "数学背景"
+
+#: manual/design/backend/js.md:13
+msgid "The package computes nothing. The only structure it takes part in is the backend sum type"
+msgstr "这个包不做任何计算。它参与的唯一结构是后端的和类型"
+
+#: manual/design/backend/js.md:20
+msgid "with each backend package providing the constant $\\texttt{backend\\_target} \\in B$ that names it. For the JavaScript package this constant is $\\mathrm{JavaScript}$, and the v1 policy subset $P_1$ described on the [shared design](../shared.md) page excludes it, so every policy or submission that names this backend is rejected before reaching any runtime."
+msgstr "每个后端包都提供一个指称自身的常量 $\\texttt{backend\\_target} \\in B$。对 JavaScript 包而言，该常量是 $\\mathrm{JavaScript}$，而 [shared 设计](../shared.md)页面描述的 v1 策略子集 $P_1$ 排除了它，因此任何指定该后端的策略或提交在到达运行时之前就会被拒绝。"
+
+#: manual/design/backend/js.md:26
+#: manual/design/backend/native.md:103
+#: manual/design/core.md:35
+#: manual/design/plan.md:35
+#: manual/design/shared.md:62
+#: manual/design/workflow.md:43
+msgid "Design decisions"
+msgstr "设计决策"
+
+#: manual/design/backend/js.md:28
+msgid "A package before a backend"
+msgstr "先有包，后有后端"
+
+#: manual/design/backend/js.md:30
+msgid "Declaring the package now keeps the module layout of the specification (`backend/native` and `backend/js` side by side) and lets code depend on `@js.backend_target()` rather than on a constructor of `shared`. When the backend is implemented, its foreign declarations and wrappers go here without a new import path."
+msgstr "现在就声明这个包，可以保持规范中的模块布局（`backend/native` 与 `backend/js` 并列），并让代码依赖 `@js.backend_target()` 而不是 `shared` 的某个构造器。后端实现之后，其外部声明和包装会放在这里，无需新的导入路径。"
+
+#: manual/design/backend/js.md:36
+msgid "No foreign declarations yet"
+msgstr "暂无外部声明"
+
+#: manual/design/backend/js.md:38
+msgid "The addon in `js/` exports only `runtimeName` and does not link the C runtime, so there is nothing to declare. Declaring functions with no implementation would compile but fail at run time, which is worse than not offering them."
+msgstr "`js/` 中的插件只导出 `runtimeName`，也没有链接 C 运行时，因此没有可声明的东西。声明没有实现的函数能够编译，却会在运行时失败，这比不提供它们更糟。"
+
+#: manual/design/backend/js.md:42
+#: manual/design/backend/native.md:245
+#: manual/design/core.md:71
+#: manual/design/plan.md:108
+#: manual/design/shared.md:97
+#: manual/design/workflow.md:110
+msgid "Correctness / invariants"
+msgstr "正确性 / 不变量"
+
+#: manual/design/backend/js.md:44
+msgid "`backend_target()` returns `JavaScript`, `default_plan_kind()` returns `Map` and `package_name()` returns `\"backend/js\"`; the package has no state."
+msgstr "`backend_target()` 返回 `JavaScript`，`default_plan_kind()` 返回 `Map`，`package_name()` 返回 `\"backend/js\"`；这个包没有状态。"
+
+#: manual/design/backend/js.md:46
+msgid "The package builds on every target, including `js`."
+msgstr "这个包可以在所有目标上构建，包括 `js`。"
+
+#: manual/design/backend/js.md:48
+#: manual/design/backend/native.md:282
+#: manual/design/core.md:81
+#: manual/design/plan.md:122
+#: manual/design/shared.md:106
+#: manual/design/workflow.md:125
+msgid "Alternatives rejected"
+msgstr "被否决的方案"
+
+#: manual/design/backend/js.md:50
+msgid "**Omitting the package until the backend exists.** Downstream code would then have no stable place to refer to the JavaScript backend."
+msgstr "**在后端存在之前省略这个包。** 那样下游代码就没有一个稳定的地方来引用 JavaScript 后端。"
+
+#: manual/design/backend/js.md:52
+msgid "**A stub that runs kernels in MoonBit on the JavaScript target.** It would bypass the C runtime and the ownership rules of the specification, giving results that the real backend might not reproduce."
+msgstr "**在 JavaScript 目标上用 MoonBit 运行内核的桩实现。** 它会绕过 C 运行时和规范中的所有权规则，得到真正的后端未必能复现的结果。"
+
+#: manual/design/backend/js.md:56
+#: manual/design/backend/native.md:297
+#: manual/design/core.md:90
+#: manual/design/plan.md:134
+#: manual/design/shared.md:116
+#: manual/design/workflow.md:138
+msgid "Boundaries"
+msgstr "边界"
+
+#: manual/design/backend/js.md:58
+msgid "The package does not execute plans or workflows, declare foreign functions, load the Node.js addon, or move data across the JavaScript boundary."
+msgstr "这个包不执行计划或工作流，不声明外部函数，不加载 Node.js 插件，也不在 JavaScript 边界上传递数据。"
+
+#: manual/design/backend/native.md:1
+msgid "backend/native design"
+msgstr "backend/native 设计"
+
+#: manual/design/backend/native.md:5
+msgid "`backend/native` is where `luna_thread` actually runs code in parallel. It has two jobs: run data-parallel integer kernels on MoonBit arrays without copying them, and run a workflow graph's synchronisation protocol on real threads. Both are implemented in C, behind a narrow interface of integers and borrowed arrays, so that the same runtime can later serve the JavaScript addon."
+msgstr "`backend/native` 是 `luna_thread` 真正并行运行代码的地方。它有两项工作：在不复制 MoonBit 数组的前提下对其运行数据并行的整数内核，以及在真实线程上运行工作流图的同步协议。两者都用 C 实现，隐藏在由整数和借用数组构成的窄接口之后，以便同一个运行时将来也能服务于 JavaScript 插件。"
+
+#: manual/design/backend/native.md:11
+msgid "This page describes the threading model, the memory model and the mathematics of the kernels as they are implemented in `native/src/runtime.c` and the bridge `ffi_runtime_bridge.c`."
+msgstr "本页描述 `native/src/runtime.c` 和桥接层 `ffi_runtime_bridge.c` 中实际实现的线程模型、内存模型以及内核背后的数学。"
+
+#: manual/design/backend/native.md:17
+msgid "Chunked evaluation"
+msgstr "分块求值"
+
+#: manual/design/backend/native.md:19
+msgid "Let $x = (x_0, \\dots, x_{n-1})$ be the input, $w$ the worker count and $c$ the chunk size, with $0 < w \\le n$ and $0 < c \\le n$. The runtime requires the **cover condition**"
+msgstr "设输入为 $x = (x_0, \\dots, x_{n-1})$，工作线程数为 $w$，块大小为 $c$，且 $0 < w \\le n$、$0 < c \\le n$。运行时要求满足**覆盖条件**"
+
+#: manual/design/backend/native.md:27
+msgid "so that one worker can take each chunk, and splits $[0, n)$ into $k$ contiguous chunks $[s_j, s_{j+1})$ with"
+msgstr "这样每个块都能分到一个工作线程；然后把 $[0, n)$ 分成 $k$ 个连续的块 $[s_j, s_{j+1})$，其中"
+
+#: manual/design/backend/native.md:34
+msgid "**Chunk sizes.** Every chunk has $\\lfloor n/k \\rfloor$ or $\\lceil n/k \\rceil$ elements, and therefore at most $c$:"
+msgstr "**块大小。** 每个块有 $\\lfloor n/k \\rfloor$ 或 $\\lceil n/k \\rceil$ 个元素，因此至多 $c$ 个："
+
+#: manual/design/backend/native.md:46
+msgid "The first claim is the usual balanced-partition argument: if the remaining $r = n - s_j$ elements and $m = k - j$ chunks satisfy $m \\lfloor n/k \\rfloor \\le r \\le m \\lceil n/k \\rceil$, then $\\lceil r/m \\rceil$ lies between $\\lfloor n/k \\rfloor$ and $\\lceil n/k \\rceil$, and the inequality holds again for $r - \\lceil r/m \\rceil$ and $m - 1$. At $j = 0$ it holds with $r = n$, $m = k$.[^cover]"
+msgstr "第一个结论是常见的均衡划分论证：若剩余的 $r = n - s_j$ 个元素和 $m = k - j$ 个块满足 $m \\lfloor n/k \\rfloor \\le r \\le m \\lceil n/k \\rceil$，则 $\\lceil r/m \\rceil$ 介于 $\\lfloor n/k \\rfloor$ 与 $\\lceil n/k \\rceil$ 之间，并且对 $r - \\lceil r/m \\rceil$ 和 $m - 1$ 该不等式再次成立。在 $j = 0$ 时，$r = n$、$m = k$，不等式成立。[^cover]"
+
+#: manual/design/backend/native.md:53
+msgid "The code computes the chunk count as $\\min(k, w)$, which equals $k$ under the cover condition. Without the condition the chunks would be larger than $c$, so the runtime rejects it instead."
+msgstr "代码把块数计算为 $\\min(k, w)$，在覆盖条件下它等于 $k$。若没有该条件，块会大于 $c$，因此运行时直接拒绝。"
+
+#: manual/design/backend/native.md:57
+msgid "Reductions as monoid folds"
+msgstr "作为幺半群折叠的归约"
+
+#: manual/design/backend/native.md:59
+msgid "A reduction combines the elements with an associative operation $\\oplus$:"
+msgstr "归约用一个满足结合律的运算 $\\oplus$ 合并各元素："
+
+#: manual/design/backend/native.md:65
+msgid "Sum, minimum and maximum on the integers are associative and commutative. Associativity is what makes chunking correct: with chunk results $P_j = x_{s_j} \\oplus \\dots \\oplus x_{s_{j+1}-1}$,"
+msgstr "整数上的求和、最小值和最大值都满足结合律和交换律。正是结合律保证了分块的正确性：设各块的结果为 $P_j = x_{s_j} \\oplus \\dots \\oplus x_{s_{j+1}-1}$，"
+
+#: manual/design/backend/native.md:74
+msgid "by the generalised associative law, whatever $w$ and $c$ are. Minimum and maximum seed each chunk with its first element, so they only need a semigroup; this is one reason the runtime requires $n > 0$."
+msgstr "这由广义结合律保证，与 $w$ 和 $c$ 无关。最小值和最大值以每个块的第一个元素作为初值，因此只需要半群；这也是运行时要求 $n > 0$ 的原因之一。"
+
+#: manual/design/backend/native.md:78
+msgid "Prefix sums by blocks"
+msgstr "分块前缀和"
+
+#: manual/design/backend/native.md:80
+msgid "The scan computes the inclusive prefix sums $y_i = \\sum_{t=0}^{i} x_t$ in three phases. With $S_j$ the sum of chunk $j$:"
+msgstr "扫描分三个阶段计算包含式前缀和 $y_i = \\sum_{t=0}^{i} x_t$。记 $S_j$ 为块 $j$ 的和："
+
+#: manual/design/backend/native.md:83
+msgid "In parallel, each chunk computes its local prefix sums $L_j(i) = \\sum_{t=s_j}^{i} x_t$ for $s_j \\le i < s_{j+1}$, writing them to the output, and its total $S_j = L_j(s_{j+1} - 1)$."
+msgstr "并行地，每个块计算其局部前缀和 $L_j(i) = \\sum_{t=s_j}^{i} x_t$（$s_j \\le i < s_{j+1}$）并写入输出，同时得到块总和 $S_j = L_j(s_{j+1} - 1)$。"
+
+#: manual/design/backend/native.md:86
+msgid "Sequentially, the carries $C_0 = 0$ and $C_j = C_{j-1} + S_{j-1}$."
+msgstr "顺序地计算进位 $C_0 = 0$ 和 $C_j = C_{j-1} + S_{j-1}$。"
+
+#: manual/design/backend/native.md:87
+msgid "In parallel, each chunk adds its carry: $y_i = C_j + L_j(i)$."
+msgstr "并行地，每个块加上自己的进位：$y_i = C_j + L_j(i)$。"
+
+#: manual/design/backend/native.md:89
+msgid "Phase 3 is correct because, by induction on $j$, $C_j = \\sum_{t=0}^{s_j - 1} x_t$:"
+msgstr "第 3 阶段之所以正确，是因为对 $j$ 归纳可得 $C_j = \\sum_{t=0}^{s_j - 1} x_t$："
+
+#: manual/design/backend/native.md:100
+msgid "The scan does $2n + k$ additions; with $k$ workers its critical path is $O(n/k + k)$, against $O(n)$ for the sequential loop."
+msgstr "扫描共做 $2n + k$ 次加法；使用 $k$ 个工作线程时，其关键路径为 $O(n/k + k)$，而顺序循环为 $O(n)$。"
+
+#: manual/design/backend/native.md:105
+msgid "Checked integer arithmetic"
+msgstr "带检查的整数运算"
+
+#: manual/design/backend/native.md:107
+msgid "The kernels work on $\\mathbb{Z}/2^{32}$ and $\\mathbb{Z}/2^{64}$, where `+` wraps around. The runtime instead treats them as the integers and refuses to return a wrapped value: every addition $a + b$ is checked before it is made,"
+msgstr "内核在 $\\mathbb{Z}/2^{32}$ 和 $\\mathbb{Z}/2^{64}$ 上工作，其中 `+` 会回绕。运行时却把它们当作整数对待，拒绝返回回绕后的值：每次加法 $a + b$ 在执行前都会检查，"
+
+#: manual/design/backend/native.md:116
+msgid "and these tests do not overflow themselves. The map kernel ($x \\mapsto 2x$) first checks every element in one parallel pass and writes only if none overflows, so on failure the output is untouched."
+msgstr "而这些检查本身不会溢出。映射内核（$x \\mapsto 2x$）先用一次并行扫描检查所有元素，只有在没有溢出时才写入，因此失败时输出保持不变。"
+
+#: manual/design/backend/native.md:120
+msgid "The consequence is that a successful result is exact: each machine addition that was performed had an in-range true result, so it equals the integer addition, and by induction the returned sum or prefix equals $\\sum x_t$ in $\\mathbb{Z}$."
+msgstr "其结果是成功的结果都是精确的：每一次执行过的机器加法，其真实结果都在范围内，因此等于整数加法；归纳可知，返回的和或前缀等于 $\\mathbb{Z}$ 中的 $\\sum x_t$。"
+
+#: manual/design/backend/native.md:125
+msgid "The cost is that checked addition is a partial operation and is **not** associative: whether some partial sum leaves the range depends on the bracketing. With $x = (-1, 0, \\mathrm{MAX}, 1)$:"
+msgstr "代价是带检查的加法是一个部分运算，并且**不**满足结合律：某个部分和是否越界取决于括号方式。取 $x = (-1, 0, \\mathrm{MAX}, 1)$："
+
+#: manual/design/backend/native.md:136
+msgid "So the values are independent of $w$ and $c$, but the set of accepted inputs is not. The alternative, wrapping arithmetic, would make every result defined and chunking-independent, but silently wrong as an integer; the runtime chose exactness."
+msgstr "因此结果的值与 $w$ 和 $c$ 无关，但被接受的输入集合与它们有关。另一种选择是回绕运算，它会让每个结果都有定义且与分块无关，但作为整数却是悄无声息的错误；运行时选择了精确性。"
+
+#: manual/design/backend/native.md:141
+msgid "Fixed kernels in C"
+msgstr "C 中的固定内核"
+
+#: manual/design/backend/native.md:143
+msgid "Plans can name `Map` and reduction kernels, but MoonBit closures cannot cross the C interface and run on C threads. The runtime therefore implements a fixed set of kernels in C: doubling, sum, minimum, maximum and prefix sum, for 32- and 64-bit integers. The facade wraps the 32-bit doubling, sum and prefix sum; the others are reachable through the `ffi_*` declarations."
+msgstr "计划可以指定 `Map` 和归约内核，但 MoonBit 闭包无法跨越 C 接口在 C 线程上运行。因此运行时在 C 中实现了一组固定的内核：针对 32 位和 64 位整数的翻倍、求和、最小值、最大值和前缀和。门面包装了 32 位的翻倍、求和与前缀和；其余的可通过 `ffi_*` 声明使用。"
+
+#: manual/design/backend/native.md:149
+msgid "Borrowed arrays, caller-allocated output"
+msgstr "借用数组，调用方分配输出"
+
+#: manual/design/backend/native.md:151
+msgid "The MoonBit side passes `FixedArray` payloads to C with `#borrow`: C reads the input and writes the output in place and takes no ownership, so no copy is made and no reference count changes. The typed wrappers allocate the output with `FixedArray::make` before the call. Reductions return their value directly; the bridge passes a stack variable as the one-element output."
+msgstr "MoonBit 一侧以 `#borrow` 把 `FixedArray` 的数据传给 C：C 就地读取输入、写入输出，不获取所有权，因此不复制数据，也不改变引用计数。带类型的包装在调用前用 `FixedArray::make` 分配输出。归约直接返回值；桥接层传入一个栈变量作为单元素输出。"
+
+#: manual/design/backend/native.md:157
+msgid "One scheduler lock for workflows"
+msgstr "工作流使用单一调度锁"
+
+#: manual/design/backend/native.md:159
+msgid "The workflow runtime keeps all scheduling state, the ready queue, dependency counters, channel slots, mutex flags and barrier counters, under a single `pthread_mutex_t`, and workers execute each node while holding it. This makes every node step atomic with respect to the others without any per-capability locks, at the price that non-compute nodes never run simultaneously; they are bookkeeping steps that take constant time."
+msgstr "工作流运行时把所有调度状态（就绪队列、依赖计数器、通道槽位、互斥标志和屏障计数器）放在同一个 `pthread_mutex_t` 之下，工作线程在持有该锁时执行每个节点。这样无需按能力加锁，每个节点步骤相对于其他步骤都是原子的；代价是非计算节点永远不会同时运行，不过它们都是常数时间的簿记步骤。"
+
+#: manual/design/backend/native.md:166
+msgid "The threading model"
+msgstr "线程模型"
+
+#: manual/design/backend/native.md:170
+msgid "Each kernel runs its chunk loop as an OpenMP `parallel for` with `num_threads(w)` when the runtime is compiled with OpenMP, one iteration per chunk. Without OpenMP the pragmas are ignored and `select_thread_count` returns $1$, so the same chunks run one after another on the calling thread. The `moon` build compiles the native stubs without OpenMP flags, so from MoonBit the kernels currently run sequentially; the CMake build of `native/` enables OpenMP. Because the chunking is the same in both builds, the results and the overflow behaviour are the same."
+msgstr "当运行时以 OpenMP 编译时，每个内核把块循环作为带 `num_threads(w)` 的 OpenMP `parallel for` 运行，每个块一次迭代。没有 OpenMP 时这些 pragma 被忽略，`select_thread_count` 返回 $1$，于是同样的块在调用线程上依次运行。`moon` 构建在编译原生桩时不带 OpenMP 选项，因此从 MoonBit 调用时内核目前是顺序运行的；`native/` 的 CMake 构建会启用 OpenMP。由于两种构建的分块相同，结果和溢出行为也相同。"
+
+#: manual/design/backend/native.md:181
+msgid "`submit_workflow_async` starts $w + 1$ POSIX threads: $w$ workers and one **compute lane**. Scheduling is Kahn's topological sort run by a pool:"
+msgstr "`submit_workflow_async` 启动 $w + 1$ 个 POSIX 线程：$w$ 个工作线程和一个**计算通道**。调度就是由线程池执行的 Kahn 拓扑排序："
+
+#: manual/design/backend/native.md:184
+msgid "Each node $v$ has a counter of unfinished predecessors, initially its in-degree. Nodes with counter $0$ go into a FIFO ring buffer of capacity $|V|$."
+msgstr "每个节点 $v$ 有一个未完成前驱的计数器，初值为其入度。计数器为 $0$ 的节点进入容量为 $|V|$ 的 FIFO 环形缓冲区。"
+
+#: manual/design/backend/native.md:187
+msgid "A worker waits on the scheduler's condition variable until the queue is non-empty, dequeues a node and executes it. Completing a node decrements the counters of its successors and enqueues those that reach $0$."
+msgstr "工作线程在调度器的条件变量上等待，直到队列非空，然后取出一个节点并执行它。完成一个节点会使其后继的计数器减一，并把减到 $0$ 的后继放入队列。"
+
+#: manual/design/backend/native.md:190
+msgid "A compute node is handed to the compute lane, and the worker waits for it. In v1 the lane only checks the node kind and reports success; the plan is not executed."
+msgstr "计算节点被交给计算通道，工作线程等待它完成。在 v1 中，计算通道只检查节点种类并报告成功；计划并不会被执行。"
+
+#: manual/design/backend/native.md:193
+msgid "When all $|V|$ nodes have completed the state becomes `Completed`; the first failing node sets `Failed`, its status and `failed_node_id`. Both wake every waiting thread so that the pool shuts down."
+msgstr "所有 $|V|$ 个节点完成后状态变为 `Completed`；第一个失败的节点设置 `Failed`、其状态码和 `failed_node_id`。两种情况都会唤醒所有等待的线程，使线程池关闭。"
+
+#: manual/design/backend/native.md:197
+msgid "There are no per-thread queues and no work stealing: all workers share one queue, and FIFO order with execution under the lock makes the order in which ready nodes run the order in which they became ready."
+msgstr "没有每线程队列，也没有工作窃取：所有工作线程共享一个队列，FIFO 顺序加上持锁执行，使就绪节点的运行顺序就是它们就绪的顺序。"
+
+#: manual/design/backend/native.md:201
+msgid "Node semantics"
+msgstr "节点语义"
+
+#: manual/design/backend/native.md:203
+msgid "Node"
+msgstr "节点"
+
+#: manual/design/backend/native.md:203
+msgid "Effect when executed"
+msgstr "执行时的效果"
+
+#: manual/design/backend/native.md:205
+msgid "Completes immediately; no data moves."
+msgstr "立即完成；不移动任何数据。"
+
+#: manual/design/backend/native.md:206
+msgid "Blocks if the channel slot is full, otherwise fills it."
+msgstr "若通道槽位已满则阻塞，否则填满它。"
+
+#: manual/design/backend/native.md:207
+msgid "Blocks if the slot is empty, otherwise empties it."
+msgstr "若槽位为空则阻塞，否则清空它。"
+
+#: manual/design/backend/native.md:208
+msgid "Blocks if the mutex flag is set, otherwise sets it."
+msgstr "若互斥标志已设置则阻塞，否则设置它。"
+
+#: manual/design/backend/native.md:209
+msgid "Fails with status 12 if the flag is clear, otherwise clears it."
+msgstr "若标志未设置则以状态码 12 失败，否则清除它。"
+
+#: manual/design/backend/native.md:210
+msgid "Blocks until a `Signal` on the same condition variable wakes it."
+msgstr "阻塞，直到同一条件变量上的某个 `Signal` 唤醒它。"
+
+#: manual/design/backend/native.md:211
+msgid "Wakes one blocked `Wait`, if any; otherwise the signal is lost."
+msgstr "唤醒一个阻塞的 `Wait`（如果有的话）；否则该信号丢失。"
+
+#: manual/design/backend/native.md:212
+msgid "Blocks until every barrier node of its group has arrived."
+msgstr "阻塞，直到其组内的所有屏障节点都已到达。"
+
+#: manual/design/backend/native.md:214
+msgid "A channel is a slot of capacity one, and capabilities carry no payload: the runtime enforces the protocol, not the transfer of data."
+msgstr "通道是容量为一的槽位，能力不携带任何负载：运行时强制执行的是协议，而不是数据的传递。"
+
+#: manual/design/backend/native.md:217
+msgid "A barrier's group is the set of `Barrier` nodes with the same capability and the same depth $d(v)$, the length of the longest path from a source to $v$:"
+msgstr "屏障的组是具有相同能力和相同深度 $d(v)$ 的 `Barrier` 节点集合，其中 $d(v)$ 是从某个源节点到 $v$ 的最长路径长度："
+
+#: manual/design/backend/native.md:224
+msgid "The runtime computes $d$ by $|V|$ rounds of relaxation over all edges, which is enough because a longest path in an acyclic graph has at most $|V| - 1$ edges. A group with fewer than two nodes fails with status 14 (`BARRIER_BROKEN`)."
+msgstr "运行时对所有边做 $|V|$ 轮松弛来计算 $d$；这已足够，因为无环图中的最长路径至多有 $|V| - 1$ 条边。少于两个节点的组以状态码 14（`BARRIER_BROKEN`）失败。"
+
+#: manual/design/backend/native.md:228
+msgid "The memory model"
+msgstr "内存模型"
+
+#: manual/design/backend/native.md:230
+msgid "For kernels, the chunks partition $[0, n)$, and in each parallel phase iteration $j$ writes only output indices in $[s_j, s_{j+1})$ and its own `partials[j]` or `summaries[j]` cell. Distinct iterations therefore write disjoint locations, and there is no data race. The end of an OpenMP `parallel for` is a barrier, so the sequential carry phase sees every phase-one write, and phase three sees the carries. The MoonBit caller is blocked for the whole call, so no MoonBit code touches the arrays while C threads run, and the borrowed arrays stay alive because the caller still holds them."
+msgstr "对内核而言，各块划分了 $[0, n)$，在每个并行阶段中，迭代 $j$ 只写 $[s_j, s_{j+1})$ 内的输出下标以及它自己的 `partials[j]` 或 `summaries[j]` 单元。因此不同迭代写入互不相交的位置，不存在数据竞争。OpenMP `parallel for` 的结尾是一个屏障，所以顺序的进位阶段能看到第一阶段的所有写入，第三阶段能看到进位。MoonBit 调用方在整个调用期间被阻塞，因此 C 线程运行时没有 MoonBit 代码接触这些数组；而且由于调用方仍持有借用的数组，它们会一直存活。"
+
+#: manual/design/backend/native.md:240
+msgid "For workflows, every access to shared scheduler state happens under the scheduler mutex, and condition-variable waits re-acquire it, so all such accesses are ordered. `poll_workflow` takes the same mutex to copy a consistent snapshot."
+msgstr "对工作流而言，所有对共享调度状态的访问都在调度器互斥锁之下进行，条件变量等待返回时会重新获取该锁，因此所有这类访问都是有序的。`poll_workflow` 获取同一个互斥锁来复制一致的快照。"
+
+#: manual/design/backend/native.md:247
+msgid "**Kernel results.** When a kernel succeeds, the doubled values, the sum and the prefix sums equal their values in $\\mathbb{Z}$, independent of $w$ and $c$, as derived above."
+msgstr "**内核结果。** 内核成功时，翻倍后的值、和以及前缀和都等于它们在 $\\mathbb{Z}$ 中的值，与 $w$ 和 $c$ 无关，如上文所推导。"
+
+#: manual/design/backend/native.md:250
+msgid "**Validation before work.** Every kernel checks null pointers, positive sizes, $w \\le n$, $c \\le n$, buffer lengths and the cover condition before it allocates or computes, and returns status 1 otherwise (7 for a null pointer)."
+msgstr "**先验证再工作。** 每个内核在分配或计算之前都会检查空指针、正的大小、$w \\le n$、$c \\le n$、缓冲区长度以及覆盖条件，否则返回状态码 1（空指针时为 7）。"
+
+#: manual/design/backend/native.md:254
+msgid "**Workflow admission.** Before starting threads the runtime requires a positive worker and node count, capabilities for the nodes that need them with matching kinds, no `RwLock`, `Semaphore` or `Opaque` capability, no self edge, existing edge endpoints, and acyclicity, which it checks completely by Kahn's algorithm: a finite graph is acyclic exactly when repeatedly removing nodes without incoming edges removes them all."
+msgstr "**工作流准入。** 在启动线程之前，运行时要求：工作线程数和节点数为正；需要能力的节点有种类匹配的能力；没有 `RwLock`、`Semaphore` 或 `Opaque` 能力；没有自环边；边的端点存在；并且图无环。无环性用 Kahn 算法完整检查：有限图无环，当且仅当反复删除没有入边的节点能删掉全部节点。"
+
+#: manual/design/backend/native.md:260
+msgid "**Termination.** If no `Send`, `Recv` or `Lock` node ever blocks, every `Wait` is signalled after it blocks, and every barrier group has at least two nodes, every node completes once and the workflow reaches `Completed` or `Failed`."
+msgstr "**终止性。** 若没有任何 `Send`、`Recv` 或 `Lock` 节点阻塞，每个 `Wait` 在阻塞后都会被唤醒，且每个屏障组至少有两个节点，则每个节点恰好完成一次，工作流到达 `Completed` 或 `Failed`。"
+
+#: manual/design/backend/native.md:265
+msgid "Known defects"
+msgstr "已知缺陷"
+
+#: manual/design/backend/native.md:267
+msgid "These behaviours of the current branch contradict the intent of the code and are tracked for fixing:"
+msgstr "当前分支的这些行为与代码的意图相悖，已记录待修复："
+
+#: manual/design/backend/native.md:270
+msgid "**Request lifetime.** `luna_mbt_workflow_submit_async` builds the request on its stack and frees the capability, node and edge arrays right after the runtime starts, but the worker threads keep a pointer to that request. Workflow runs read freed memory and crash intermittently."
+msgstr "**请求的生命周期。** `luna_mbt_workflow_submit_async` 在自己的栈上构建请求，并在运行时启动后立即释放能力、节点和边数组，但工作线程仍保留着指向该请求的指针。运行工作流时会读取已释放的内存，并间歇性崩溃。"
+
+#: manual/design/backend/native.md:274
+msgid "**Lost wake-ups.** Only `Signal` and a completed barrier re-enqueue blocked nodes. A `Send`, `Recv` or `Lock` that blocks is never retried, so the workflow never finishes and `wait_workflow` does not return."
+msgstr "**丢失的唤醒。** 只有 `Signal` 和完成的屏障会把阻塞的节点重新放入队列。阻塞的 `Send`、`Recv` 或 `Lock` 永远不会被重试，因此工作流永远无法完成，`wait_workflow` 也不会返回。"
+
+#: manual/design/backend/native.md:277
+msgid "**Errors without a channel.** A rejected workflow becomes an empty handle reported as `Ok`, and `execute_reduce_sum_i32` reports failures as `0`."
+msgstr "**没有错误通道。** 被拒绝的工作流变成一个以 `Ok` 报告的空句柄，`execute_reduce_sum_i32` 把失败报告为 `0`。"
+
+#: manual/design/backend/native.md:279
+msgid "**Runtime identity.** `supports_openmp()` is the constant `true`, while the `moon` build has no OpenMP."
+msgstr "**运行时标识。** `supports_openmp()` 是常量 `true`，而 `moon` 构建并没有 OpenMP。"
+
+#: manual/design/backend/native.md:284
+msgid "**Work-stealing deques.** Per-worker deques pay off when tasks are many and uneven. Workflow nodes here are constant-time protocol steps executed under one lock, so a shared FIFO is simpler and enough; data parallelism is left to OpenMP inside each kernel."
+msgstr "**工作窃取双端队列。** 当任务数量多且不均匀时，每个工作线程一个双端队列才划算。这里的工作流节点是在同一把锁下执行的常数时间协议步骤，因此共享的 FIFO 更简单也足够；数据并行则交给每个内核内部的 OpenMP。"
+
+#: manual/design/backend/native.md:288
+msgid "**Executing MoonBit closures on C threads.** The MoonBit runtime gives no guarantee that its objects may be used from foreign threads, so the kernels are fixed C functions instead."
+msgstr "**在 C 线程上执行 MoonBit 闭包。** MoonBit 运行时并不保证其对象可以在外部线程中使用，因此内核改为固定的 C 函数。"
+
+#: manual/design/backend/native.md:291
+msgid "**Copying arrays across the interface.** Copies would make the memory model trivial but double the memory traffic of every kernel; borrowing plus disjoint writes gives the same safety."
+msgstr "**跨接口复制数组。** 复制会让内存模型变得平凡，但会使每个内核的内存流量翻倍；借用加上互不相交的写入能提供同样的安全性。"
+
+#: manual/design/backend/native.md:294
+msgid "**Wrapping arithmetic.** Rejected in favour of exact results, as derived above."
+msgstr "**回绕运算。** 如上文所推导，为了得到精确结果而被否决。"
+
+#: manual/design/backend/native.md:299
+msgid "The backend does not execute plans, user-defined kernels, floating-point data or `Bytes`; it does not move data through channels or shared capabilities; it does not implement read-write locks or semaphores; it does not detect deadlocks or offer timeouts; and it does not build for any target but `native`."
+msgstr "这个后端不执行计划、用户定义的内核、浮点数据或 `Bytes`；不通过通道或共享能力移动数据；不实现读写锁或信号量；不检测死锁，也不提供超时；并且只能在 `native` 目标上构建。"
+
+#: manual/design/core.md:1
+msgid "core design"
+msgstr "core 设计"
+
+#: manual/design/core.md:5
+msgid "The root package is the facade most programs import. It should let a program build policies, plans and workflows, run kernels and submit workflows through one import, with sensible defaults, while the real definitions stay in the packages that own them. It is also where the backend is chosen, so it is the only package besides `backend/native` that depends on the C runtime."
+msgstr "根包是大多数程序导入的门面。它应当让程序通过一次导入就能构建策略、计划和工作流，运行内核并提交工作流，并提供合理的默认值，而真正的定义留在拥有它们的包中。后端也是在这里选择的，因此它是除 `backend/native` 之外唯一依赖 C 运行时的包。"
+
+#: manual/design/core.md:13
+msgid "The facade adds no new concepts; it is a set of equations between its functions and those of the underlying packages. With $\\mathbf{d}$ the default policy $(\\mathrm{Native}, \\mathrm{Synchronous}, 1, 1, \\mathrm{PreserveInputOrder})$:"
+msgstr "门面没有引入新概念；它是其函数与底层包函数之间的一组等式。记 $\\mathbf{d}$ 为默认策略 $(\\mathrm{Native}, \\mathrm{Synchronous}, 1, 1, \\mathrm{PreserveInputOrder})$："
+
+#: manual/design/core.md:25
+msgid "and likewise for every other function. The only facts specific to the facade are its defaults. For the kernels the defaults are $w = c = 1$, and the native cover condition $w \\ge \\lceil n / c \\rceil$ becomes"
+msgstr "其他每个函数也是如此。门面特有的事实只有它的默认值。对内核而言默认值为 $w = c = 1$，原生的覆盖条件 $w \\ge \\lceil n / c \\rceil$ 就变成"
+
+#: manual/design/core.md:33
+msgid "so with default arguments the kernels accept only inputs of length one."
+msgstr "因此使用默认参数时，内核只接受长度为一的输入。"
+
+#: manual/design/core.md:37
+msgid "Free functions with defaults"
+msgstr "带默认值的自由函数"
+
+#: manual/design/core.md:39
+msgid "The facade exposes free functions such as `map`, `workflow` and `spawn_task` rather than methods on the imported types, because the types belong to other packages and cannot gain methods here. Optional arguments carry the defaults, so the common call is short: `@luna_thread.map(\"double\", @luna_thread.i32_type(), 16)` is a complete, valid plan. Capability helpers bind each kind to its only valid access mode (`channel_capability` to `MoveOnly`, `mutex_capability` to `SynchronizeOnly`, `shared_read_capability` to `ReadOnly`), which removes a whole class of `InvalidCapabilityAccess` issues."
+msgstr "门面暴露的是 `map`、`workflow`、`spawn_task` 这样的自由函数，而不是导入类型上的方法，因为这些类型属于其他包，无法在这里添加方法。可选参数承载默认值，所以常见的调用很短：`@luna_thread.map(\"double\", @luna_thread.i32_type(), 16)` 就是一个完整且有效的计划。能力辅助函数把每种能力绑定到唯一有效的访问模式（`channel_capability` 对应 `MoveOnly`，`mutex_capability` 对应 `SynchronizeOnly`，`shared_read_capability` 对应 `ReadOnly`），从而消除了一整类 `InvalidCapabilityAccess` 问题。"
+
+#: manual/design/core.md:48
+msgid "Backend routing in one place"
+msgstr "在一处进行后端路由"
+
+#: manual/design/core.md:50
+msgid "`submit_workflow` dispatches on the backend: `Native` goes to `@native.submit_workflow`, anything else to `@workflow.submit`. Both produce the same validated submission today, but routing through the backend package is where execution will be attached. The direct-execution and asynchronous functions call `backend/native` unconditionally, because it is the only backend that executes."
+msgstr "`submit_workflow` 按后端分派：`Native` 交给 `@native.submit_workflow`，其他交给 `@workflow.submit`。两者如今产生相同的经过验证的提交，但通过后端包路由正是将来接入执行的位置。直接执行和异步函数无条件调用 `backend/native`，因为它是唯一能执行的后端。"
+
+#: manual/design/core.md:57
+msgid "The facade is native-only"
+msgstr "门面只支持原生目标"
+
+#: manual/design/core.md:59
+msgid "Because it imports `backend/native`, whose foreign functions exist only on the native target, the facade declares `supported_targets = \"native\"`. Code that must build everywhere imports `plan`, `shared` and `workflow` directly; they provide everything except execution."
+msgstr "由于它导入了 `backend/native`，而后者的外部函数只存在于原生目标上，门面声明了 `supported_targets = \"native\"`。必须在所有目标上构建的代码直接导入 `plan`、`shared` 和 `workflow`；除执行之外，它们提供了一切。"
+
+#: manual/design/core.md:64
+msgid "Kernel defaults kept from the original interface"
+msgstr "沿用原有接口的内核默认值"
+
+#: manual/design/core.md:66
+msgid "The kernel defaults $w = c = 1$ are the smallest valid policy values, matching `make_policy`, but as derived above they satisfy the cover condition only for one element. Changing them would change the meaning of existing calls; the API and tutorial pages tell users to pass both arguments."
+msgstr "内核默认值 $w = c = 1$ 是最小的有效策略值，与 `make_policy` 一致，但如上文推导，它们只在只有一个元素时满足覆盖条件。改变它们会改变现有调用的含义；API 和教程页面会提醒用户把两个参数都传上。"
+
+#: manual/design/core.md:73
+msgid "**Faithful forwarding.** Each facade function returns exactly what the underlying function returns for the same arguments and defaults; the facade holds no state."
+msgstr "**忠实转发。** 对同样的参数和默认值，每个门面函数返回的正是底层函数返回的结果；门面不持有状态。"
+
+#: manual/design/core.md:76
+msgid "**Defaults are valid policies.** `default_policy()` lies in the v1 policy subset; `make_policy` with no arguments returns `Ok(default_policy())`."
+msgstr "**默认值是有效策略。** `default_policy()` 属于 v1 策略子集；不带参数调用 `make_policy` 返回 `Ok(default_policy())`。"
+
+#: manual/design/core.md:78
+msgid "**Single dependency on C.** Only `execute_*`, `submit_workflow_async`, `poll_workflow`, `wait_workflow` and `drop_workflow` reach the C runtime."
+msgstr "**对 C 的单一依赖。** 只有 `execute_*`、`submit_workflow_async`、`poll_workflow`、`wait_workflow` 和 `drop_workflow` 会触及 C 运行时。"
+
+#: manual/design/core.md:83
+msgid "**Re-exporting whole packages.** Re-exporting every name of `plan`, `shared` and `workflow` would duplicate their API pages; the facade keeps the entry points a typical program needs, and the packages remain importable."
+msgstr "**重新导出整个包。** 重新导出 `plan`、`shared` 和 `workflow` 的每个名称会重复它们的 API 页面；门面只保留典型程序需要的入口，而那些包仍然可以直接导入。"
+
+#: manual/design/core.md:86
+msgid "**Choosing the backend by target at compile time.** That would make the facade build on every target but silently change behaviour with the target; v1 makes the native requirement explicit instead."
+msgstr "**在编译时按目标选择后端。** 这会让门面能在所有目标上构建，却会随目标悄悄改变行为；v1 改为把原生要求明确写出来。"
+
+#: manual/design/core.md:92
+msgid "The facade does not define types, validate anything itself, execute plans, manage thread pools, or support the JavaScript backend; it forwards to the packages that do or will."
+msgstr "门面不定义类型，自身不验证任何东西，不执行计划，不管理线程池，也不支持 JavaScript 后端；它只转发给已经或将要做这些事的包。"
+
+#: manual/design/plan.md:1
+msgid "plan design"
+msgstr "plan 设计"
+
+#: manual/design/plan.md:5
+msgid "A plan states *what* data-parallel operation to perform, on what input shape, under which policy, without saying *how* or running it. Keeping this as plain, comparable data lets `luna_thread` validate work before it reaches a runtime, embed it in workflows, and translate it for different backends. The package must stay backend-independent and build on every target."
+msgstr "计划说明要执行*什么*数据并行操作、作用于什么形状的输入、使用什么策略，而不说明*如何*执行，也不运行它。把它保持为普通的、可比较的数据，可以让 `luna_thread` 在工作到达运行时之前验证它，把它嵌入工作流，并为不同后端进行转换。这个包必须保持与后端无关，并能在所有目标上构建。"
+
+#: manual/design/plan.md:13
+msgid "Let the input be a sequence $x = (x_0, \\dots, x_{n-1}) \\in A^n$ with $n > 0$. The four plan kinds denote these functions:"
+msgstr "设输入为序列 $x = (x_0, \\dots, x_{n-1}) \\in A^n$，其中 $n > 0$。四种计划分别表示以下函数："
+
+#: manual/design/plan.md:25
+msgid "A reduction kernel must be **associative**, $(a \\oplus b) \\oplus c = a \\oplus (b \\oplus c)$, so that the bracketing a parallel runtime chooses does not matter. The three kernels of v1 are commutative and associative on the integers:"
+msgstr "归约内核必须满足**结合律** $(a \\oplus b) \\oplus c = a \\oplus (b \\oplus c)$，这样并行运行时选择的括号方式就无关紧要。v1 的三个内核在整数上满足交换律和结合律："
+
+#: manual/design/plan.md:29
+msgid "Kernel"
+msgstr "内核"
+
+#: manual/design/plan.md:29
+msgid "Identity"
+msgstr "单位元"
+
+#: manual/design/plan.md:32
+msgid "none in $\\mathbb{Z}$; the largest value of a fixed-width type"
+msgstr "在 $\\mathbb{Z}$ 中没有；对定宽类型为其最大值"
+
+#: manual/design/plan.md:33
+msgid "none in $\\mathbb{Z}$; the smallest value of a fixed-width type"
+msgstr "在 $\\mathbb{Z}$ 中没有；对定宽类型为其最小值"
+
+#: manual/design/plan.md:37
+msgid "Plans are data, not closures"
+msgstr "计划是数据，而不是闭包"
+
+#: manual/design/plan.md:39
+msgid "The plan records the kind, the element type, the length, the policy, an optional named kernel and the ordering, and nothing executable. A closure could express any $f$ and $\\oplus$, but it cannot be compared, inspected, validated, or passed to C threads. Named kernels can be checked against what a runtime implements: `reduction_kernel_is_supported_in_v1` accepts exactly the kernels with a C implementation, and `Custom(name)` keeps a place for kernels that a later runtime may register."
+msgstr "计划记录种类、元素类型、长度、策略、可选的具名内核和顺序，不包含任何可执行的东西。闭包可以表达任意的 $f$ 和 $\\oplus$，但无法被比较、检查、验证，也无法传给 C 线程。具名内核则可以对照运行时的实现进行检查：`reduction_kernel_is_supported_in_v1` 恰好接受那些有 C 实现的内核，而 `Custom(name)` 为将来运行时可能注册的内核留出了位置。"
+
+#: manual/design/plan.md:47
+msgid "Ordering is a property of the kind"
+msgstr "顺序是种类的属性"
+
+#: manual/design/plan.md:49
+msgid "`OrderingGuarantee` says whether results must keep input positions. For a reduction with a commutative and associative $\\oplus$, the result is the same for every permutation $\\pi$ of the input:"
+msgstr "`OrderingGuarantee` 说明结果是否必须保持输入位置。对于满足交换律和结合律的 $\\oplus$ 的归约，输入的任意置换 $\\pi$ 都给出相同的结果："
+
+#: manual/design/plan.md:57
+msgid "by the generalised commutative law, so `RelaxedOrder` is safe for `Reduce` and `MapReduce`, and for `Map` it only permits results to be produced out of order. A scan is different: $y_i$ depends on which elements come before position $i$. For $x = (1, 2)$ and the swap $\\pi$, the sums are"
+msgstr "这由广义交换律保证，因此 `RelaxedOrder` 对 `Reduce` 和 `MapReduce` 是安全的；对 `Map` 而言它只是允许结果乱序产生。扫描则不同：$y_i$ 取决于哪些元素位于位置 $i$ 之前。对 $x = (1, 2)$ 和交换置换 $\\pi$，前缀和为"
+
+#: manual/design/plan.md:66
+msgid "so a scan has no meaning without input order. `scan` therefore always sets `PreserveInputOrder`, and `validate` reports both `UnsupportedOrdering` and `ScanRequiresStableOrdering` for a hand-built relaxed scan."
+msgstr "因此没有输入顺序，扫描就没有意义。所以 `scan` 总是设置 `PreserveInputOrder`，而对手工构建的宽松顺序扫描，`validate` 会同时报告 `UnsupportedOrdering` 和 `ScanRequiresStableOrdering`。"
+
+#: manual/design/plan.md:70
+msgid "The v1 subset is checked, not encoded in types"
+msgstr "v1 子集通过检查实现，而不是编码在类型中"
+
+#: manual/design/plan.md:72
+msgid "`ValueType` lists `F32`, `F64`, `Bytes` and `Opaque`, and `ExecutionPolicy` can name the JavaScript backend and asynchronous mode, although v1 supports none of them. The types describe the whole model of the specification; `validate` decides what the current runtime accepts. When a runtime grows, the predicates change and user code that builds plans does not."
+msgstr "`ValueType` 列出了 `F32`、`F64`、`Bytes` 和 `Opaque`，`ExecutionPolicy` 可以指定 JavaScript 后端和异步模式，尽管 v1 一个都不支持。这些类型描述的是规范的完整模型；`validate` 决定当前运行时接受什么。运行时扩展时，变化的是谓词，构建计划的用户代码不必改变。"
+
+#: manual/design/plan.md:78
+msgid "Integer element types are also the ones for which chunked reduction is well-defined. Floating-point addition is not associative: in `Double`,"
+msgstr "整数元素类型也正是分块归约有良好定义的类型。浮点加法不满足结合律：在 `Double` 中，"
+
+#: manual/design/plan.md:85
+msgid "so a parallel sum of `F64` data would depend on the worker count and chunk size. Supporting it needs a decision about which bracketing to promise, which v1 does not make."
+msgstr "因此 `F64` 数据的并行求和会依赖工作线程数和块大小。要支持它，就需要决定承诺哪一种括号方式，而 v1 没有做出这个决定。"
+
+#: manual/design/plan.md:89
+msgid "Validation reports every issue"
+msgstr "验证报告所有问题"
+
+#: manual/design/plan.md:91
+msgid "`validate` returns an array of all issues rather than the first one, so a caller can show every problem of a plan together, and a workflow can wrap each one as `InvalidComputePlan`. The issues are independent tests, listed in a fixed order. `is_runnable` is the conjunction of their negations:"
+msgstr "`validate` 返回所有问题组成的数组，而不只是第一个，这样调用方可以一次展示计划的所有问题，工作流也可以把每个问题包装为 `InvalidComputePlan`。各项问题是相互独立的检查，按固定顺序列出。`is_runnable` 是它们的否定的合取："
+
+#: manual/design/plan.md:100
+msgid "Size checks stop short of the cover condition"
+msgstr "大小检查止步于覆盖条件之前"
+
+#: manual/design/plan.md:102
+msgid "`validate` rejects $c > n$ and $w > n$ because no runtime can use more chunks than elements. It does not check the native cover condition $w \\ge \\lceil n / c \\rceil$, which belongs to one backend's chunking strategy (see the [native backend design](backend/native.md)). Backends check their own conditions when they build requests or run kernels."
+msgstr "`validate` 拒绝 $c > n$ 和 $w > n$，因为任何运行时都无法使用比元素还多的块。它不检查原生的覆盖条件 $w \\ge \\lceil n / c \\rceil$，那属于某一个后端的分块策略（参见[原生后端设计](backend/native.md)）。各后端在构建请求或运行内核时检查自己的条件。"
+
+#: manual/design/plan.md:110
+msgid "**Builders fix the kind.** `map`, `reduce`, `scan` and `map_reduce` produce plans of the corresponding kind; `reduce` and `map_reduce` always carry a kernel; `scan` and `reduce` always preserve order."
+msgstr "**构建函数固定种类。** `map`、`reduce`、`scan` 和 `map_reduce` 产生对应种类的计划；`reduce` 和 `map_reduce` 总是带有内核；`scan` 和 `reduce` 总是保持顺序。"
+
+#: manual/design/plan.md:113
+msgid "**Validation is total and pure.** `validate` terminates for every plan, has no effects, and depends only on the plan's fields."
+msgstr "**验证是全函数且纯的。** `validate` 对每个计划都会终止，没有副作用，只依赖计划的字段。"
+
+#: manual/design/plan.md:115
+msgid "**Supported plans name implemented kernels.** If $\\operatorname{validate}(p) = [\\,]$ and $p$ reduces, its kernel is `Sum`, `Min` or `Max` and its element type is `I32` or `I64`, the combinations the C runtime implements."
+msgstr "**受支持的计划指定已实现的内核。** 若 $\\operatorname{validate}(p) = [\\,]$ 且 $p$ 做归约，则其内核是 `Sum`、`Min` 或 `Max`，元素类型是 `I32` 或 `I64`，正是 C 运行时实现的组合。"
+
+#: manual/design/plan.md:119
+msgid "**Equality is structural.** Two plans are equal exactly when all fields are equal, so plans can serve as keys and test expectations."
+msgstr "**相等是结构性的。** 两个计划相等当且仅当所有字段相等，因此计划可以用作键和测试的期望值。"
+
+#: manual/design/plan.md:124
+msgid "**A generic `Plan[T]`.** Typing the element would push the element type into every workflow node and backend signature, and the C interface would still need a runtime tag. A `ValueType` tag keeps plans of different element types in one array."
+msgstr "**泛型的 `Plan[T]`。** 为元素加上类型会把元素类型推进每个工作流节点和后端签名中，而 C 接口仍然需要一个运行时标签。`ValueType` 标签让不同元素类型的计划可以放在同一个数组里。"
+
+#: manual/design/plan.md:128
+msgid "**Separate types per kind.** `MapPlan`, `ReducePlan` and so on would encode \"reduce has a kernel\" in the type, but workflows and requests would need a sum type over them anyway; `PlanKind` plus validation is that sum type."
+msgstr "**每种种类一个单独类型。** `MapPlan`、`ReducePlan` 等可以在类型中编码“归约有内核”，但工作流和请求无论如何都需要它们的和类型；`PlanKind` 加上验证就是这个和类型。"
+
+#: manual/design/plan.md:131
+msgid "**Validation inside the builders.** Builders that return `Result` would make the hand-built plans that tests and tools need impossible to express."
+msgstr "**在构建函数内部验证。** 返回 `Result` 的构建函数会使测试和工具所需的手工构建计划无法表达。"
+
+#: manual/design/plan.md:136
+msgid "The package does not execute plans, hold input data, allocate buffers, choose chunk sizes, check backend-specific conditions, or describe user-defined functions; the map function is implied by the backend (doubling in the native backend), not stored in the plan."
+msgstr "这个包不执行计划，不持有输入数据，不分配缓冲区，不选择块大小，不检查后端特有的条件，也不描述用户定义的函数；映射函数由后端隐含（原生后端中为翻倍），并不存储在计划中。"
+
+#: manual/design/shared.md:1
+msgid "shared design"
+msgstr "shared 设计"
+
+#: manual/design/shared.md:5
+msgid "Every package of `luna_thread` needs to say which backend, which mode, how many workers and what ordering it means, and every backend needs to speak the C runtime's integer codes. `shared` is the one place where these are defined, so that `plan`, `workflow` and the backends agree on them without depending on each other. It has no dependencies of its own and builds on every target."
+msgstr "`luna_thread` 的每个包都需要表达所指的后端、模式、工作线程数和顺序，每个后端都需要使用 C 运行时的整数编码。`shared` 是定义这些内容的唯一位置，使 `plan`、`workflow` 和各后端无需相互依赖就能对它们达成一致。它自身没有依赖，可以在所有目标上构建。"
+
+#: manual/design/shared.md:13
+msgid "Policies as a refined product"
+msgstr "作为精化积的策略"
+
+#: manual/design/shared.md:15
+msgid "An execution policy is an element of the product"
+msgstr "执行策略是下面这个积中的元素"
+
+#: manual/design/shared.md:21
+msgid "backend, mode, worker count, chunk size and ordering. The v1 runtime accepts the subset"
+msgstr "即后端、模式、工作线程数、块大小和顺序。v1 运行时接受其子集"
+
+#: manual/design/shared.md:28
+msgid "`make_execution_policy` is a partial constructor $P \\rightharpoonup P_1$: it returns its argument when it lies in $P_1$ and otherwise the first violated condition, in the order listed. `validate_policy` returns the list of all violated conditions, so"
+msgstr "`make_execution_policy` 是一个部分构造器 $P \\rightharpoonup P_1$：参数属于 $P_1$ 时返回它，否则按所列顺序返回第一个被违反的条件。`validate_policy` 返回所有被违反条件的列表，因此"
+
+#: manual/design/shared.md:37
+msgid "Status codes as a section and a retraction"
+msgstr "作为截面和收缩的状态码"
+
+#: manual/design/shared.md:39
+msgid "Let $S$ be the eight constructors of `NativeStatus` and $\\gamma = $ `native_status_code` $: S \\to \\mathbb{Z}$ number them $0$ to $7$. Let $\\rho = $ `native_status_from_code` $: \\mathbb{Z} \\to S$ invert $\\gamma$ on $\\{0, \\dots, 7\\}$ and send every other integer to `InvalidArgument`. Then"
+msgstr "设 $S$ 为 `NativeStatus` 的八个构造器，$\\gamma = $ `native_status_code` $: S \\to \\mathbb{Z}$ 把它们编号为 $0$ 到 $7$。设 $\\rho = $ `native_status_from_code` $: \\mathbb{Z} \\to S$ 在 $\\{0, \\dots, 7\\}$ 上是 $\\gamma$ 的逆，并把其他整数都映射为 `InvalidArgument`。于是"
+
+#: manual/design/shared.md:48
+msgid "so $\\gamma$ is injective (a section) and $\\rho$ is surjective (a retraction). The other composite is the identity only on the image of $\\gamma$:"
+msgstr "所以 $\\gamma$ 是单射（截面），$\\rho$ 是满射（收缩）。另一个复合只在 $\\gamma$ 的像上是恒等："
+
+#: manual/design/shared.md:59
+msgid "Converting a C status to `NativeStatus` and back therefore preserves codes $0$ to $7$ and collapses the workflow statuses $8$ to $14$ to $1$."
+msgstr "因此把 C 状态码转换为 `NativeStatus` 再转回来，会保留编码 $0$ 到 $7$，并把工作流状态码 $8$ 到 $14$ 折叠为 $1$。"
+
+#: manual/design/shared.md:64
+msgid "Return the first policy error, list all policy issues"
+msgstr "返回第一个策略错误，列出所有策略问题"
+
+#: manual/design/shared.md:66
+msgid "Constructing a policy is the common case, and one error message is enough to fix a call, so `make_execution_policy` returns `Result` with the first problem. Re-checking a stored policy happens inside workflow validation, which reports everything at once, so `validate_policy` returns all problems. Both test the same four conditions in the same order."
+msgstr "构建策略是常见情形，一条错误信息就足以修正一次调用，因此 `make_execution_policy` 以 `Result` 返回第一个问题。重新检查已存储的策略发生在工作流验证中，它一次报告所有问题，因此 `validate_policy` 返回全部问题。两者按同样的顺序检查同样的四个条件。"
+
+#: manual/design/shared.md:72
+msgid "Aborting conveniences are kept small"
+msgstr "让中止式的便捷函数保持精简"
+
+#: manual/design/shared.md:74
+msgid "`ExecutionPolicy::new`, `native_policy` and `javascript_policy` unwrap the result of `make_execution_policy`. For the native defaults this cannot fail. For the JavaScript backend it always fails in v1, so `javascript_policy` aborts; it exists so that code written for the planned JavaScript backend compiles today. Code that takes policy arguments from users should call `make_execution_policy`."
+msgstr "`ExecutionPolicy::new`、`native_policy` 和 `javascript_policy` 会对 `make_execution_policy` 的结果调用 unwrap。对原生默认值这不会失败。对 JavaScript 后端，它在 v1 中总是失败，所以 `javascript_policy` 会中止；它的存在是为了让为计划中的 JavaScript 后端编写的代码今天就能编译。从用户处获取策略参数的代码应调用 `make_execution_policy`。"
+
+#: manual/design/shared.md:81
+msgid "Capabilities are declared, not probed"
+msgstr "能力是声明的，而不是探测的"
+
+#: manual/design/shared.md:83
+msgid "`RuntimeCapabilities::for_backend` returns a fixed table. Probing the running system would need the native backend, which `shared` must not depend on, and would differ between the `moon` build and the CMake build. The table states the intended capabilities of each backend; the backend pages state what the current implementation does."
+msgstr "`RuntimeCapabilities::for_backend` 返回一张固定的表。探测运行中的系统需要原生后端，而 `shared` 不能依赖它；而且探测结果在 `moon` 构建和 CMake 构建之间也会不同。这张表陈述的是各后端预期的能力；各后端页面说明当前实现实际做了什么。"
+
+#: manual/design/shared.md:89
+msgid "Integer-coded mirrors of the C structs"
+msgstr "C 结构体的整数编码镜像"
+
+#: manual/design/shared.md:91
+msgid "`NativeBuffer` and the three request records copy the field order and integer encodings of the C structs in `luna_thread_runtime.h`, so that a binding can fill them without knowing the typed records of `backend/native`. The specification calls this correspondence the ABI layout isomorphism. The records store values unchecked; checking belongs to the backend that sends them."
+msgstr "`NativeBuffer` 和三个请求记录复制了 `luna_thread_runtime.h` 中 C 结构体的字段顺序和整数编码，使绑定代码不必了解 `backend/native` 的带类型记录就能填充它们。规范把这种对应称为 ABI 布局同构。这些记录不检查地保存值；检查属于发送它们的后端。"
+
+#: manual/design/shared.md:99
+msgid "**Policy subset.** Every policy returned by `make_execution_policy`, `ExecutionPolicy::new` or `native_policy` lies in $P_1$."
+msgstr "**策略子集。** `make_execution_policy`、`ExecutionPolicy::new` 或 `native_policy` 返回的每个策略都属于 $P_1$。"
+
+#: manual/design/shared.md:101
+msgid "**Status round trip.** $\\rho(\\gamma(s)) = s$ for every `NativeStatus` $s$, as derived above; the test in the [shared API](../api/shared.md) checks all eight."
+msgstr "**状态码往返。** 如上文推导，对每个 `NativeStatus` $s$ 都有 $\\rho(\\gamma(s)) = s$；[shared API](../api/shared.md) 中的测试检查了全部八个。"
+
+#: manual/design/shared.md:103
+msgid "**No dependencies.** The package imports only the MoonBit core library, so the dependency graph of the module stays acyclic."
+msgstr "**没有依赖。** 这个包只导入 MoonBit 核心库，因此模块的依赖图保持无环。"
+
+#: manual/design/shared.md:108
+msgid "**A typed error per backend.** One `PolicyIssue` type keeps policies backend-independent; the issues name the unsupported backend or mode as data."
+msgstr "**每个后端一个带类型的错误。** 单一的 `PolicyIssue` 类型让策略与后端无关；问题以数据的形式指出不受支持的后端或模式。"
+
+#: manual/design/shared.md:110
+msgid "**A partial `native_status_from_code`.** Returning `NativeStatus?` would force every caller to handle codes the runtime may add later; mapping them to `InvalidArgument` errs on the side of failure."
+msgstr "**部分函数形式的 `native_status_from_code`。** 返回 `NativeStatus?` 会迫使每个调用方处理运行时将来可能新增的编码；把它们映射为 `InvalidArgument` 则是偏向失败的稳妥做法。"
+
+#: manual/design/shared.md:113
+msgid "**Defining the integer codes in each backend.** The codes are part of the C contract, so they live in the package every backend shares."
+msgstr "**在每个后端中定义整数编码。** 这些编码是 C 契约的一部分，因此放在所有后端共享的包中。"
+
+#: manual/design/shared.md:118
+msgid "The package does not run anything, probe the system, validate the integer request records, or describe statuses $8$ to $14$ as constructors; the workflow runtime reports those as raw integers."
+msgstr "这个包不运行任何东西，不探测系统，不验证整数编码的请求记录，也不把状态码 $8$ 到 $14$ 描述为构造器；工作流运行时以原始整数报告它们。"
+
+#: manual/design/workflow.md:1
+msgid "workflow design"
+msgstr "workflow 设计"
+
+#: manual/design/workflow.md:5
+msgid "Data-parallel plans cover one operation at a time. Real programs also spawn and join tasks, pass work through channels, and protect shared state with locks. The `workflow` package gives these a single description: a task graph whose nodes are typed steps, whose resources are explicit capabilities, and whose edges fix the order of execution. The graph is data, so it can be validated in MoonBit on any target before a runtime executes it."
+msgstr "数据并行计划一次只覆盖一个操作。真实的程序还会派生和汇合任务、通过通道传递工作、用锁保护共享状态。`workflow` 包为这些提供统一的描述：一个任务图，其节点是有类型的步骤，资源是显式的能力，边决定执行顺序。图是数据，因此可以在运行时执行它之前，在任何目标上用 MoonBit 验证。"
+
+#: manual/design/workflow.md:14
+msgid "A workflow is a triple $W = (C, V, E)$ of capabilities, nodes and edges."
+msgstr "工作流是由能力、节点和边组成的三元组 $W = (C, V, E)$。"
+
+#: manual/design/workflow.md:16
+msgid "Each capability $\\kappa \\in C$ has an id, a kind $k(\\kappa) \\in K$ and an access mode $a(\\kappa) \\in M$."
+msgstr "每个能力 $\\kappa \\in C$ 有一个 id、一个种类 $k(\\kappa) \\in K$ 和一个访问模式 $a(\\kappa) \\in M$。"
+
+#: manual/design/workflow.md:18
+msgid "Each node $v \\in V$ has an id, a kind $t(v) \\in T$ and optionally a capability $\\operatorname{cap}(v)$."
+msgstr "每个节点 $v \\in V$ 有一个 id、一个种类 $t(v) \\in T$，以及可选的能力 $\\operatorname{cap}(v)$。"
+
+#: manual/design/workflow.md:20
+msgid "Each edge $(u, v) \\in E$ says that $v$ may start only after $u$ has completed."
+msgstr "每条边 $(u, v) \\in E$ 表示 $v$ 只能在 $u$ 完成后开始。"
+
+#: manual/design/workflow.md:23
+msgid "Two relations type the graph. $\\mathrm{Acc} \\subseteq K \\times M$ lists the valid access modes of each capability kind, and $\\mathrm{Use} \\subseteq T \\times K$ the capability kinds each node kind may use (both tables are in the [workflow API](../api/workflow.md)). A workflow is **well formed** when ids are unique, edges join existing distinct nodes, and"
+msgstr "两个关系为图赋予类型。$\\mathrm{Acc} \\subseteq K \\times M$ 列出每种能力的有效访问模式，$\\mathrm{Use} \\subseteq T \\times K$ 列出每种节点可以使用的能力种类（两张表都在 [workflow API](../api/workflow.md) 中）。当 id 唯一、边连接存在且不同的节点，并且满足下式时，工作流是**良构的**"
+
+#: manual/design/workflow.md:35
+msgid "The edges define the relation $u \\prec v$, \"there is a path from $u$ to $v$\". An execution order is a sequence of all nodes in which $u$ comes before $v$ whenever $u \\prec v$, a **topological order**. Such an order exists exactly when $(V, E)$ has no directed cycle: a cycle $v_0 \\to \\dots \\to v_m = v_0$ would require $v_0$ before itself, and conversely Kahn's algorithm builds an order for every acyclic graph by repeatedly removing a node without incoming edges."
+msgstr "边定义了关系 $u \\prec v$，即“存在一条从 $u$ 到 $v$ 的路径”。执行顺序是所有节点的一个序列，其中只要 $u \\prec v$，$u$ 就排在 $v$ 之前，这称为**拓扑序**。这样的顺序存在，当且仅当 $(V, E)$ 没有有向环：环 $v_0 \\to \\dots \\to v_m = v_0$ 会要求 $v_0$ 排在自己之前；反之，Kahn 算法通过反复删除没有入边的节点，为每个无环图构造出一个顺序。"
+
+#: manual/design/workflow.md:45
+msgid "Capabilities are declared, nodes refer to them by id"
+msgstr "能力被声明，节点通过 id 引用它们"
+
+#: manual/design/workflow.md:47
+msgid "Synchronisation resources exist independently of the steps that use them: two nodes that send and receive must agree on one channel. Declaring a capability once and referring to it by id makes that agreement explicit and checkable, and gives the runtime a dense table of resources to allocate. The access mode records the intent of the declaration, such as `MoveOnly` for a channel or `ReadOnly` for a shared view, so that `validate` can reject a `WriteShared` node on a read-only buffer."
+msgstr "同步资源独立于使用它们的步骤而存在：发送和接收的两个节点必须约定同一个通道。只声明一次能力并通过 id 引用它，使这种约定明确且可检查，也给了运行时一张紧凑的待分配资源表。访问模式记录声明的意图，例如通道的 `MoveOnly` 或共享视图的 `ReadOnly`，使 `validate` 可以拒绝作用于只读缓冲区的 `WriteShared` 节点。"
+
+#: manual/design/workflow.md:55
+msgid "Every edge kind orders the same way"
+msgstr "每种边的排序方式相同"
+
+#: manual/design/workflow.md:57
+msgid "`DataDependency`, `ControlDependency`, `OwnershipTransfer` and `SynchronizationDependency` all mean $u$ completes before $v$ starts. The kind documents why the edge exists, and the specification gives ownership transfer further meaning, but v1 checks and schedules all edges alike, so the order relation $\\prec$ does not depend on the kinds."
+msgstr "`DataDependency`、`ControlDependency`、`OwnershipTransfer` 和 `SynchronizationDependency` 都表示 $u$ 在 $v$ 开始前完成。种类说明边存在的原因，规范还赋予所有权转移更多含义，但 v1 对所有边一视同仁地检查和调度，因此顺序关系 $\\prec$ 与种类无关。"
+
+#: manual/design/workflow.md:63
+msgid "Builders mutate in place"
+msgstr "构建方法就地修改"
+
+#: manual/design/workflow.md:65
+msgid "`Workflow` stores its capabilities, nodes and edges in `Array`s, and `add_capability`, `add_node` and `add_edge` push onto them and return the same workflow. This makes chained construction cheap, $O(1)$ amortised per step, but it is not a persistent builder: after `let b = a.add_node(n)`, `a` and `b` are the same value and both contain `n`. Code that needs two variants must build two workflows."
+msgstr "`Workflow` 把能力、节点和边存放在 `Array` 中，`add_capability`、`add_node` 和 `add_edge` 向其中追加并返回同一个工作流。这使链式构建很廉价，每步均摊 $O(1)$，但它不是持久化的构建器：执行 `let b = a.add_node(n)` 之后，`a` 和 `b` 是同一个值，都包含 `n`。需要两个变体的代码必须构建两个工作流。"
+
+#: manual/design/workflow.md:72
+msgid "Validation is layered"
+msgstr "验证是分层的"
+
+#: manual/design/workflow.md:74
+msgid "`validate` in MoonBit checks the whole data model on every target: policy, capability kinds and access modes, node and capability references, edge endpoints, the plans of compute nodes, and cycles. The native runtime checks again what it relies on when a workflow is submitted. The two layers agree on most rules but not all:"
+msgstr "MoonBit 中的 `validate` 在所有目标上检查完整的数据模型：策略、能力种类和访问模式、节点和能力的引用、边的端点、计算节点的计划，以及环。原生运行时在提交工作流时会再次检查它所依赖的内容。两层在大多数规则上一致，但并非全部："
+
+#: manual/design/workflow.md:80
+msgid "Rule"
+msgstr "规则"
+
+#: manual/design/workflow.md:80
+msgid "Native runtime"
+msgstr "原生运行时"
+
+#: manual/design/workflow.md:82
+msgid "`RwLock`, `Semaphore` capabilities"
+msgstr "`RwLock`、`Semaphore` 能力"
+
+#: manual/design/workflow.md:82
+#: manual/design/workflow.md:83
+msgid "accepted"
+msgstr "接受"
+
+#: manual/design/workflow.md:82
+msgid "rejected (status 8)"
+msgstr "拒绝（状态码 8）"
+
+#: manual/design/workflow.md:83
+msgid "`Lock` and `Unlock` on an `RwLock`"
+msgstr "作用于 `RwLock` 的 `Lock` 和 `Unlock`"
+
+#: manual/design/workflow.md:83
+msgid "rejected"
+msgstr "拒绝"
+
+#: manual/design/workflow.md:84
+msgid "Access modes, duplicate ids, compute plans"
+msgstr "访问模式、重复 id、计算计划"
+
+#: manual/design/workflow.md:84
+msgid "checked"
+msgstr "检查"
+
+#: manual/design/workflow.md:84
+msgid "not checked"
+msgstr "不检查"
+
+#: manual/design/workflow.md:85
+msgid "Cycles"
+msgstr "环"
+
+#: manual/design/workflow.md:85
+msgid "partial (below)"
+msgstr "部分（见下文）"
+
+#: manual/design/workflow.md:85
+msgid "complete (status 9)"
+msgstr "完整（状态码 9）"
+
+#: manual/design/workflow.md:87
+msgid "The MoonBit layer reports every issue, so a user sees all problems at once; the native layer stops at the first, because it only decides whether to start."
+msgstr "MoonBit 层报告每个问题，让用户一次看到所有问题；原生层在遇到第一个问题时就停止，因为它只需决定是否启动。"
+
+#: manual/design/workflow.md:90
+msgid "The MoonBit cycle check is partial"
+msgstr "MoonBit 的环检查是部分的"
+
+#: manual/design/workflow.md:92
+msgid "`validate` reports `CyclicDependency` when (a) the graph has nodes but none without incoming edges, or (b) two edges point in opposite directions between the same pair of nodes. Both conditions imply a cycle when every edge joins existing nodes:"
+msgstr "在以下情况下 `validate` 报告 `CyclicDependency`：(a) 图中有节点，但没有一个节点没有入边；或 (b) 同一对节点之间有两条方向相反的边。当每条边都连接存在的节点时，这两个条件都意味着存在环："
+
+#: manual/design/workflow.md:97
+msgid "(b) is a cycle of length two."
+msgstr "(b) 是长度为二的环。"
+
+#: manual/design/workflow.md:98
+msgid "For (a), walk backwards from any node along incoming edges. Every node has one, so the walk never stops; with $|V|$ nodes it must repeat a node within $|V| + 1$ steps, and the repeated segment is a cycle."
+msgstr "对于 (a)，从任意节点出发沿入边反向行走。每个节点都有入边，所以行走永不停止；在 $|V|$ 个节点中，它必然在 $|V| + 1$ 步之内重复某个节点，重复的那一段就是一个环。"
+
+#: manual/design/workflow.md:102
+msgid "The converse fails: in $1 \\to 2 \\to 3 \\to 4 \\to 2$, node $1$ has no incoming edge and no pair of edges is opposite, so `validate` reports nothing although $2 \\to 3 \\to 4 \\to 2$ is a cycle. The native runtime runs Kahn's algorithm, which removes $1$ and then finds no node to remove among $\\{2, 3, 4\\}$, and rejects the graph. An edge from an unknown node also counts as an incoming edge for (a), so a graph whose only incoming edges come from unknown ids gets a `CyclicDependency` next to its `InvalidNodeReference` issues."
+msgstr "反过来则不成立：在 $1 \\to 2 \\to 3 \\to 4 \\to 2$ 中，节点 $1$ 没有入边，也没有方向相反的边对，因此尽管 $2 \\to 3 \\to 4 \\to 2$ 是一个环，`validate` 却什么也不报告。原生运行时运行 Kahn 算法，先删除 $1$，然后在 $\\{2, 3, 4\\}$ 中找不到可删除的节点，从而拒绝该图。来自未知节点的边对 (a) 也算作入边，因此若一个图的入边全都来自未知 id，它会在 `InvalidNodeReference` 问题之外再得到一个 `CyclicDependency`。"
+
+#: manual/design/workflow.md:112
+msgid "**Soundness of acceptance.** If `validate` returns no issue, the workflow is well formed in the sense above, except possibly for a cycle of length three or more that is reachable from a source."
+msgstr "**接受的可靠性。** 若 `validate` 没有返回问题，则工作流在上述意义下是良构的，只可能存在一个从源节点可达、长度为三或以上的环。"
+
+#: manual/design/workflow.md:115
+msgid "**Soundness of rejection.** Every issue names a real violation, with the one `CyclicDependency` caveat for edges from unknown nodes."
+msgstr "**拒绝的可靠性。** 每个问题都指出一个真实的违规，唯一的例外是来自未知节点的边所引起的 `CyclicDependency`。"
+
+#: manual/design/workflow.md:117
+msgid "**Submission.** `submit(w, backend)` is accepted exactly when `validate(w)` is empty and `backend` is `Native`; it never sets `completed`."
+msgstr "**提交。** 当且仅当 `validate(w)` 为空且 `backend` 为 `Native` 时，`submit(w, backend)` 被接受；它从不设置 `completed`。"
+
+#: manual/design/workflow.md:119
+msgid "**Complexity.** `validate` runs in $O(|V|^2 + |C|^2 + |E|^2 + |V| \\cdot |C| + |V| \\cdot |E|)$: duplicate detection filters the whole array for each element, endpoint and in-degree lookups scan the node and edge arrays, and the opposite-edge test compares all pairs of edges."
+msgstr "**复杂度。** `validate` 的运行时间为 $O(|V|^2 + |C|^2 + |E|^2 + |V| \\cdot |C| + |V| \\cdot |E|)$：重复检测对每个元素过滤整个数组，端点和入度查找会扫描节点和边数组，反向边测试比较所有边对。"
+
+#: manual/design/workflow.md:127
+msgid "**Capabilities embedded in nodes.** A channel stored inside each `Send` node could not be shared with the matching `Recv`."
+msgstr "**把能力嵌入节点。** 存放在每个 `Send` 节点内部的通道无法与对应的 `Recv` 共享。"
+
+#: manual/design/workflow.md:129
+msgid "**Typed edges with different scheduling.** Giving each edge kind its own scheduling rule would make the order relation depend on runtime policy; v1 keeps one rule."
+msgstr "**调度方式各异的带类型边。** 为每种边规定各自的调度规则，会让顺序关系依赖于运行时策略；v1 只保留一条规则。"
+
+#: manual/design/workflow.md:132
+msgid "**A persistent builder.** Copying the arrays on every `add_*` would make construction quadratic for the convenience of keeping old versions."
+msgstr "**持久化构建器。** 每次 `add_*` 都复制数组，会为了保留旧版本的便利而让构建变成二次复杂度。"
+
+#: manual/design/workflow.md:134
+msgid "**Full cycle detection in MoonBit.** A topological sort in `validate` would close the gap described above; the current check is cheaper and the native runtime catches the remaining cases. The gap is a candidate for a fix."
+msgstr "**在 MoonBit 中完整检测环。** 在 `validate` 中做拓扑排序可以弥补上述缺口；当前的检查更廉价，剩下的情形由原生运行时捕获。这个缺口是一个待修复的候选项。"
+
+#: manual/design/workflow.md:140
+msgid "The package does not schedule or execute workflows, move data between nodes, check that blocking nodes are matched (that a `Recv` has a `Send` that runs first), detect deadlocks, or give edge kinds different meanings."
+msgstr "这个包不调度或执行工作流，不在节点之间移动数据，不检查阻塞节点是否配对（即某个 `Recv` 是否有先运行的 `Send`），不检测死锁，也不赋予不同种类的边不同的含义。"
 
 #: manual/index.md:1
 msgid "luna_thread"
 msgstr "luna_thread"
 
 #: manual/index.md:3
-msgid "luna_thread is a MoonBit library workspace for parallel execution through the foreign function interface. MoonBit code builds a workflow graph, and a native runtime executes it; a JavaScript compatibility path reaches the same runtime through an N-API addon."
-msgstr "luna_thread 是一个通过外部函数接口（FFI）进行并行执行的 MoonBit 库工作区。MoonBit 代码构造 workflow 图，由原生运行时执行；JavaScript 兼容路径则通过 N-API 插件访问同一个运行时。"
+msgid "`luna_thread` lets MoonBit programs describe parallel work as data and run part of it on a native C runtime. A program builds **plans** (map, reduce, scan and map-reduce over a typed input domain) and **workflows** (task graphs whose nodes use capabilities such as channels, mutexes and barriers), validates them in MoonBit, and executes integer kernels and workflow graphs through the C foreign function interface. A JavaScript path through a Node.js addon is scaffolded but does not execute anything yet."
+msgstr "`luna_thread` 让 MoonBit 程序把并行工作描述为数据，并在原生 C 运行时上运行其中一部分。程序构建**计划**（作用于带类型输入域的 map、reduce、scan 和 map-reduce）和**工作流**（其节点使用通道、互斥锁、屏障等能力的任务图），在 MoonBit 中验证它们，并通过 C 外部函数接口执行整数内核和工作流图。经由 Node.js 插件的 JavaScript 路径已搭好脚手架，但还不执行任何东西。"
 
-#: manual/index.md:5
-msgid "Realization paths"
-msgstr "实现路径"
-
-#: manual/index.md:7
-msgid "MoonBit facade → MoonBit C FFI → C wrapper → C runtime"
-msgstr "MoonBit facade → MoonBit C FFI → C 包装层 → C 运行时"
-
-#: manual/index.md:8
-msgid "MoonBit facade → MoonBit JS FFI → JS wrapper → N-API addon → C runtime"
-msgstr "MoonBit facade → MoonBit JS FFI → JS 包装层 → N-API 插件 → C 运行时"
-
-#: manual/index.md:10
-msgid "Packages"
-msgstr "包"
-
-#: manual/index.md:12
-msgid "**`facade`** (`luna_thread/`): the root MoonBit package that applications import. See the [API reference](api/facade.md), the [design notes](design/facade.md) and the [tutorial](tutorial/facade.md)."
-msgstr "**`facade`**（`luna_thread/`）：应用程序导入的 MoonBit 根包。参见 [API 参考](api/facade.md)、[设计说明](design/facade.md)和[教程](tutorial/facade.md)。"
-
-#: manual/index.md:13
-msgid "**`backend`** (`native/`, `js/` and `luna_thread/backend/`): the native C runtime and the Node.js addon that realize the FFI design. See the [API reference](api/backend.md), the [design notes](design/backend.md) and the [tutorial](tutorial/backend.md)."
-msgstr "**`backend`**（`native/`、`js/` 与 `luna_thread/backend/`）：实现 FFI 设计的原生 C 运行时和 Node.js 插件。参见 [API 参考](api/backend.md)、[设计说明](design/backend.md)和[教程](tutorial/backend.md)。"
+#: manual/index.md:11
+msgid "The repository also holds the normative specification that the implementation is moving towards. This manual describes what the current branch implements; where the code is narrower than the specification, the pages say so."
+msgstr "仓库中还保存着实现正在逐步靠拢的规范性规范。本手册描述当前分支实现了什么；凡是代码比规范更窄的地方，页面都会说明。"
 
 #: manual/index.md:15
-msgid "Specification"
-msgstr "规格"
-
-#: manual/index.md:17
-msgid "The specification is the authoritative design narrative for the workspace: it defines the workflow graph, capabilities, ownership transfer and separation-safe execution that the facade and the backends must realize. The English text is normative; the Chinese text is a strict mirror of it."
-msgstr "该规格是本工作区的权威设计叙述：它定义了 facade 与各后端必须实现的 workflow 图、capability、所有权转移和分离安全执行。英文文本具有规范效力，中文文本是其严格镜像。"
-
-#: manual/index.md:19
 msgid "[A Normative Specification for a MoonBit Workflow and Parallel FFI Runtime](../attachments/moonbit_parallel_spec/main.typ)"
 msgstr "[MoonBit Workflow 与并行 FFI Runtime 的规范性规格](../attachments/moonbit_parallel_spec/main.typ)"
 
-#: manual/tutorial/backend.md:1
-msgid "backend Tutorial"
-msgstr "backend 教程"
+#: manual/index.md:17
+msgid "Status"
+msgstr "状态"
 
-#: manual/tutorial/backend.md:3
-msgid "Use this page as the starting point for practical workflows around this module. backend in Luna-Flow/luna_thread."
-msgstr "本页用于说明这个模块的实际使用路径。 这里聚焦 Luna-Flow/luna_thread 中的 backend。"
+#: manual/index.md:19
+msgid "The module is at version 0.1.0 and implements a first, deliberately small subset (\"v1\"):"
+msgstr "该模块的版本为 0.1.0，实现了一个有意保持很小的首个子集（“v1”）："
 
-#: manual/tutorial/backend.md:5
-#: manual/tutorial/facade.md:5
-msgid "Suggested Flow"
-msgstr "建议阅读顺序"
+#: manual/index.md:22
+msgid "Plans and workflows are validated in MoonBit, and only the native backend in synchronous mode passes validation."
+msgstr "计划和工作流在 MoonBit 中验证，并且只有同步模式下的原生后端能通过验证。"
 
-#: manual/tutorial/backend.md:7
-msgid "Read the repository README and the backend API reference."
-msgstr "先看仓库 README 和 backend 的 API 文档。"
+#: manual/index.md:24
+msgid "The executable kernels are element-wise doubling, sum, minimum and maximum reductions, and inclusive prefix sums over `Int` and `Int64`. The facade exposes the `Int` versions of doubling, sum and prefix sum."
+msgstr "可执行的内核包括作用于 `Int` 和 `Int64` 的逐元素翻倍、求和、最小值和最大值归约，以及包含式前缀和。门面暴露了 `Int` 版本的翻倍、求和与前缀和。"
 
-#: manual/tutorial/backend.md:8
-msgid "Start from the constructors or entry points under `native and js`."
-msgstr "从 `native and js` 中的构造入口或主入口开始。"
+#: manual/index.md:27
+msgid "Workflow graphs run on a pthread scheduler in C that executes the synchronisation protocol of each node. Compute nodes are scheduled but do not yet run their plan."
+msgstr "工作流图运行在 C 中基于 pthread 的调度器上，该调度器执行每个节点的同步协议。计算节点会被调度，但还不运行它们的计划。"
 
-#: manual/tutorial/backend.md:9
-#: manual/tutorial/facade.md:9
-msgid "Validate behavior with the existing tests or examples before depending on edge-case semantics."
-msgstr "在依赖边界行为之前，先结合已有测试或示例验证语义。"
+#: manual/index.md:30
+msgid "The facade and `backend/native` build only for the `native` target; `plan`, `shared`, `workflow` and `backend/js` build for every target."
+msgstr "门面和 `backend/native` 只能在 `native` 目标上构建；`plan`、`shared`、`workflow` 和 `backend/js` 可以在所有目标上构建。"
 
-#: manual/tutorial/backend.md:11
-#: manual/tutorial/facade.md:11
-msgid "Practical Guidance"
-msgstr "实践建议"
+#: manual/index.md:33
+msgid "Packages"
+msgstr "包"
 
-#: manual/tutorial/backend.md:13
-#: manual/tutorial/facade.md:13
-msgid "Prefer the documented entry points over internal helpers."
-msgstr "优先使用已文档化的入口，而不是内部辅助函数。"
+#: manual/index.md:35
+msgid "The MoonBit module lives in the `luna_thread/` directory of the repository; its root package is documented as `core`."
+msgstr "MoonBit 模块位于仓库的 `luna_thread/` 目录中；其根包以 `core` 为名编写文档。"
 
-#: manual/tutorial/backend.md:14
-#: manual/tutorial/facade.md:14
-msgid "Record runtime, numeric, or proof-state assumptions explicitly in downstream code."
-msgstr "下游代码里显式记录运行时、数值或证明状态前提。"
+#: manual/index.md:38
+msgid "Import path"
+msgstr "导入路径"
 
-#: manual/tutorial/facade.md:1
-msgid "facade Tutorial"
-msgstr "facade 教程"
+#: manual/index.md:38
+msgid "Pages"
+msgstr "页面"
 
-#: manual/tutorial/facade.md:3
-msgid "Begin with `luna_thread/luna_thread.mbt` and the package tests to understand the exposed MoonBit facade."
-msgstr "从 `luna_thread/luna_thread.mbt` 和包测试入手，了解对外暴露的 MoonBit facade。"
+#: manual/index.md:40
+msgid "The facade: policies, plan and workflow builders, direct execution and asynchronous workflows."
+msgstr "门面：策略、计划和工作流构建器、直接执行以及异步工作流。"
 
-#: manual/tutorial/facade.md:7
-msgid "Read the repository README and the facade API reference."
-msgstr "先看仓库 README 和 facade 的 API 文档。"
+#: manual/index.md:40
+msgid "[API](api/core.md) · [Tutorial](tutorial/core.md) · [Design](design/core.md)"
+msgstr "[API](api/core.md) · [教程](tutorial/core.md) · [设计](design/core.md)"
 
-#: manual/tutorial/facade.md:8
-msgid "Start from the constructors or entry points under `luna_thread`."
-msgstr "从 `luna_thread` 中的构造入口或主入口开始。"
+#: manual/index.md:41
+msgid "Backend-independent data-parallel plans and their validation."
+msgstr "与后端无关的数据并行计划及其验证。"
+
+#: manual/index.md:41
+msgid "[API](api/plan.md) · [Tutorial](tutorial/plan.md) · [Design](design/plan.md)"
+msgstr "[API](api/plan.md) · [教程](tutorial/plan.md) · [设计](design/plan.md)"
+
+#: manual/index.md:42
+msgid "Task graphs with capabilities, their validation and submission records."
+msgstr "带能力的任务图、其验证和提交记录。"
+
+#: manual/index.md:42
+msgid "[API](api/workflow.md) · [Tutorial](tutorial/workflow.md) · [Design](design/workflow.md)"
+msgstr "[API](api/workflow.md) · [教程](tutorial/workflow.md) · [设计](design/workflow.md)"
+
+#: manual/index.md:43
+msgid "Execution policies, backend targets, runtime capabilities and the integer-coded FFI records."
+msgstr "执行策略、后端目标、运行时能力以及整数编码的 FFI 记录。"
+
+#: manual/index.md:43
+msgid "[API](api/shared.md) · [Tutorial](tutorial/shared.md) · [Design](design/shared.md)"
+msgstr "[API](api/shared.md) · [教程](tutorial/shared.md) · [设计](design/shared.md)"
+
+#: manual/index.md:44
+msgid "The C FFI backend: kernels, the workflow runtime and typed native requests."
+msgstr "C FFI 后端：内核、工作流运行时以及带类型的原生请求。"
+
+#: manual/index.md:44
+msgid "[API](api/backend/native.md) · [Tutorial](tutorial/backend/native.md) · [Design](design/backend/native.md)"
+msgstr "[API](api/backend/native.md) · [教程](tutorial/backend/native.md) · [设计](design/backend/native.md)"
+
+#: manual/index.md:45
+msgid "The placeholder for the JavaScript backend."
+msgstr "JavaScript 后端的占位包。"
+
+#: manual/index.md:45
+msgid "[API](api/backend/js.md) · [Tutorial](tutorial/backend/js.md) · [Design](design/backend/js.md)"
+msgstr "[API](api/backend/js.md) · [教程](tutorial/backend/js.md) · [设计](design/backend/js.md)"
+
+#: manual/index.md:47
+msgid "The C runtime in `native/`, its copy compiled as a MoonBit native stub, and the Node.js addon in `js/` are not MoonBit packages; the [architecture guide](architecture.md) describes them and how the layers fit together."
+msgstr "`native/` 中的 C 运行时、作为 MoonBit 原生桩编译的副本，以及 `js/` 中的 Node.js 插件都不是 MoonBit 包；[架构指南](architecture.md)描述了它们以及各层如何组合。"
+
+#: manual/index.md:52
+msgid "Reading paths"
+msgstr "阅读路径"
+
+#: manual/index.md:54
+msgid "If you want to run something, start with the [core tutorial](tutorial/core.md): it doubles, sums and scans an array on the native backend and submits a small workflow. To understand what a plan or a workflow means before you build one, read the [plan tutorial](tutorial/plan.md) and the [workflow tutorial](tutorial/workflow.md). If you already use the library, the API pages list every public name, starting with the [core API](api/core.md). Contributors should read the [architecture guide](architecture.md) and the design pages, in particular the [native backend design](design/backend/native.md) for the threading and memory model, then the specification above."
+msgstr "如果你想运行点什么，请从 [core 教程](tutorial/core.md)开始：它在原生后端上对数组做翻倍、求和与扫描，并提交一个小型工作流。若想在构建之前理解计划或工作流的含义，请阅读 [plan 教程](tutorial/plan.md)和 [workflow 教程](tutorial/workflow.md)。如果你已经在使用这个库，API 页面列出了每个公开名称，可从 [core API](api/core.md) 开始。贡献者应阅读[架构指南](architecture.md)和各设计页面，特别是关于线程和内存模型的[原生后端设计](design/backend/native.md)，然后阅读上面的规范。"
+
+#: manual/index.md:64
+msgid "Toolchain"
+msgstr "工具链"
+
+#: manual/index.md:66
+msgid "The module uses the `moon.mod` and `moon.pkg` manifest syntax and needs MoonBit `moonc` 0.10 or later. Running the facade needs the `native` target and a C compiler; the build links the C runtime from the package's native stubs and uses POSIX threads. Building the standalone C runtime with OpenMP uses CMake, and the Node.js addon uses `node-gyp`; `scripts/check-env.sh` checks for all of them."
+msgstr "本模块使用 `moon.mod` 与 `moon.pkg` 清单语法，需要 MoonBit `moonc` 0.10 或更高版本。运行门面需要 `native` 目标和 C 编译器；构建会从包的原生桩链接 C 运行时，并使用 POSIX 线程。以 OpenMP 构建独立的 C 运行时使用 CMake，Node.js 插件使用 `node-gyp`；`scripts/check-env.sh` 会检查所有这些工具。"
+
+#: manual/index.md:73
+msgid "Installation"
+msgstr "安装"
+
+#: manual/index.md:75
+msgid "Add the module to your project:"
+msgstr "把模块添加到你的项目中："
+
+#: manual/index.md:81
+msgid "Import the facade in the `moon.pkg` of a package that builds for the native target:"
+msgstr "在一个为原生目标构建的包的 `moon.pkg` 中导入门面："
+
+#: manual/index.md:92
+msgid "The facade is then available as `@luna_thread`. Packages that only build plans or workflows can import `Luna-Flow/luna_thread/plan` or `Luna-Flow/luna_thread/workflow` on any target."
+msgstr "之后即可通过 `@luna_thread` 使用门面。只构建计划或工作流的包可以在任何目标上导入 `Luna-Flow/luna_thread/plan` 或 `Luna-Flow/luna_thread/workflow`。"
+
+#: manual/tutorial/backend/js.md:1
+msgid "backend/js tutorial"
+msgstr "backend/js 教程"
+
+#: manual/tutorial/backend/js.md:3
+msgid "This short tutorial shows what the JavaScript backend package offers today and how to write code that is ready for it: the package names the JavaScript target, and the rest of the module already describes JavaScript policies and capabilities, but nothing executes on JavaScript yet."
+msgstr "这篇简短的教程展示 JavaScript 后端包目前提供什么，以及如何编写为它做好准备的代码：该包给出 JavaScript 目标，模块的其余部分已经能描述 JavaScript 的策略和能力，但还没有任何东西在 JavaScript 上执行。"
+
+#: manual/tutorial/backend/js.md:8
+#: manual/tutorial/backend/native.md:8
+#: manual/tutorial/core.md:8
+#: manual/tutorial/plan.md:7
+#: manual/tutorial/shared.md:7
+#: manual/tutorial/workflow.md:8
+msgid "Quick start"
+msgstr "快速开始"
+
+#: manual/tutorial/backend/js.md:10
+msgid "Import the package; it builds on every target:"
+msgstr "导入该包；它可以在所有目标上构建："
+
+#: manual/tutorial/backend/js.md:24
+#: manual/tutorial/backend/native.md:32
+#: manual/tutorial/core.md:46
+#: manual/tutorial/plan.md:28
+#: manual/tutorial/shared.md:27
+#: manual/tutorial/workflow.md:33
+msgid "Everyday tasks"
+msgstr "日常任务"
+
+#: manual/tutorial/backend/js.md:26
+msgid "Select a backend by target"
+msgstr "按目标选择后端"
+
+#: manual/tutorial/backend/js.md:28
+msgid "Code that chooses a backend at run time can use each backend package's `backend_target`:"
+msgstr "在运行时选择后端的代码可以使用各后端包的 `backend_target`："
+
+#: manual/tutorial/backend/js.md:45
+msgid "Check what the JavaScript backend would accept"
+msgstr "检查 JavaScript 后端会接受什么"
+
+#: manual/tutorial/backend/js.md:47
+msgid "Validation tells you that v1 rejects the JavaScript backend, so you can fall back to the native one:"
+msgstr "验证会告诉你 v1 拒绝 JavaScript 后端，因此你可以回退到原生后端："
+
+#: manual/tutorial/backend/js.md:64
+#: manual/tutorial/backend/native.md:99
+#: manual/tutorial/core.md:154
+#: manual/tutorial/plan.md:97
+#: manual/tutorial/shared.md:88
+#: manual/tutorial/workflow.md:119
+msgid "Going further"
+msgstr "进阶"
+
+#: manual/tutorial/backend/js.md:66
+msgid "The specification describes a JavaScript realization that passes typed array buffers to a Node.js addon. The addon in `js/` is built with `make js-install` and `make js-build` and currently exports only `runtimeName`; the [architecture guide](../../architecture.md) describes it."
+msgstr "规范描述了一种 JavaScript 实现，它把类型化数组缓冲区传给 Node.js 插件。`js/` 中的插件通过 `make js-install` 和 `make js-build` 构建，目前只导出 `runtimeName`；[架构指南](../../architecture.md)对它做了描述。"
+
+#: manual/tutorial/backend/js.md:71
+#: manual/tutorial/backend/native.md:108
+#: manual/tutorial/core.md:169
+#: manual/tutorial/plan.md:107
+#: manual/tutorial/shared.md:96
+#: manual/tutorial/workflow.md:130
+msgid "Common pitfalls"
+msgstr "常见陷阱"
+
+#: manual/tutorial/backend/js.md:73
+msgid "Do not call `@shared.javascript_policy()`: it aborts in v1."
+msgstr "不要调用 `@shared.javascript_policy()`：它在 v1 中会中止。"
+
+#: manual/tutorial/backend/js.md:74
+msgid "`RuntimeCapabilities::for_backend(JavaScript)` declares async and zero-copy support that does not exist yet."
+msgstr "`RuntimeCapabilities::for_backend(JavaScript)` 声明了尚不存在的异步和零拷贝支持。"
+
+#: manual/tutorial/backend/js.md:77
+#: manual/tutorial/backend/native.md:120
+#: manual/tutorial/core.md:188
+#: manual/tutorial/plan.md:118
+#: manual/tutorial/shared.md:106
+#: manual/tutorial/workflow.md:143
+msgid "Next steps"
+msgstr "下一步"
+
+#: manual/tutorial/backend/js.md:79
+msgid "The [backend/js API](../../api/backend/js.md) lists the three functions, and the [backend/js design](../../design/backend/js.md) explains why the package exists before the backend does."
+msgstr "[backend/js API](../../api/backend/js.md) 列出了这三个函数，[backend/js 设计](../../design/backend/js.md)解释了为什么这个包先于后端而存在。"
+
+#: manual/tutorial/backend/native.md:1
+msgid "backend/native tutorial"
+msgstr "backend/native 教程"
+
+#: manual/tutorial/backend/native.md:3
+msgid "This tutorial shows you how to call the native backend directly: run the typed kernels, reach the `Int64` and minimum and maximum kernels through the raw foreign functions, turn plans into native requests, and run a workflow on the C scheduler."
+msgstr "本教程展示如何直接调用原生后端：运行带类型的内核，通过原始外部函数使用 `Int64` 内核以及最小值和最大值内核，把计划转换为原生请求，并在 C 调度器上运行工作流。"
+
+#: manual/tutorial/backend/native.md:10
+msgid "Import the backend from a package that builds for the native target:"
+msgstr "在一个为原生目标构建的包中导入该后端："
+
+#: manual/tutorial/backend/native.md:20
+msgid "Compute prefix sums with three workers and chunks of two:"
+msgstr "用三个工作线程、块大小为二来计算前缀和："
+
+#: manual/tutorial/backend/native.md:34
+msgid "Find the minimum and maximum of `Int64` data"
+msgstr "求 `Int64` 数据的最小值和最大值"
+
+#: manual/tutorial/backend/native.md:36
+msgid "The raw functions take the length explicitly and return the result directly:"
+msgstr "原始函数显式接受长度，并直接返回结果："
+
+#: manual/tutorial/backend/native.md:47
+msgid "Write into your own output array"
+msgstr "写入你自己的输出数组"
+
+#: manual/tutorial/backend/native.md:49
+msgid "Map and scan write into an array you provide and return a status code, `0` on success:"
+msgstr "映射和扫描写入你提供的数组，并返回状态码，成功时为 `0`："
+
+#: manual/tutorial/backend/native.md:62
+msgid "Turn a plan into a request"
+msgstr "把计划转换为请求"
+
+#: manual/tutorial/backend/native.md:64
+msgid "The `*_from_plan` functions check a plan and translate it to the backend's typed request:"
+msgstr "`*_from_plan` 函数检查计划，并把它转换为后端的带类型请求："
+
+#: manual/tutorial/backend/native.md:80
+msgid "Run a workflow"
+msgstr "运行工作流"
+
+#: manual/tutorial/backend/native.md:82
+msgid "`submit_workflow_async` starts the graph on worker threads; `wait_workflow` blocks until it finishes. Because of the known bridge defect described in the [backend/native API](../../api/backend/native.md), this example is not compiled into the documentation tests:"
+msgstr "`submit_workflow_async` 在工作线程上启动图；`wait_workflow` 阻塞直到它完成。由于 [backend/native API](../../api/backend/native.md) 中描述的已知桥接缺陷，这个示例没有编译进文档测试："
+
+#: manual/tutorial/backend/native.md:101
+msgid "The kernels take the same three numbers $n$, $w$ and $c$, and the [native backend design](../../design/backend/native.md) derives how they split the input, why the results do not depend on $w$ and $c$ when they succeed, and when overflow is detected. To link the C runtime with OpenMP outside MoonBit, build `native/` with CMake as described in the [architecture guide](../../architecture.md)."
+msgstr "内核都接受相同的三个数 $n$、$w$ 和 $c$；[原生后端设计](../../design/backend/native.md)推导了它们如何划分输入、为什么成功时结果与 $w$ 和 $c$ 无关，以及何时检测到溢出。若要在 MoonBit 之外以 OpenMP 链接 C 运行时，请按[架构指南](../../architecture.md)所述用 CMake 构建 `native/`。"
+
+#: manual/tutorial/backend/native.md:110
+msgid "Every kernel needs $w \\ge \\lceil n / c \\rceil$, $w \\le n$ and $c \\le n$; otherwise it fails with `InvalidArgument` (or returns `0` for reductions)."
+msgstr "每个内核都需要 $w \\ge \\lceil n / c \\rceil$、$w \\le n$ 和 $c \\le n$；否则以 `InvalidArgument` 失败（归约则返回 `0`）。"
+
+#: manual/tutorial/backend/native.md:112
+msgid "The raw functions trust the `length` you pass. Passing more than the array holds reads past its end."
+msgstr "原始函数信任你传入的 `length`。传入的值大于数组实际长度时，会读到数组末尾之外。"
+
+#: manual/tutorial/backend/native.md:114
+msgid "The `moon` build does not enable OpenMP: the kernels run on the calling thread even though `supports_openmp()` returns `true`."
+msgstr "`moon` 构建没有启用 OpenMP：即使 `supports_openmp()` 返回 `true`，内核也在调用线程上运行。"
+
+#: manual/tutorial/backend/native.md:116
+msgid "Requests built from plans have empty buffers; nothing executes them yet."
+msgstr "由计划构建的请求带有空缓冲区；目前没有任何东西执行它们。"
+
+#: manual/tutorial/backend/native.md:117
+msgid "A workflow whose nodes block without being woken never finishes, and `wait_workflow` does not return."
+msgstr "若工作流的节点阻塞后从未被唤醒，它就永远不会结束，`wait_workflow` 也不会返回。"
+
+#: manual/tutorial/backend/native.md:122
+msgid "The [backend/native API](../../api/backend/native.md) lists every function, including the raw ones. The [backend/native design](../../design/backend/native.md) describes the threading and memory model. The [core tutorial](../core.md) shows the same kernels through the facade."
+msgstr "[backend/native API](../../api/backend/native.md) 列出了每个函数，包括原始函数。[backend/native 设计](../../design/backend/native.md)描述了线程和内存模型。[core 教程](../core.md)通过门面展示了同样的内核。"
+
+#: manual/tutorial/core.md:1
+msgid "core tutorial"
+msgstr "core 教程"
+
+#: manual/tutorial/core.md:3
+msgid "This tutorial shows you how to run parallel integer kernels from MoonBit with the `luna_thread` facade, how to describe the same work as a plan that the library validates, and how to build and check a workflow graph. Everything runs on the native target."
+msgstr "本教程展示如何借助 `luna_thread` 门面从 MoonBit 运行并行整数内核，如何把同样的工作描述为由库验证的计划，以及如何构建并检查工作流图。所有内容都在原生目标上运行。"
+
+#: manual/tutorial/core.md:10
+msgid "Add the module:"
+msgstr "添加模块："
+
+#: manual/tutorial/core.md:16
+msgid "Import the facade from a package that builds for the native target:"
+msgstr "在一个为原生目标构建的包中导入门面："
+
+#: manual/tutorial/core.md:26
+msgid "Sum an array with two workers that each take a chunk of up to three elements:"
+msgstr "用两个工作线程对数组求和，每个线程处理至多三个元素的块："
+
+#: manual/tutorial/core.md:40
+msgid "`moon test --target native` reports:"
+msgstr "`moon test --target native` 报告："
+
+#: manual/tutorial/core.md:48
+msgid "Choose the worker count and chunk size"
+msgstr "选择工作线程数和块大小"
+
+#: manual/tutorial/core.md:50
+msgid "The kernels split $n$ elements into $\\lceil n / c \\rceil$ chunks of at most $c$ elements and need one worker per chunk, so pick $c$ first and then $w = \\lceil n / c \\rceil$. Both must also be at most $n$."
+msgstr "内核把 $n$ 个元素分成 $\\lceil n / c \\rceil$ 个至多 $c$ 个元素的块，每个块需要一个工作线程，所以先选 $c$，再取 $w = \\lceil n / c \\rceil$。两者都不能超过 $n$。"
+
+#: manual/tutorial/core.md:68
+msgid "Double the elements and handle overflow"
+msgstr "把元素翻倍并处理溢出"
+
+#: manual/tutorial/core.md:70
+msgid "`execute_map_i32` doubles every element and reports overflow as an error instead of wrapping around:"
+msgstr "`execute_map_i32` 把每个元素翻倍，并把溢出作为错误报告，而不是回绕："
+
+#: manual/tutorial/core.md:88
+msgid "Compute prefix sums"
+msgstr "计算前缀和"
+
+#: manual/tutorial/core.md:90
+msgid "`execute_scan_sum_i32` returns the running totals:"
+msgstr "`execute_scan_sum_i32` 返回累计总和："
+
+#: manual/tutorial/core.md:102
+msgid "Describe the work as a plan and validate it"
+msgstr "把工作描述为计划并验证它"
+
+#: manual/tutorial/core.md:104
+msgid "A plan records what should run without running it. Validation tells you whether the v1 runtime supports it:"
+msgstr "计划记录应该运行什么，但不运行它。验证会告诉你 v1 运行时是否支持它："
+
+#: manual/tutorial/core.md:123
+msgid "Build and check a workflow"
+msgstr "构建并检查工作流"
+
+#: manual/tutorial/core.md:125
+msgid "A workflow is a graph of tasks. This one spawns, computes the plan above and joins, with edges that fix the order:"
+msgstr "工作流是由任务组成的图。这个工作流先派生，再计算上面的计划，最后汇合，并用边固定顺序："
+
+#: manual/tutorial/core.md:150
+msgid "This needs `\"Luna-Flow/luna_thread/workflow\"` in the imports as well, for `Edge`. `submit_workflow` validates and records the submission; it does not run the graph."
+msgstr "为了使用 `Edge`，导入中还需要 `\"Luna-Flow/luna_thread/workflow\"`。`submit_workflow` 验证并记录提交；它不会运行图。"
+
+#: manual/tutorial/core.md:156
+msgid "To run a workflow's synchronisation protocol on real threads, submit it with `submit_workflow_async`, then `wait_workflow` and `drop_workflow`. The asynchronous path is experimental because of a known defect in the C bridge; read the warning in the [core API](../api/core.md) before you use it."
+msgstr "要在真实线程上运行工作流的同步协议，请用 `submit_workflow_async` 提交，然后调用 `wait_workflow` 和 `drop_workflow`。由于 C 桥接层的一个已知缺陷，异步路径是实验性的；使用前请阅读 [core API](../api/core.md) 中的警告。"
+
+#: manual/tutorial/core.md:161
+msgid "For other element types and kernels, `backend/native` exposes the raw C entry points, including `Int64` and minimum and maximum reductions; see the [native backend tutorial](backend/native.md). For finer control over plans and graphs, use the `plan` and `workflow` packages directly: the [plan tutorial](plan.md) and the [workflow tutorial](workflow.md) build plans and graphs field by field. Packages that only describe work can import those two packages and build for every target."
+msgstr "对于其他元素类型和内核，`backend/native` 暴露了原始的 C 入口，包括 `Int64` 以及最小值和最大值归约；参见[原生后端教程](backend/native.md)。若要更精细地控制计划和图，请直接使用 `plan` 和 `workflow` 包：[plan 教程](plan.md)和 [workflow 教程](workflow.md)逐字段地构建计划和图。只描述工作的包可以导入这两个包，并在所有目标上构建。"
+
+#: manual/tutorial/core.md:171
+msgid "The defaults `worker_count=1` and `chunk_size=1` only work for one-element inputs. For longer inputs the kernels return `Err(InvalidArgument)`, and `execute_reduce_sum_i32` returns `0`."
+msgstr "默认值 `worker_count=1` 和 `chunk_size=1` 只适用于单元素输入。对于更长的输入，内核返回 `Err(InvalidArgument)`，`execute_reduce_sum_i32` 返回 `0`。"
+
+#: manual/tutorial/core.md:174
+msgid "`execute_reduce_sum_i32` returns `0` both for a sum of zero and for any failure. Check the input and parameters yourself, or use the scan and take the last element when you need to tell them apart."
+msgstr "`execute_reduce_sum_i32` 在和为零以及任何失败时都返回 `0`。需要区分二者时，请自行检查输入和参数，或者改用扫描并取最后一个元素。"
+
+#: manual/tutorial/core.md:177
+msgid "Whether an `Int` sum overflows can depend on the chunking, because partial sums are checked: `[-1, 0, 2147483647, 1]` sums with `chunk_size=4` and fails with `chunk_size=2`."
+msgstr "由于部分和会被检查，`Int` 求和是否溢出可能取决于分块方式：`[-1, 0, 2147483647, 1]` 在 `chunk_size=4` 时能求和，在 `chunk_size=2` 时却失败。"
+
+#: manual/tutorial/core.md:180
+msgid "`is_ready` does not check the worker-per-chunk condition, so a ready plan can still be rejected by a kernel."
+msgstr "`is_ready` 不检查“每块一个工作线程”的条件，因此就绪的计划仍可能被内核拒绝。"
+
+#: manual/tutorial/core.md:182
+msgid "`javascript_policy()` aborts in v1, and `make_policy` rejects the JavaScript backend and asynchronous mode."
+msgstr "`javascript_policy()` 在 v1 中会中止，`make_policy` 会拒绝 JavaScript 后端和异步模式。"
+
+#: manual/tutorial/core.md:184
+msgid "`Workflow::add_node` and the other builders change the workflow in place."
+msgstr "`Workflow::add_node` 和其他构建方法会就地修改工作流。"
+
+#: manual/tutorial/core.md:185
+msgid "The facade builds only for the native target. Packages that import it need `supported_targets = \"native\"` or a native-only build."
+msgstr "门面只能在原生目标上构建。导入它的包需要 `supported_targets = \"native\"`，或者只在原生目标上构建。"
+
+#: manual/tutorial/core.md:190
+msgid "The [core API](../api/core.md) lists every facade function with its exact semantics. The [core design](../design/core.md) explains why the facade is a set of free functions with defaults, and the [native backend design](../design/backend/native.md) explains how the kernels and the workflow scheduler use threads and memory. The [architecture guide](../architecture.md) shows how the packages and the C runtime fit together."
+msgstr "[core API](../api/core.md) 列出了每个门面函数及其精确语义。[core 设计](../design/core.md)解释了为什么门面是一组带默认值的自由函数，[原生后端设计](../design/backend/native.md)解释了内核和工作流调度器如何使用线程和内存。[架构指南](../architecture.md)展示了各个包和 C 运行时如何组合在一起。"
+
+#: manual/tutorial/plan.md:1
+msgid "plan tutorial"
+msgstr "plan 教程"
+
+#: manual/tutorial/plan.md:3
+msgid "This tutorial shows you how to describe a data-parallel operation as a `Plan`, check it against the v1 subset, and read the reasons when a plan is rejected. Plans are plain data, so this package works on every target."
+msgstr "本教程展示如何把数据并行操作描述为 `Plan`，按 v1 子集检查它，以及在计划被拒绝时阅读原因。计划是普通数据，因此这个包可以在所有目标上使用。"
+
+#: manual/tutorial/plan.md:9
+msgid "Import the package, and `shared` for policies:"
+msgstr "导入该包，以及用于策略的 `shared`："
+
+#: manual/tutorial/plan.md:18
+msgid "Build a map plan over eight `Int` values and validate it:"
+msgstr "构建一个作用于八个 `Int` 值的映射计划并验证它："
+
+#: manual/tutorial/plan.md:30
+msgid "Give a plan a policy"
+msgstr "为计划指定策略"
+
+#: manual/tutorial/plan.md:32
+msgid "The default policy uses one worker and chunk size one. Build a parallel policy with `make_execution_policy` and pass it to the builder:"
+msgstr "默认策略使用一个工作线程，块大小为一。用 `make_execution_policy` 构建一个并行策略，并把它传给构建函数："
+
+#: manual/tutorial/plan.md:45
+msgid "Read why a plan is rejected"
+msgstr "阅读计划被拒绝的原因"
+
+#: manual/tutorial/plan.md:47
+msgid "`validate` returns all problems at once, so you can report them together:"
+msgstr "`validate` 一次返回所有问题，因此你可以把它们一起报告："
+
+#: manual/tutorial/plan.md:61
+msgid "The fourth issue is `WorkerCountExceedsInput`: eight workers for four elements."
+msgstr "第四个问题是 `WorkerCountExceedsInput`：四个元素却有八个工作线程。"
+
+#: manual/tutorial/plan.md:64
+msgid "Build an unusual plan by hand"
+msgstr "手工构建不寻常的计划"
+
+#: manual/tutorial/plan.md:66
+msgid "`Plan::new` stores whatever you give it, which is how you test validation rules such as the ordering requirement of scans:"
+msgstr "`Plan::new` 会保存你给它的任何东西，借此可以测试各种验证规则，例如扫描的顺序要求："
+
+#: manual/tutorial/plan.md:83
+msgid "Inspect a plan"
+msgstr "查看计划"
+
+#: manual/tutorial/plan.md:85
+msgid "Accessors return each field, and the kind predicates save a match:"
+msgstr "访问器返回各个字段，种类谓词则省去了一次模式匹配："
+
+#: manual/tutorial/plan.md:99
+msgid "Plans become executable through `backend/native`, whose `map_request_from_plan`, `reduce_request_from_plan` and `scan_request_from_plan` turn a valid plan into a typed request, and through workflows, where `@workflow.compute_node` embeds a plan in a task graph and `@workflow.validate` reports its issues as `InvalidComputePlan`. Write library code against `Plan` and `ValidationIssue` rather than against the facade, so it builds for every target."
+msgstr "计划通过 `backend/native` 变得可执行：它的 `map_request_from_plan`、`reduce_request_from_plan` 和 `scan_request_from_plan` 把有效计划转换为带类型的请求；也可以通过工作流：`@workflow.compute_node` 把计划嵌入任务图，`@workflow.validate` 把计划的问题报告为 `InvalidComputePlan`。库代码应基于 `Plan` 和 `ValidationIssue` 而不是门面来编写，这样它可以在所有目标上构建。"
+
+#: manual/tutorial/plan.md:109
+msgid "`is_runnable` does not check that there is one worker per chunk ($w \\ge \\lceil n / c \\rceil$), which the native kernels require."
+msgstr "`is_runnable` 不检查原生内核所要求的“每块一个工作线程”（$w \\ge \\lceil n / c \\rceil$）。"
+
+#: manual/tutorial/plan.md:111
+msgid "`reduce` and `scan` always preserve input order; to try other orderings use `Plan::new`."
+msgstr "`reduce` 和 `scan` 总是保持输入顺序；要尝试其他顺序，请使用 `Plan::new`。"
+
+#: manual/tutorial/plan.md:113
+msgid "A scan plan has no kernel; the native scan is always a prefix sum."
+msgstr "扫描计划没有内核；原生扫描总是前缀和。"
+
+#: manual/tutorial/plan.md:114
+msgid "The enumerations are read-only outside the package: write `@plan.i32_type()`, not `@plan.I32`, when you build a value. Matching on `@plan.I32` works."
+msgstr "枚举类型在包外是只读的：构建值时请写 `@plan.i32_type()`，而不是 `@plan.I32`。对 `@plan.I32` 做模式匹配是可以的。"
+
+#: manual/tutorial/plan.md:120
+msgid "The [plan API](../api/plan.md) lists every rule of `validate`. The [plan design](../design/plan.md) explains what each plan kind computes and why scans need ordered input. The [workflow tutorial](workflow.md) puts plans into task graphs."
+msgstr "[plan API](../api/plan.md) 列出了 `validate` 的每条规则。[plan 设计](../design/plan.md)解释了每种计划计算什么，以及为什么扫描需要有序的输入。[workflow 教程](workflow.md)把计划放进任务图。"
+
+#: manual/tutorial/shared.md:1
+msgid "shared tutorial"
+msgstr "shared 教程"
+
+#: manual/tutorial/shared.md:3
+msgid "This tutorial shows you how to build and check execution policies, ask what a backend declares it can do, and convert native status codes. These are the values every other package of `luna_thread` takes as input."
+msgstr "本教程展示如何构建和检查执行策略、查询后端声明自己能做什么，以及转换原生状态码。这些是 `luna_thread` 其他所有包都接受的输入值。"
+
+#: manual/tutorial/shared.md:9
+msgid "Import the package:"
+msgstr "导入该包："
+
+#: manual/tutorial/shared.md:17
+msgid "Build a policy with four workers and chunks of 256 elements:"
+msgstr "构建一个有四个工作线程、块大小为 256 个元素的策略："
+
+#: manual/tutorial/shared.md:29
+msgid "Handle a rejected policy"
+msgstr "处理被拒绝的策略"
+
+#: manual/tutorial/shared.md:31
+msgid "`make_execution_policy` returns the first problem it finds, so you can report it without aborting:"
+msgstr "`make_execution_policy` 返回它发现的第一个问题，因此你可以报告它而不必中止："
+
+#: manual/tutorial/shared.md:55
+msgid "Re-check a stored policy"
+msgstr "重新检查已存储的策略"
+
+#: manual/tutorial/shared.md:57
+msgid "`validate_policy` lists every issue of a policy you already have, for example one read back from a workflow:"
+msgstr "`validate_policy` 列出你已有策略的所有问题，例如从工作流中读回的策略："
+
+#: manual/tutorial/shared.md:67
+msgid "Ask what a backend declares"
+msgstr "查询后端的声明"
+
+#: manual/tutorial/shared.md:78
+msgid "Convert status codes"
+msgstr "转换状态码"
+
+#: manual/tutorial/shared.md:90
+msgid "Policies flow into `@plan` builders, `@workflow.Workflow::new` and the facade's `make_policy`. The integer-coded request records (`NativeBuffer`, `NativeMapRequest` and the others) mirror the C structs and are useful when you write your own bindings to the C runtime; the [architecture guide](../architecture.md) lists the codes."
+msgstr "策略会流入 `@plan` 的构建函数、`@workflow.Workflow::new` 以及门面的 `make_policy`。整数编码的请求记录（`NativeBuffer`、`NativeMapRequest` 等）镜像了 C 结构体，在你为 C 运行时编写自己的绑定时很有用；[架构指南](../architecture.md)列出了这些编码。"
+
+#: manual/tutorial/shared.md:98
+msgid "`ExecutionPolicy::new` and `javascript_policy` abort on a rejected policy; `javascript_policy` always aborts in v1. Use `make_execution_policy` when the arguments come from outside."
+msgstr "`ExecutionPolicy::new` 和 `javascript_policy` 在策略被拒绝时会中止；`javascript_policy` 在 v1 中总是中止。参数来自外部时，请使用 `make_execution_policy`。"
+
+#: manual/tutorial/shared.md:101
+msgid "`RuntimeCapabilities::for_backend` is a fixed table. The JavaScript row does not mean the JavaScript backend runs anything."
+msgstr "`RuntimeCapabilities::for_backend` 是一张固定的表。JavaScript 一行并不意味着 JavaScript 后端会运行任何东西。"
+
+#: manual/tutorial/shared.md:103
+msgid "`native_status_from_code` maps every unknown code, including the workflow statuses 8 to 14, to `InvalidArgument`. Keep the raw code when you need it."
+msgstr "`native_status_from_code` 把每个未知编码（包括工作流状态码 8 到 14）映射为 `InvalidArgument`。需要原始编码时请保留它。"
+
+#: manual/tutorial/shared.md:108
+msgid "The [shared API](../api/shared.md) lists every value, and the [shared design](../design/shared.md) explains the policy rules and the status code mapping. The [plan tutorial](plan.md) uses policies in plans."
+msgstr "[shared API](../api/shared.md) 列出了每个值，[shared 设计](../design/shared.md)解释了策略规则和状态码映射。[plan 教程](plan.md)在计划中使用策略。"
+
+#: manual/tutorial/workflow.md:1
+msgid "workflow tutorial"
+msgstr "workflow 教程"
+
+#: manual/tutorial/workflow.md:3
+msgid "This tutorial shows you how to describe concurrent work as a task graph: you declare capabilities, add nodes that use them, order the nodes with edges, and let `validate` check the result before anything runs. The package works on every target."
+msgstr "本教程展示如何把并发工作描述为任务图：声明能力，添加使用它们的节点，用边为节点排序，并在任何东西运行之前让 `validate` 检查结果。这个包可以在所有目标上使用。"
+
+#: manual/tutorial/workflow.md:10
+msgid "Import the package, and `shared` and `plan` when you need policies and compute nodes:"
+msgstr "导入该包；需要策略和计算节点时，再导入 `shared` 和 `plan`："
+
+#: manual/tutorial/workflow.md:21
+msgid "A fork-join graph with two nodes:"
+msgstr "一个只有两个节点的派生-汇合图："
+
+#: manual/tutorial/workflow.md:35
+msgid "Pass work through a channel"
+msgstr "通过通道传递工作"
+
+#: manual/tutorial/workflow.md:37
+msgid "Nodes that communicate name a capability by id. A channel is used with `MoveOnly` access, and the edge from `send` to `recv` makes the receive wait for the send:"
+msgstr "相互通信的节点通过 id 指定能力。通道以 `MoveOnly` 访问模式使用，从 `send` 到 `recv` 的边使接收等待发送完成："
+
+#: manual/tutorial/workflow.md:58
+msgid "Protect a critical section"
+msgstr "保护临界区"
+
+#: manual/tutorial/workflow.md:60
+msgid "A mutex is used with `SynchronizeOnly` access by a `Lock` and an `Unlock` node:"
+msgstr "互斥锁以 `SynchronizeOnly` 访问模式，由一个 `Lock` 节点和一个 `Unlock` 节点使用："
+
+#: manual/tutorial/workflow.md:82
+msgid "The write names capability `2`, which the graph does not declare. Adding an `AtomicCell` with `ReadWrite` access as capability `2` fixes it."
+msgstr "写入节点指定了能力 `2`，而图中没有声明它。把一个访问模式为 `ReadWrite` 的 `AtomicCell` 作为能力 `2` 加入即可修正。"
+
+#: manual/tutorial/workflow.md:85
+msgid "Embed a plan"
+msgstr "嵌入计划"
+
+#: manual/tutorial/workflow.md:87
+msgid "A compute node carries a plan, and the plan's own issues are reported with the node id:"
+msgstr "计算节点携带一个计划，计划自身的问题会连同节点 id 一起报告："
+
+#: manual/tutorial/workflow.md:104
+msgid "Submit a workflow"
+msgstr "提交工作流"
+
+#: manual/tutorial/workflow.md:106
+msgid "`submit` validates and records whether the chosen backend accepts the graph:"
+msgstr "`submit` 验证图，并记录所选后端是否接受它："
+
+#: manual/tutorial/workflow.md:121
+msgid "To run a graph, pass it to `@native.submit_workflow_async` (or the facade's `submit_workflow_async`) on the native target; the [native backend tutorial](backend/native.md) shows how, and the [native backend design](../design/backend/native.md) explains which node kinds can block and what wakes them. Because `validate` returns every issue, a tool can show all problems of a graph at once; the predicates `is_missing_capability`, `is_cyclic_dependency`, `is_invalid_compute_plan` and `is_unsupported_shared_write` group the common ones."
+msgstr "要运行图，请在原生目标上把它传给 `@native.submit_workflow_async`（或门面的 `submit_workflow_async`）；[原生后端教程](backend/native.md)展示了做法，[原生后端设计](../design/backend/native.md)解释了哪些节点种类会阻塞以及什么会唤醒它们。由于 `validate` 返回所有问题，工具可以一次展示图的所有问题；谓词 `is_missing_capability`、`is_cyclic_dependency`、`is_invalid_compute_plan` 和 `is_unsupported_shared_write` 对常见问题做了分组。"
+
+#: manual/tutorial/workflow.md:132
+msgid "`add_capability`, `add_node` and `add_edge` change the workflow in place. Two variables bound to the same workflow see the same nodes."
+msgstr "`add_capability`、`add_node` 和 `add_edge` 会就地修改工作流。绑定到同一个工作流的两个变量看到的是同样的节点。"
+
+#: manual/tutorial/workflow.md:134
+msgid "`validate` misses cycles of three or more nodes when some node has no incoming edge; the native runtime rejects them on submission."
+msgstr "当某个节点没有入边时，`validate` 会漏掉三个或更多节点构成的环；原生运行时会在提交时拒绝它们。"
+
+#: manual/tutorial/workflow.md:136
+msgid "A `Recv`, `Lock` or `Send` that can run before its partner may block forever on the native runtime. Order such nodes with edges."
+msgstr "可能先于其配对节点运行的 `Recv`、`Lock` 或 `Send` 可能会在原生运行时上永远阻塞。请用边为这类节点排序。"
+
+#: manual/tutorial/workflow.md:138
+msgid "A single `Barrier` node in a group fails at run time with status `14`; a barrier needs at least two nodes at the same depth."
+msgstr "组内只有一个 `Barrier` 节点时，会在运行时以状态码 `14` 失败；一个屏障需要在同一深度上至少有两个节点。"
+
+#: manual/tutorial/workflow.md:140
+msgid "`RwLock` and `Semaphore` pass `validate` but are rejected by the native runtime."
+msgstr "`RwLock` 和 `Semaphore` 能通过 `validate`，但会被原生运行时拒绝。"
+
+#: manual/tutorial/workflow.md:145
+msgid "The [workflow API](../api/workflow.md) lists every check of `validate`. The [workflow design](../design/workflow.md) gives the graph model and the cycle checks. The [core tutorial](core.md) builds workflows through the facade."
+msgstr "[workflow API](../api/workflow.md) 列出了 `validate` 的每项检查。[workflow 设计](../design/workflow.md)给出了图模型和环检查。[core 教程](core.md)通过门面构建工作流。"
+
+#~ msgid "A MoonBit library for parallel execution through native and JavaScript FFI runtimes, defined by a normative specification."
+#~ msgstr "一个通过原生与 JavaScript FFI 运行时实现并行执行的 MoonBit 库，由一份规范性规格定义。"
+
+#~ msgid "backend is part of Luna-Flow/luna_thread. This page should describe the public types, constructors, functions, traits, and observable semantics that are implemented in the current branch."
+#~ msgstr "backend 属于 Luna-Flow/luna_thread。本页描述当前分支已经实现的公开类型、构造器、函数、trait 以及可观察语义。"
+
+#~ msgid "Scope"
+#~ msgstr "范围"
+
+#~ msgid "Source boundary: `native and js`"
+#~ msgstr "源码边界：`native and js`"
+
+#~ msgid "Audience: package users, integrators, and maintainers who need the exported contract"
+#~ msgstr "读者：需要依赖公开契约的使用者、集成方和维护者"
+
+#~ msgid "Public Contract"
+#~ msgstr "公开契约"
+
+#~ msgid "Describe only exported behavior that exists today."
+#~ msgstr "只描述今天已经存在的导出行为。"
+
+#~ msgid "Call out backend or subtype differences when they are observable."
+#~ msgstr "如果后端、子类型或执行路径存在可观察差异，要明确写出。"
+
+#~ msgid "Keep naming, argument ordering, and error semantics aligned with sibling modules when possible."
+#~ msgstr "在可能的情况下，与同类模块保持命名、参数顺序和错误语义一致。"
+
+#~ msgid "facade API"
+#~ msgstr "facade API 参考"
+
+#~ msgid "facade is part of Luna-Flow/luna_thread. This page should describe the public types, constructors, functions, traits, and observable semantics that are implemented in the current branch."
+#~ msgstr "facade 属于 Luna-Flow/luna_thread。本页描述当前分支已经实现的公开类型、构造器、函数、trait 以及可观察语义。"
+
+#~ msgid "Source boundary: `luna_thread`"
+#~ msgstr "源码边界：`luna_thread`"
+
+#~ msgid "This subsystem covers the native C runtime scaffold and the Node.js addon scaffold used to realize the FFI design."
+#~ msgstr "该子系统涵盖用于实现 FFI 设计的原生 C 运行时脚手架和 Node.js 插件脚手架。"
+
+#~ msgid "Responsibilities"
+#~ msgstr "职责"
+
+#~ msgid "Keep the code and docs aligned around `native and js`."
+#~ msgstr "让代码和文档围绕 `native and js` 保持一致。"
+
+#~ msgid "Preserve the real execution model instead of smoothing over important internal differences."
+#~ msgstr "如实保留执行模型，不掩盖重要的内部差异。"
+
+#~ msgid "Note extension points, invariants, and limitations that maintainers must keep stable."
+#~ msgstr "记录维护者必须稳定保留的扩展点、不变量和限制。"
+
+#~ msgid "Maintenance Notes"
+#~ msgstr "维护说明"
+
+#~ msgid "Update this page whenever the module boundary, core algorithm, or observable semantics change."
+#~ msgstr "只要模块边界、核心算法或可观察语义变化，就更新本页。"
+
+#~ msgid "If the module is intentionally incomplete, say so here instead of documenting speculative APIs."
+#~ msgstr "如果模块仍然不完整，也要明确写出，不要伪造未来 API。"
+
+#~ msgid "facade Design"
+#~ msgstr "facade 设计"
+
+#~ msgid "Use this page to explain the structural responsibilities and implementation constraints of this module. facade in Luna-Flow/luna_thread."
+#~ msgstr "本页用于说明这个模块的结构职责和实现约束。 这里聚焦 Luna-Flow/luna_thread 中的 facade。"
+
+#~ msgid "Keep the code and docs aligned around `luna_thread`."
+#~ msgstr "让代码和文档围绕 `luna_thread` 保持一致。"
+
+#~ msgid "luna_thread is a MoonBit library workspace for parallel execution through the foreign function interface. MoonBit code builds a workflow graph, and a native runtime executes it; a JavaScript compatibility path reaches the same runtime through an N-API addon."
+#~ msgstr "luna_thread 是一个通过外部函数接口（FFI）进行并行执行的 MoonBit 库工作区。MoonBit 代码构造 workflow 图，由原生运行时执行；JavaScript 兼容路径则通过 N-API 插件访问同一个运行时。"
+
+#~ msgid "Realization paths"
+#~ msgstr "实现路径"
+
+#~ msgid "MoonBit facade → MoonBit C FFI → C wrapper → C runtime"
+#~ msgstr "MoonBit facade → MoonBit C FFI → C 包装层 → C 运行时"
+
+#~ msgid "MoonBit facade → MoonBit JS FFI → JS wrapper → N-API addon → C runtime"
+#~ msgstr "MoonBit facade → MoonBit JS FFI → JS 包装层 → N-API 插件 → C 运行时"
+
+#~ msgid "**`facade`** (`luna_thread/`): the root MoonBit package that applications import. See the [API reference](api/facade.md), the [design notes](design/facade.md) and the [tutorial](tutorial/facade.md)."
+#~ msgstr "**`facade`**（`luna_thread/`）：应用程序导入的 MoonBit 根包。参见 [API 参考](api/facade.md)、[设计说明](design/facade.md)和[教程](tutorial/facade.md)。"
+
+#~ msgid "**`backend`** (`native/`, `js/` and `luna_thread/backend/`): the native C runtime and the Node.js addon that realize the FFI design. See the [API reference](api/backend.md), the [design notes](design/backend.md) and the [tutorial](tutorial/backend.md)."
+#~ msgstr "**`backend`**（`native/`、`js/` 与 `luna_thread/backend/`）：实现 FFI 设计的原生 C 运行时和 Node.js 插件。参见 [API 参考](api/backend.md)、[设计说明](design/backend.md)和[教程](tutorial/backend.md)。"
+
+#~ msgid "The specification is the authoritative design narrative for the workspace: it defines the workflow graph, capabilities, ownership transfer and separation-safe execution that the facade and the backends must realize. The English text is normative; the Chinese text is a strict mirror of it."
+#~ msgstr "该规格是本工作区的权威设计叙述：它定义了 facade 与各后端必须实现的 workflow 图、capability、所有权转移和分离安全执行。英文文本具有规范效力，中文文本是其严格镜像。"
+
+#~ msgid "Use this page as the starting point for practical workflows around this module. backend in Luna-Flow/luna_thread."
+#~ msgstr "本页用于说明这个模块的实际使用路径。 这里聚焦 Luna-Flow/luna_thread 中的 backend。"
+
+#~ msgid "Suggested Flow"
+#~ msgstr "建议阅读顺序"
+
+#~ msgid "Read the repository README and the backend API reference."
+#~ msgstr "先看仓库 README 和 backend 的 API 文档。"
+
+#~ msgid "Start from the constructors or entry points under `native and js`."
+#~ msgstr "从 `native and js` 中的构造入口或主入口开始。"
+
+#~ msgid "Validate behavior with the existing tests or examples before depending on edge-case semantics."
+#~ msgstr "在依赖边界行为之前，先结合已有测试或示例验证语义。"
+
+#~ msgid "Practical Guidance"
+#~ msgstr "实践建议"
+
+#~ msgid "Prefer the documented entry points over internal helpers."
+#~ msgstr "优先使用已文档化的入口，而不是内部辅助函数。"
+
+#~ msgid "Record runtime, numeric, or proof-state assumptions explicitly in downstream code."
+#~ msgstr "下游代码里显式记录运行时、数值或证明状态前提。"
+
+#~ msgid "facade Tutorial"
+#~ msgstr "facade 教程"
+
+#~ msgid "Begin with `luna_thread/luna_thread.mbt` and the package tests to understand the exposed MoonBit facade."
+#~ msgstr "从 `luna_thread/luna_thread.mbt` 和包测试入手，了解对外暴露的 MoonBit facade。"
+
+#~ msgid "Read the repository README and the facade API reference."
+#~ msgstr "先看仓库 README 和 facade 的 API 文档。"
+
+#~ msgid "Start from the constructors or entry points under `luna_thread`."
+#~ msgstr "从 `luna_thread` 中的构造入口或主入口开始。"
 
 #~ msgid "spec is part of Luna-Flow/luna_thread. This page should describe the public types, constructors, functions, traits, and observable semantics that are implemented in the current branch."
 #~ msgstr "spec 属于 Luna-Flow/luna_thread。本页描述当前分支已经实现的公开类型、构造器、函数、trait 以及可观察语义。"
