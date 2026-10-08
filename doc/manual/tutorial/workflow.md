@@ -1,16 +1,29 @@
 # workflow tutorial
 
-This tutorial shows you how to describe concurrent work as a task graph: you
-declare capabilities, add nodes that use them, order the nodes with edges, and
-let `validate` check the result before anything runs. The package works on
-every target.
+This tutorial gets you describing concurrent work as a task graph: you declare
+capabilities, add nodes that use them, order the nodes with edges, and let
+`validate` check the result before anything runs. The package works on every
+target.
+
+| I want to | Use |
+| --- | --- |
+| start an empty graph | `@workflow.Workflow::new(label, policy?)` |
+| declare a channel, mutex, barrier or shared value | `@workflow.Capability::new(id, label, kind, access)` |
+| add a step | `@workflow.spawn_node`, `send_node`, `lock_node`, ... or `compute_node` with a plan |
+| say that one step runs after another | `@workflow.Edge::new(from, to, kind)` |
+| check the graph | `@workflow.validate(graph)` or `@workflow.is_ready(graph)` |
+| run it on threads | `@native.submit_workflow_async(graph)` on the native target |
 
 ## Quick start
 
-Import the package, and `shared` and `plan` when you need policies and compute
-nodes:
+Add the module, then import the package, and `shared` and `plan` when you need
+policies and compute nodes:
 
-```text
+```bash
+moon add Luna-Flow/luna_thread@0.1.0
+```
+
+```moonbit nocheck
 import {
   "Luna-Flow/luna_thread/plan",
   "Luna-Flow/luna_thread/shared",
@@ -135,8 +148,15 @@ can show all problems of a graph at once; the predicates `is_missing_capability`
   incoming edge; the native runtime rejects them on submission.
 - A `Recv`, `Lock` or `Send` that can run before its partner may block forever
   on the native runtime. Order such nodes with edges.
+- A `Signal` wakes only a `Wait` that is already blocked. Do not join them by
+  an edge: `Wait -> Signal` deadlocks, because the `Wait` completes only after
+  the `Signal` ran, and `Signal -> Wait` loses the signal. Make the `Wait`
+  ready first instead, for example by putting another node in front of the
+  `Signal`.
 - A single `Barrier` node in a group fails at run time with status `14`; a
-  barrier needs at least two nodes at the same depth.
+  barrier needs at least two nodes at the same depth. Use one barrier
+  capability per group: two groups at different depths that share a capability
+  share its arrival counter, and the native runtime can then hang.
 - `RwLock` and `Semaphore` pass `validate` but are rejected by the native
   runtime.
 

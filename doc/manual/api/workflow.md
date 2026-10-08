@@ -1,13 +1,32 @@
 # workflow API
 
-The package `Luna-Flow/luna_thread/workflow`, imported as `@workflow`,
-describes a task graph: a set of capabilities (channels, locks, barriers and
-shared data), a set of nodes that compute or synchronise, and dependency edges
-between nodes. It validates the graph and records submissions. It executes
-nothing itself and builds on every target; `backend/native` runs workflows.
+## Purpose
 
-The enumerations of this package are read-only outside it: match on their
-constructors, but build values with the functions below.
+The package `Luna-Flow/luna_thread/workflow` describes a task graph: a set of
+capabilities (channels, locks, barriers and shared data), a set of nodes that
+compute or synchronise, and dependency edges between nodes. It validates the
+graph and records submissions. It executes nothing itself and builds on every
+target; `backend/native` runs workflows.
+
+The enumerations and records of this package are read-only outside it: match
+on their constructors and read their fields, but build values with the
+functions below. The graph model and the reasoning behind the checks are in the
+[workflow design](../design/workflow.md).
+
+## Importing
+
+Add the package, and `plan` and `shared` for compute nodes and policies, to
+your `moon.pkg`:
+
+```moonbit nocheck
+import {
+  "Luna-Flow/luna_thread/plan",
+  "Luna-Flow/luna_thread/shared",
+  "Luna-Flow/luna_thread/workflow",
+}
+```
+
+The examples on this page call them as `@workflow`, `@plan` and `@shared`.
 
 ## Capabilities
 
@@ -359,13 +378,44 @@ The checks, in the order their issues appear:
    compute node's plan.
 4. For each edge: `SelfEdge` when `from == to`, `InvalidNodeReference` for each
    endpoint that is not a node, and `InvalidDependency` when either is not.
-5. `CyclicDependency` when the graph has no node without incoming edges, or
-   when two edges point in opposite directions between the same nodes.
+5. `CyclicDependency` when the graph has nodes but none without incoming
+   edges (edges from unknown ids count), or when two edges point in opposite
+   directions between the same nodes (a self edge counts as such a pair).
 
-The cycle check in step 5 does not find every cycle: a cycle of three or more
-nodes that is reachable from a source passes. The native runtime checks for
-cycles completely and rejects such a graph when it is submitted. The
-[workflow design](../design/workflow.md) discusses both checks.
+Step 1 re-checks the stored policy, but a policy built outside `shared` always
+passes, so `InvalidPolicy` does not occur in practice.
+
+> [!WARNING]
+> The cycle check in step 5 is incomplete. As soon as one node has no incoming
+> edge, a cycle of three or more nodes passes, even one that is not connected
+> to that node: nodes `1`, `2`, `3`, `4` with edges `2 -> 3 -> 4 -> 2` give no
+> issue. The C runtime checks for cycles completely and rejects such a graph
+> when it is submitted, which `submit_workflow_async` reports only as an empty
+> handle. The [workflow design](../design/workflow.md) derives exactly which
+> cycles the check finds.
+
+```moonbit
+test "a cycle the check misses" {
+  let edge = @workflow.control_dependency()
+  let graph = @workflow.Workflow::new("hidden cycle")
+    .add_node(@workflow.spawn_node(1, "alone"))
+    .add_node(@workflow.spawn_node(2, "a"))
+    .add_node(@workflow.spawn_node(3, "b"))
+    .add_node(@workflow.spawn_node(4, "c"))
+    .add_edge(@workflow.Edge::new(2, 3, edge))
+    .add_edge(@workflow.Edge::new(3, 4, edge))
+    .add_edge(@workflow.Edge::new(4, 2, edge))
+  assert_eq(@workflow.validate(graph).length(), 0)
+  let alone = @workflow.Workflow::new("bare cycle")
+    .add_node(@workflow.spawn_node(2, "a"))
+    .add_node(@workflow.spawn_node(3, "b"))
+    .add_node(@workflow.spawn_node(4, "c"))
+    .add_edge(@workflow.Edge::new(2, 3, edge))
+    .add_edge(@workflow.Edge::new(3, 4, edge))
+    .add_edge(@workflow.Edge::new(4, 2, edge))
+  debug_inspect(@workflow.validate(alone), content="[CyclicDependency]")
+}
+```
 
 ### `is_ready`
 
