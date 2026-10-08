@@ -90,7 +90,12 @@ All enumerations cross the C interface as `Int`. The MoonBit side maps them in
 | 14 | `BARRIER_BROKEN` | none |
 
 Codes 8 to 14 come only from the workflow runtime; `WorkflowResult::status`
-carries them as raw integers.
+carries them as raw integers. The current runtime never produces codes 2, 3,
+10 and 11. Codes 8 and 9 reject a graph at submission, and through
+`submit_workflow_async` they are visible only as an empty handle. Code 13 is
+returned only for a `Wait` in a graph without capabilities, which admission
+already rejects, so in practice the failures a running workflow reports are 12
+(`Unlock` of a free mutex) and 14 (a barrier group of one node).
 
 ### Workflow codes
 
@@ -125,8 +130,12 @@ specification and `main.zh_CN.typ` its Chinese mirror; `make docs` compiles
 both. The specification defines the workflow calculus, ownership transfer,
 the ABI layouts and the conformance obligations. The implementation covers the
 data model and validation of Part I and the native realization of a subset of
-it; the package design pages state which parts. `docs/spec-review-report-zh.md`
-records review findings in Chinese.
+it; the package design pages state which parts.
+
+`docs/spec-review-report-zh.md`, outside the manual, is an earlier review of
+the specification in Chinese. It predates the move of the specification into
+`doc/attachments/`, so its links point to files that no longer exist; read it
+as a historical record, not as a description of the current code.
 
 ## Repository layout
 
@@ -136,5 +145,6 @@ records review findings in Chinese.
 | `native/` | The C runtime, its header, CMake build and smoke test. |
 | `js/` | The Node.js addon scaffold. |
 | `doc/` | This manual, its translations and the specification. |
+| `docs/` | The earlier Chinese review report of the specification. |
 | `scripts/check-env.sh` | Checks the MoonBit, C, Node.js and Typst toolchains. |
 | `Makefile` | Shortcuts for checking, building the native runtime and the addon, and compiling the specification. |
