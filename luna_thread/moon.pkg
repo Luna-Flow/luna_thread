@@ -4,3 +4,5 @@ import {
   "Luna-Flow/luna_thread/shared",
   "Luna-Flow/luna_thread/workflow",
 }
+
+supported_targets = "native"

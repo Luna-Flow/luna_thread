@@ -5,6 +5,8 @@ import {
   "Luna-Flow/luna_thread/workflow",
 }
 
+supported_targets = "native"
+
 options(
   "native-stub": [ "ffi_stub.c", "ffi_runtime_bridge.c", "ffi_runtime_impl.c" ],
   targets: { "ffi_native.mbt": [ "native" ] },
